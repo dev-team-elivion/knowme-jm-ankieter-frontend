@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "Ankieter 6.0",
+    "subtitle": "Application skeleton — backend and frontend talk over an OpenAPI contract."
+  },
+  "backend": {
+    "heading": "Backend connection",
+    "checking": "Checking connection…",
+    "online": "Backend is responding",
+    "offline": "No connection to the backend",
+    "application": "Application",
+    "serverTime": "Server time",
+    "retry": "Check again"
+  },
+  "user": {
+    "heading": "Signed in user",
+    "anonymous": "Nobody is signed in",
+    "login": "Sign in with SSO",
+    "logout": "Sign out"
+  }
+}

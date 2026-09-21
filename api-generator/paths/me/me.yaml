@@ -1,0 +1,32 @@
+current-user:
+  get:
+    tags:
+      - CurrentUser
+    summary: Dane zalogowanego uzytkownika
+    description: Wymaga zalogowania przez SSO. Zrodlem danych jest token z Keycloaka.
+    operationId: getCurrentUser
+    responses:
+      200:
+        description: Dane uzytkownika z biezacej sesji
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurrentUser'
+      401:
+        description: Brak zalogowanej sesji
+components:
+  schemas:
+    CurrentUser:
+      type: object
+      required:
+        - authenticated
+      properties:
+        authenticated:
+          type: boolean
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string

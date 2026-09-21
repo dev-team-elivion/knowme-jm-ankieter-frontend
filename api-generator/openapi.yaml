@@ -1,0 +1,17 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: Ankieter API
+  description: Ankieter 6.0 - kontrakt API (zrodlo prawdy dla backendu i frontu)
+paths:
+  #Ping (publiczny health dla frontu):
+  /api/v1/ping:
+    $ref: "./paths/ping/ping.yaml#/ping"
+
+  #CSRF handshake:
+  /api/v1/csrf:
+    $ref: "./paths/csrf/csrf.yaml#/csrf-token"
+
+  #Zalogowany uzytkownik:
+  /api/v1/me:
+    $ref: "./paths/me/me.yaml#/current-user"

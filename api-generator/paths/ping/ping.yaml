@@ -1,0 +1,35 @@
+ping:
+  get:
+    tags:
+      - Ping
+    summary: Publiczny health check aplikacji
+    description: Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
+    operationId: ping
+    responses:
+      200:
+        description: Backend odpowiada
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PingResponse'
+components:
+  schemas:
+    PingResponse:
+      type: object
+      required:
+        - application
+        - status
+        - serverTime
+      properties:
+        application:
+          type: string
+          example: knowme-jm-ankieter-backend
+        status:
+          $ref: '#/components/schemas/PingStatus'
+        serverTime:
+          type: string
+          format: date-time
+    PingStatus:
+      type: string
+      enum:
+        - UP

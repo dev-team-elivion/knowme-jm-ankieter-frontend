@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "generators": {
+      "main": {
+        "additionalProperties": {
+          "legacyDiscriminatorBehavior": true,
+          "modelPropertyNaming": "camelCase",
+          "npmName": "sdk",
+          "supportsES6": true,
+          "typescriptThreePlus": true,
+          "useOneOfDiscriminatorLookup": true,
+          "withInterfaces": true,
+          "withSeparateModelsAndApi": true,
+          "withoutRuntimeChecks": true,
+          "modelNameSuffix": "Dto"
+        },
+        "apiPackage": "apis",
+        "generateAliasAsModel": false,
+        "generatorName": "typescript-axios",
+        "glob": "api-generator/openapi.yaml",
+        "modelPackage": "models",
+        "output": "api-generator/tmp"
+      }
+    },
+    "version": "7.14.0"
+  }
+}
