@@ -1,6 +1,6 @@
 #!/bin/bash
-# Generuje klienta TS z kontraktu skopiowanego z backendu.
-# Uzycie: ./api-generator/generate-api.sh main
+# Generates the TypeScript client from the contract copied over from the backend.
+# Usage: ./api-generator/generate-api.sh main
 set -euo pipefail
 
 GENERATOR_KEY=${1:-main}
@@ -17,7 +17,7 @@ cd "$ROOT_DIR"
 rm -rf "$TMP_API_PATH"
 mkdir -p "$TMP_API_PATH"
 cp "$API_YAML_PATH" "$TMP_API_PATH"
-# Generator TS nie obsluguje niektorych wzorcow z kontraktu - wycinamy je na kopii roboczej.
+# The TS generator chokes on some patterns, so they are stripped from the working copy.
 sed -i '' "s/.*pattern:.*/#open-api-mocker-unsupported#pattern:/" "$TMP_API_YAML_PATH" 2>/dev/null \
   || sed -i "s/.*pattern:.*/#open-api-mocker-unsupported#pattern:/" "$TMP_API_YAML_PATH"
 

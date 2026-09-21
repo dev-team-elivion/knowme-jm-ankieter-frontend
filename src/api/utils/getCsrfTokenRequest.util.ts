@@ -8,9 +8,8 @@ type Token = {
   token: string;
 };
 
-// Backend uzywa HttpSessionCsrfTokenRepository - token jest staly przez cale zycie sesji i nie rotuje
-// per zadanie, wiec pobieramy go raz i trzymamy w pamieci. Rownolegle pierwsze zapisy czekaja na to
-// samo zadanie w locie zamiast kazdy bic po /csrf.
+// The backend uses HttpSessionCsrfTokenRepository: the token is stable for the whole session and
+// does not rotate per request, so it is fetched once and reused.
 let cachedToken: null | string = null;
 let inFlight: null | Promise<string> = null;
 
@@ -31,7 +30,7 @@ export const getCsrfToken = async (): Promise<string> => {
   return inFlight;
 };
 
-/** Czysci cache, zeby kolejny zapis pobral swiezy token (np. po wylogowaniu). */
+/** Drops the cached token so the next mutating request fetches a fresh one. */
 export const invalidateCsrfToken = (): void => {
   cachedToken = null;
   inFlight = null;

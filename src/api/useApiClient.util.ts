@@ -5,10 +5,6 @@ import { CONFIG } from '@/config/config.ts';
 
 import { Configuration, CsrfApiFactory, CurrentUserApiFactory, PingApiFactory } from './generated';
 
-/**
- * Jedyne wejscie do API. Kazda nowa fabryka z generatora rejestrowana jest tutaj - hooki React Query
- * wolaja wylacznie metody stad, nigdy axiosa bezposrednio.
- */
 export const useApiClient = () => {
   const axiosInstance = useAxiosInstance();
   const configuration = useMemo(() => getConfiguration(CONFIG.HOST), []);

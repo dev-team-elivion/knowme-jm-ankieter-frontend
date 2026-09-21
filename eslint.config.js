@@ -33,7 +33,6 @@ export default tsEslint.config(
   perfectionist.configs['recommended-alphabetical'],
   eslintConfigPrettier,
   {
-    // Kod z generatora OpenAPI nie jest utrzymywany recznie, wiec nie podlega lintowi.
     ignores: ['node_modules', 'build', 'dist', 'public', 'eslint.config.js', 'src/api/generated'],
   },
   {
@@ -52,7 +51,7 @@ export default tsEslint.config(
       ],
       '@typescript-eslint/prefer-nullish-coalescing': 'error',
       'import-x/default': 'off',
-      // Domyslne eksporty i18next i react-dom/client maja tez eksporty nazwane o tych samych nazwach.
+      // i18next and react-dom/client have named exports matching their default export.
       'import-x/no-named-as-default': 'off',
       'import-x/no-named-as-default-member': 'off',
       'import-x/no-unresolved': 'off',

@@ -14,10 +14,7 @@ const MUTATING_METHODS: string[] = [
   HttpMethod.DELETE,
 ];
 
-/**
- * withCredentials: cookie sesji musi krazyc takze cross-origin (lokalnie front :3001 -> backend :8081).
- * Po stronie backendu CORS ma allow-credentials i konkretny origin.
- */
+// withCredentials: the session cookie has to travel cross-origin (front :3001 -> backend :8081).
 export const useAxiosInstance = (): Return =>
   useMemo(() => {
     const instance = axios.create({ withCredentials: true });

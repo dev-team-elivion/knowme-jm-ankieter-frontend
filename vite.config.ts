@@ -17,7 +17,6 @@ export default defineConfig({
     dedupe: ['@emotion/react', '@emotion/styled'],
   },
   server: {
-    // 3001, zeby front Ankietera mogl stac obok frontu jAIn (3000).
     port: 3001,
   },
 });
