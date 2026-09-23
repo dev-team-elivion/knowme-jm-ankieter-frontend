@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { useMemo } from 'react';
 
+import { hasHttpStatus } from '@/api/guards/isAxiosError.guard.ts';
 import { HTTP_HEADER } from '@/api/httpHeaders.model.ts';
 import { HttpMethod } from '@/api/HttpMethod.model.ts';
+import { HttpStatusEnum } from '@/api/model/HttpStatus.enum.ts';
 import { getCsrfToken } from '@/api/utils/getCsrfTokenRequest.util.ts';
+import { redirectToSso } from '@/api/utils/ssoRedirect.util.ts';
 
 type Return = ReturnType<typeof axios.create>;
 
@@ -24,6 +27,13 @@ export const useAxiosInstance = (): Return =>
         config.headers[HTTP_HEADER['X-CSRF-Token']] = await getCsrfToken();
       }
       return config;
+    });
+
+    instance.interceptors.response.use(undefined, (error: unknown) => {
+      if (hasHttpStatus(error, HttpStatusEnum.UNAUTHORIZED)) {
+        redirectToSso();
+      }
+      return Promise.reject(error instanceof Error ? error : new Error(String(error)));
     });
 
     return instance;
