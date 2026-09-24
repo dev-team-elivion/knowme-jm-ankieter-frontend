@@ -1,4 +1,8 @@
+const DEV_TOOLS_ENVIRONMENTS = ['dev', 'local'];
+
 export const CONFIG = {
+  DEV_TOOLS_ENABLED:
+    import.meta.env.DEV || DEV_TOOLS_ENVIRONMENTS.includes(import.meta.env.VITE_ENVIRONMENT),
   ENVIRONMENT: import.meta.env.VITE_ENVIRONMENT,
   HOST:
     import.meta.env.VITE_ENVIRONMENT === 'local'
