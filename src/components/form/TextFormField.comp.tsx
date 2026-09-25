@@ -14,6 +14,8 @@ type Props<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValue
   type?: HTMLInputTypeAttribute;
 } & FormFieldProps<TFieldValues, TName>;
 
+const toNumberValue = (raw: string): number | undefined => (raw === '' ? undefined : Number(raw));
+
 export const TextFormField = <
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -53,6 +55,9 @@ export const TextFormField = <
         maxRows={multiline ? (maxRows ?? (minRows ?? 3) + 4) : undefined}
         minRows={multiline ? (minRows ?? 3) : undefined}
         multiline={multiline}
+        onChange={event =>
+          field.onChange(type === 'number' ? toNumberValue(event.target.value) : event)
+        }
         placeholder={placeholder}
         type={type}
         value={field.value ?? ''}

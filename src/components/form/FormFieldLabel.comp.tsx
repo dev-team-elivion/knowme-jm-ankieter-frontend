@@ -5,11 +5,12 @@ import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.
 
 type Props = {
   htmlFor: string;
+  id?: string;
   isRequired: boolean;
   label: string;
 };
 
-export const FormFieldLabel = ({ htmlFor, isRequired, label }: Props): JSX.Element => {
+export const FormFieldLabel = ({ htmlFor, id, isRequired, label }: Props): JSX.Element => {
   const theme = useTheme();
   const { t } = useTranslationWithPrefix('components.form');
 
@@ -17,6 +18,7 @@ export const FormFieldLabel = ({ htmlFor, isRequired, label }: Props): JSX.Eleme
     <Box
       component="label"
       htmlFor={htmlFor}
+      id={id}
       sx={{
         ...theme.typography.caption,
         color: theme.colors.textSecondary,

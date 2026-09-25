@@ -8,6 +8,7 @@ import { FormFieldProps, SelectOption } from '@/components/form/model/FormProps.
 import { isFormFieldRequired } from '@/components/form/util/isFormFieldRequired.util.ts';
 
 type Props<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>> = {
+  onChange?: (value: string) => void;
   options: SelectOption[];
 } & FormFieldProps<TFieldValues, TName>;
 
@@ -19,6 +20,7 @@ export const SelectFormField = <
   helperText,
   label,
   name,
+  onChange,
   options,
   placeholder,
 }: Props<TFieldValues, TName>): JSX.Element => {
@@ -45,6 +47,10 @@ export const SelectFormField = <
         fullWidth
         helperText={error?.message ?? helperText}
         id={inputId}
+        onChange={event => {
+          field.onChange(event);
+          onChange?.(event.target.value);
+        }}
         select
         slotProps={{
           select: {

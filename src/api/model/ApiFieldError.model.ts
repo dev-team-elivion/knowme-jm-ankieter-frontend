@@ -1,11 +1,7 @@
-export type ApiFieldErrorResponse = {
-  detail?: string;
-  status: number;
-  title?: string;
-  violations: ApiFieldViolation[];
-};
+import { ProblemDetailDto, ViolationDto } from '@/api/generated';
 
-export type ApiFieldViolation = {
-  field: string;
-  message: string;
-};
+export type ApiFieldErrorResponse = {
+  violations: ApiFieldViolation[];
+} & ProblemDetailDto;
+
+export type ApiFieldViolation = ViolationDto;

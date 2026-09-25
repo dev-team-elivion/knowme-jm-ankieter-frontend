@@ -10,10 +10,28 @@ export type ApiFieldErrorsResult<TFieldValues extends FieldValues> = {
   unmappedViolations: ApiFieldViolation[];
 };
 
+export type ApiViolationResolver<TFieldValues extends FieldValues> = (
+  violation: ApiFieldViolation,
+) => ResolvedFieldError<TFieldValues> | undefined;
+
+export type ResolvedFieldError<TFieldValues extends FieldValues> = {
+  field: Path<TFieldValues>;
+  message: string;
+};
+
+export const resolveByFieldName =
+  <TFieldValues extends FieldValues>(
+    fields: readonly Path<TFieldValues>[],
+  ): ApiViolationResolver<TFieldValues> =>
+  violation => {
+    const field = fields.find(candidate => candidate === violation.field);
+    return field === undefined ? undefined : { field, message: violation.message };
+  };
+
 export const applyApiFieldErrors = <TFieldValues extends FieldValues>(
   error: unknown,
   setError: UseFormSetError<TFieldValues>,
-  fields: readonly Path<TFieldValues>[],
+  resolveViolation: ApiViolationResolver<TFieldValues>,
 ): ApiFieldErrorsResult<TFieldValues> | null => {
   if (!isAxiosError(error) || !hasHttpStatus(error, HttpStatusEnum.BAD_REQUEST)) {
     return null;
@@ -23,10 +41,13 @@ export const applyApiFieldErrors = <TFieldValues extends FieldValues>(
     return null;
   }
 
-  const mapped = body.violations.flatMap(violation => {
-    const field = fields.find(candidate => candidate === violation.field);
-    return field === undefined ? [] : [{ field, message: violation.message }];
-  });
+  const resolved = body.violations.map(violation => ({
+    resolution: resolveViolation(violation),
+    violation,
+  }));
+  const mapped = resolved.flatMap(({ resolution }) =>
+    resolution === undefined ? [] : [resolution],
+  );
 
   mapped.forEach(({ field, message }, index) =>
     setError(field, { message, type: 'server' }, { shouldFocus: index === 0 }),
@@ -34,8 +55,8 @@ export const applyApiFieldErrors = <TFieldValues extends FieldValues>(
 
   return {
     mappedFields: mapped.map(({ field }) => field),
-    unmappedViolations: body.violations.filter(
-      violation => !fields.some(candidate => candidate === violation.field),
+    unmappedViolations: resolved.flatMap(({ resolution, violation }) =>
+      resolution === undefined ? [violation] : [],
     ),
   };
 };

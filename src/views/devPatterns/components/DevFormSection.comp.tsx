@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { FormProviderKnowMe } from '@/components/form/FormProviderKnowMe.comp.tsx';
 import { SelectFormField } from '@/components/form/SelectFormField.comp.tsx';
 import { TextFormField } from '@/components/form/TextFormField.comp.tsx';
+import { resolveByFieldName } from '@/components/form/util/applyApiFieldErrors.util.ts';
 import { useApiFormErrorHandler } from '@/components/form/util/useApiFormErrorHandler.util.ts';
 import { useNotifications } from '@/components/notifications/Notification.context.ts';
 import { SectionPanel } from '@/components/page/SectionPanel.comp.tsx';
@@ -17,7 +18,11 @@ import { QUESTION_CATEGORIES } from '@/views/devPatterns/model/questionTable.con
 import { useQuestionFormValidation } from '@/views/devPatterns/model/useQuestionFormValidation.validation.ts';
 
 const DEFAULT_VALUES: QuestionFormModel = { authorEmail: '', category: '', content: '' };
-const SERVER_FIELDS = ['authorEmail', 'category', 'content'] as const;
+const RESOLVE_SERVER_FIELD = resolveByFieldName<QuestionFormModel>([
+  'authorEmail',
+  'category',
+  'content',
+]);
 
 type Props = {
   revealIndex: number;
@@ -33,7 +38,7 @@ export const DevFormSection = ({ revealIndex }: Props): JSX.Element => {
     defaultValues: DEFAULT_VALUES,
     resolver: yupResolver(validation),
   });
-  const handleApiError = useApiFormErrorHandler(form.setError, SERVER_FIELDS);
+  const handleApiError = useApiFormErrorHandler(form.setError, RESOLVE_SERVER_FIELD);
 
   const categoryOptions = useMemo(
     () =>

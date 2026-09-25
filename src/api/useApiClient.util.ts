@@ -3,7 +3,14 @@ import { useMemo } from 'react';
 import { useAxiosInstance } from '@/api/useAxiosInstance.util.ts';
 import { CONFIG } from '@/config/config.ts';
 
-import { Configuration, CsrfApiFactory, CurrentUserApiFactory, PingApiFactory } from './generated';
+import {
+  Configuration,
+  CsrfApiFactory,
+  CurrentUserApiFactory,
+  DictionariesApiFactory,
+  PingApiFactory,
+  QuestionsApiFactory,
+} from './generated';
 
 export const useApiClient = () => {
   const axiosInstance = useAxiosInstance();
@@ -13,7 +20,9 @@ export const useApiClient = () => {
     () => ({
       csrfApi: CsrfApiFactory(configuration, undefined, axiosInstance),
       currentUserApi: CurrentUserApiFactory(configuration, undefined, axiosInstance),
+      dictionariesApi: DictionariesApiFactory(configuration, undefined, axiosInstance),
       pingApi: PingApiFactory(configuration, undefined, axiosInstance),
+      questionsApi: QuestionsApiFactory(configuration, undefined, axiosInstance),
     }),
     [axiosInstance, configuration],
   );

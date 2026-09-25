@@ -6,6 +6,7 @@ import { HttpStatusEnum } from '@/api/model/HttpStatus.enum.ts';
 const REJECTION_BODY: ApiFieldErrorResponse = {
   status: HttpStatusEnum.BAD_REQUEST,
   title: 'Bad Request',
+  type: 'about:blank',
   violations: [
     { field: 'content', message: 'Pytanie o tej treści już istnieje w bazie.' },
     { field: 'authorEmail', message: 'Ten adres nie należy do żadnego pracownika.' },

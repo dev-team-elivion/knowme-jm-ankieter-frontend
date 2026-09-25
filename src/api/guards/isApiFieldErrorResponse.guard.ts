@@ -9,5 +9,7 @@ const isApiFieldViolation = (value: unknown): value is ApiFieldViolation =>
 export const isApiFieldErrorResponse = (value: unknown): value is ApiFieldErrorResponse =>
   isRecord(value) &&
   typeof value.status === 'number' &&
+  typeof value.title === 'string' &&
+  typeof value.type === 'string' &&
   Array.isArray(value.violations) &&
   value.violations.every(isApiFieldViolation);
