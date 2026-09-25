@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   version: 0.0.1
   title: Ankieter API
-  description: Ankieter 6.0 - kontrakt API (zrodlo prawdy dla backendu i frontu)
+  description: Ankieter 6.0 - the API contract, source of truth for the backend and the frontend
 paths:
-  #Ping (publiczny health dla frontu):
+  #Ping (public health check for the frontend):
   /api/v1/ping:
     $ref: "./paths/ping/ping.yaml#/ping"
 
@@ -12,6 +12,32 @@ paths:
   /api/v1/csrf:
     $ref: "./paths/csrf/csrf.yaml#/csrf-token"
 
-  #Zalogowany uzytkownik:
+  #Signed-in user:
   /api/v1/me:
     $ref: "./paths/me/me.yaml#/current-user"
+
+  #Question bank:
+  /api/v1/questions:
+    $ref: "./paths/questions/questions.yaml#/questions"
+  /api/v1/questions/{questionId}:
+    $ref: "./paths/questions/questions.yaml#/question-by-id"
+  /api/v1/questions/{questionId}/classification:
+    $ref: "./paths/questions/questions.yaml#/question-classification"
+  /api/v1/questions/{questionId}/versions:
+    $ref: "./paths/questions/questions.yaml#/question-versions"
+  /api/v1/questions/{questionId}/versions/{versionId}:
+    $ref: "./paths/questions/questions.yaml#/question-version-by-id"
+  /api/v1/questions/{questionId}/versions/{versionId}/activate:
+    $ref: "./paths/questions/questions.yaml#/question-version-activate"
+
+  #Dictionaries:
+  /api/v1/categories:
+    $ref: "./paths/dictionaries/dictionaries.yaml#/categories"
+  /api/v1/categories/{categoryId}:
+    $ref: "./paths/dictionaries/dictionaries.yaml#/category-by-id"
+  /api/v1/tags:
+    $ref: "./paths/dictionaries/dictionaries.yaml#/tags"
+  /api/v1/tags/{tagId}/merge:
+    $ref: "./paths/dictionaries/dictionaries.yaml#/tag-merge"
+  /api/v1/procedure-names:
+    $ref: "./paths/dictionaries/dictionaries.yaml#/procedure-names"

@@ -15,28 +15,17 @@
 
 
 /**
- * 
+ * Whether the question belongs to the test world or the survey world. They score in incompatible ways, so a test must never draw a survey question.
  * @export
- * @interface CsrfTokenDto
+ * @enum {string}
  */
-export interface CsrfTokenDto {
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'headerName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
-}
+
+export const QuestionPurposeDto = {
+    Test: 'TEST',
+    Survey: 'SURVEY'
+} as const;
+
+export type QuestionPurposeDto = typeof QuestionPurposeDto[keyof typeof QuestionPurposeDto];
+
+
 

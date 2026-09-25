@@ -2,12 +2,12 @@ ping:
   get:
     tags:
       - Ping
-    summary: Publiczny health check aplikacji
-    description: Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
+    summary: Public application health check
+    description: Unauthenticated endpoint the frontend uses to check whether the backend responds.
     operationId: ping
     responses:
       200:
-        description: Backend odpowiada
+        description: The backend responds
         content:
           application/json:
             schema:

@@ -17,26 +17,14 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface MergeTagRequestDto
  */
-export interface CsrfTokenDto {
+export interface MergeTagRequestDto {
     /**
-     * 
+     * The tag that survives. Must differ from the one in the path.
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof MergeTagRequestDto
      */
-    'headerName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
+    'targetTagId': string;
 }
 

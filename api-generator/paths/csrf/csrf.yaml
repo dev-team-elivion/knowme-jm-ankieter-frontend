@@ -2,14 +2,14 @@ csrf-token:
   get:
     tags:
       - Csrf
-    summary: Token CSRF biezacej sesji
+    summary: CSRF token of the current session
     description: >-
-      Token jest stabilny w obrebie sesji (HttpSessionCsrfTokenRepository), wiec front pobiera go raz
-      i dokleja do zadan zmieniajacych stan.
+      The token is stable within a session (HttpSessionCsrfTokenRepository), so the frontend
+      fetches it once and attaches it to every state-changing request.
     operationId: getCsrfToken
     responses:
       200:
-        description: Token CSRF
+        description: The CSRF token
         content:
           application/json:
             schema:

@@ -13,30 +13,29 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { TranslationStatusDto } from './translation-status-dto';
 
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface LocaleStatusDto
  */
-export interface CsrfTokenDto {
+export interface LocaleStatusDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof LocaleStatusDto
      */
-    'headerName': string;
+    'locale': string;
     /**
      * 
-     * @type {string}
-     * @memberof CsrfTokenDto
+     * @type {TranslationStatusDto}
+     * @memberof LocaleStatusDto
      */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
+    'status': TranslationStatusDto;
 }
+
+
 

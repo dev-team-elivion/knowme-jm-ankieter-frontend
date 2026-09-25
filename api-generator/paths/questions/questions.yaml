@@ -1,0 +1,508 @@
+# Question bank contract.
+#
+# The split between a question and its versions is the thing to understand before reading on.
+# A question keeps what survives every rewrite: key, type, classification. A version keeps the
+# wording and the scoring. Reports join results across versions by the key, so rewording a
+# question must never break its history.
+#
+# Two ways of editing exist on purpose and they are different endpoints, not a flag: correcting
+# a typo changes a version in place, a substantive rewrite creates a new one and invalidates the
+# translations. No machine can tell the two apart, so the author decides.
+
+questions:
+  get:
+    tags: [Questions]
+    summary: List questions
+    description: >-
+      Filtering, sorting and paging happen on the server. The bank is designed for tens of
+      thousands of questions, so fetching everything and filtering in the browser is not an
+      option at any size.
+    operationId: listQuestions
+    parameters:
+      - { name: categoryId, in: query, schema: { type: string, format: uuid } }
+      - { name: type, in: query, schema: { $ref: '#/components/schemas/QuestionType' } }
+      - { name: purpose, in: query, schema: { $ref: '#/components/schemas/QuestionPurpose' } }
+      - { name: status, in: query, schema: { $ref: '#/components/schemas/VersionStatus' } }
+      - { name: source, in: query, schema: { $ref: '#/components/schemas/QuestionSource' } }
+      - name: tagId
+        in: query
+        description: Repeatable. A question matches when it carries every tag given.
+        schema: { type: array, items: { type: string, format: uuid } }
+      - name: positionCode
+        in: query
+        description: Narrows to questions addressed to this job position.
+        schema: { type: string }
+      - name: locale
+        in: query
+        description: Language the summary text and the full text search use. Defaults to pl.
+        schema: { type: string, default: pl }
+      - name: translationStatus
+        in: query
+        description: Finds questions whose translation into "locale" is in this state.
+        schema: { $ref: '#/components/schemas/TranslationStatus' }
+      - name: author
+        in: query
+        description: >-
+          Who created the question, matched exactly. Stored as the sign-in name rather than an
+          id, because authors come from the identity provider and are not a table here.
+        schema: { type: string }
+      - name: q
+        in: query
+        description: >-
+          Searches the question body and its answers in "locale", by fragment: "olej" finds
+          "oleju". Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so
+          matching whole words would miss most of what people type.
+        schema: { type: string }
+      - { name: changedFrom, in: query, schema: { type: string, format: date } }
+      - { name: changedTo, in: query, schema: { type: string, format: date } }
+      - { name: page, in: query, schema: { type: integer, format: int32, default: 0, minimum: 0 } }
+      - { name: size, in: query, schema: { type: integer, format: int32, default: 25, minimum: 1, maximum: 200 } }
+      - name: sort
+        in: query
+        description: Field and direction, for example "updatedAt,desc". Defaults to newest change first.
+        schema: { type: string, default: updatedAt,desc }
+    responses:
+      200:
+        description: A page of questions
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionPage' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+
+  post:
+    tags: [Questions]
+    summary: Create a question with its first version
+    description: >-
+      The first version is created as a DRAFT. Leave businessKey empty to have one issued from
+      the category prefix and a counter; supply it only when carrying a question over from an
+      existing bank.
+    operationId: createQuestion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/CreateQuestionRequest' }
+    responses:
+      201:
+        description: Created
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionDetails' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      409: { $ref: '../common/errors.yaml#/components/responses/Conflict' }
+
+question-by-id:
+  get:
+    tags: [Questions]
+    summary: One question with every version
+    description: >-
+      Returns the classification and the full history: every version with its status, scoring
+      and translations. Retired versions are included — an attempt from years ago has to be
+      reproducible in the wording the employee actually saw.
+    operationId: getQuestion
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      200:
+        description: The question
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionDetails' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+
+question-classification:
+  patch:
+    tags: [Questions]
+    summary: Change category, source, tags and positions
+    description: >-
+      Classification hangs off the question, not off a version, so changing it does not create a
+      new version and does not touch what anyone answered. The business key never changes, even
+      when the question moves to a different category — a key is an identifier, not a label.
+    operationId: updateQuestionClassification
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/UpdateClassificationRequest' }
+    responses:
+      200:
+        description: Updated
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionDetails' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+
+question-versions:
+  post:
+    tags: [Questions]
+    summary: Create a new version of a question
+    description: >-
+      For a substantive rewrite. The currently active version becomes RETIRED, and every
+      translation of the new version except the source language starts as MISSING — which is how
+      the list of questions awaiting translation writes itself.
+    operationId: createQuestionVersion
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/QuestionVersionContent' }
+    responses:
+      201:
+        description: Created
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionVersion' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+
+question-version-by-id:
+  patch:
+    tags: [Questions]
+    summary: Correct a version in place
+    description: >-
+      For a typo or a clarification that does not change the meaning. Translation statuses are
+      left alone, because the translations still say the same thing. Retired versions cannot be
+      edited: history that can be corrected is not history.
+    operationId: updateQuestionVersion
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+      - { name: versionId, in: path, required: true, schema: { type: string, format: uuid } }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/QuestionVersionContent' }
+    responses:
+      200:
+        description: Updated
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionVersion' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+      409: { $ref: '../common/errors.yaml#/components/responses/Conflict' }
+
+question-version-activate:
+  post:
+    tags: [Questions]
+    summary: Make a version the one in force
+    description: >-
+      Exactly one version per question is ACTIVE. Activating another retires the current one.
+      The database enforces this with a partial unique index, so the answer is a conflict, not a
+      silent second active row.
+    operationId: activateQuestionVersion
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+      - { name: versionId, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      200:
+        description: Activated
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionVersion' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+      409: { $ref: '../common/errors.yaml#/components/responses/Conflict' }
+
+components:
+  schemas:
+
+    QuestionType:
+      type: string
+      description: >-
+        How an answer is given. Belongs to the question, not to a version: changing it would make
+        historical results incomparable, so a different type means a different question.
+      enum: [SINGLE_CHOICE, MULTIPLE_CHOICE, PASS_FAIL, OPEN_TEXT, PRACTICAL, ORDERING]
+
+    QuestionPurpose:
+      type: string
+      description: >-
+        Whether the question belongs to the test world or the survey world. They score in
+        incompatible ways, so a test must never draw a survey question.
+      enum: [TEST, SURVEY]
+
+    QuestionSource:
+      type: string
+      enum: [PROCEDURE, OPEROLKA, HANDBOOK, OTHER]
+
+    VersionStatus:
+      type: string
+      enum: [DRAFT, ACTIVE, RETIRED]
+
+    TranslationStatus:
+      type: string
+      enum: [MISSING, DRAFT, APPROVED]
+
+    ScoringRule:
+      type: string
+      description: >-
+        How a multiple choice answer turns into points. ALL_OR_NOTHING needs the complete key
+        with nothing wrong ticked. PARTIAL awards in proportion and ignores wrong ticks, so
+        ticking everything scores full marks. PARTIAL_WITH_PENALTY subtracts wrong ticks and
+        stops at zero — a question never takes away points earned elsewhere.
+      enum: [ALL_OR_NOTHING, PARTIAL, PARTIAL_WITH_PENALTY]
+
+    CategoryRef:
+      type: object
+      required: [id, name, codePrefix]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: BHP }
+        codePrefix:
+          type: string
+          description: What question keys in this category are built from, for example BHP-1.
+          example: BHP
+
+    TagRef:
+      type: object
+      required: [id, code, label]
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string, example: bhp }
+        label: { type: string, example: BHP }
+
+    AnswerTranslation:
+      type: object
+      required: [locale, body]
+      properties:
+        locale: { type: string, example: pl }
+        body: { type: string, example: Secure the area and mark it with a warning sign }
+
+    AnswerOption:
+      type: object
+      required: [id, displayOrder, isCorrect, translations]
+      properties:
+        id: { type: string, format: uuid }
+        displayOrder:
+          type: integer
+          format: int32
+          description: Order shown to the author. What the employee sees may be shuffled.
+          minimum: 1
+        isCorrect:
+          type: boolean
+          description: >-
+            Lives on the option, never on a translation, so the answer key cannot drift between
+            language versions of the same question.
+        points:
+          type: number
+          format: double
+          description: Value of this option, used by survey questions on a 0..100 scale.
+        correctOrder:
+          type: integer
+          format: int32
+          description: Position in the correct sequence. Only for ORDERING questions.
+          minimum: 1
+        translations:
+          type: array
+          items: { $ref: '#/components/schemas/AnswerTranslation' }
+
+    QuestionTranslation:
+      type: object
+      required: [locale, status, body]
+      properties:
+        locale: { type: string, example: pl }
+        status: { $ref: '#/components/schemas/TranslationStatus' }
+        body: { type: string }
+        explanation:
+          type: string
+          description: Optional note shown after the test, when the test is configured to show one.
+        answerKey:
+          type: string
+          description: >-
+            The examiner's reference for open, pass/fail and practical questions. Never leaves
+            this endpoint: the API used during an attempt returns a different shape that has no
+            such field, because hiding it in the interface would not stop anyone reading the
+            network response.
+
+    QuestionVersion:
+      type: object
+      required: [id, versionNo, status, maxPoints, scoringRule, sourceLocale, translations, answers, createdAt, createdBy]
+      properties:
+        id: { type: string, format: uuid }
+        versionNo: { type: integer, format: int32 }
+        status: { $ref: '#/components/schemas/VersionStatus' }
+        maxPoints:
+          type: number
+          format: double
+          description: >-
+            Greater than zero. A knowledge test accepts 1 only; a practical exam uses the scale.
+            The limit is enforced when a question is added to a test, not here, so one model
+            serves both.
+        scoringRule: { $ref: '#/components/schemas/ScoringRule' }
+        scaleMax:
+          type: integer
+          format: int32
+          description: Upper bound of a practical question's 0..N scale.
+        sourceLocale:
+          type: string
+          description: Language the version was written in. Other languages are translations of it.
+          example: pl
+        translations:
+          type: array
+          items: { $ref: '#/components/schemas/QuestionTranslation' }
+        answers:
+          type: array
+          items: { $ref: '#/components/schemas/AnswerOption' }
+        createdAt: { type: string, format: date-time }
+        createdBy: { type: string }
+        retiredAt: { type: string, format: date-time }
+
+    QuestionDetails:
+      type: object
+      required: [id, businessKey, type, purpose, category, source, tags, positionCodes, versions, createdAt, createdBy]
+      properties:
+        id: { type: string, format: uuid }
+        businessKey:
+          type: string
+          description: Never changes, not even when the question moves to another category.
+          example: BHP-1
+        type: { $ref: '#/components/schemas/QuestionType' }
+        purpose: { $ref: '#/components/schemas/QuestionPurpose' }
+        category: { $ref: '#/components/schemas/CategoryRef' }
+        source: { $ref: '#/components/schemas/QuestionSource' }
+        sourceName: { type: string, example: Safety on the sales floor }
+        tags:
+          type: array
+          items: { $ref: '#/components/schemas/TagRef' }
+        positionCodes:
+          type: array
+          description: >-
+            Job positions this question is addressed to. Stored as codes from jAIn with no
+            foreign key: positions arrive through a full replica sync that replaces the table in
+            one transaction. A code no longer present in jAIn stays on the question and is
+            reported as unknown rather than dropped.
+          items: { type: string }
+        versions:
+          type: array
+          description: Newest first, retired versions included.
+          items: { $ref: '#/components/schemas/QuestionVersion' }
+        createdAt: { type: string, format: date-time }
+        createdBy: { type: string }
+
+    NewAnswerOption:
+      type: object
+      required: [displayOrder, isCorrect, translations]
+      properties:
+        displayOrder: { type: integer, format: int32, minimum: 1 }
+        isCorrect: { type: boolean }
+        points: { type: number, format: double }
+        correctOrder: { type: integer, format: int32, minimum: 1 }
+        translations:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/AnswerTranslation' }
+
+    QuestionVersionContent:
+      type: object
+      description: >-
+        The body of a version. The same shape serves an in-place correction and a new version —
+        what differs is which endpoint it is sent to, not what is sent.
+      required: [maxPoints, scoringRule, sourceLocale, translations]
+      properties:
+        maxPoints: { type: number, format: double, minimum: 0, exclusiveMinimum: true }
+        scoringRule: { $ref: '#/components/schemas/ScoringRule' }
+        scaleMax: { type: integer, format: int32, minimum: 1 }
+        sourceLocale: { type: string, default: pl }
+        translations:
+          type: array
+          minItems: 1
+          description: Must contain at least the source language.
+          items: { $ref: '#/components/schemas/QuestionTranslation' }
+        answers:
+          type: array
+          description: >-
+            Empty for PASS_FAIL, OPEN_TEXT and PRACTICAL, which have no options. At least two
+            for the choice types.
+          items: { $ref: '#/components/schemas/NewAnswerOption' }
+
+    CreateQuestionRequest:
+      type: object
+      required: [type, purpose, categoryId, source, version]
+      properties:
+        businessKey:
+          type: string
+          description: Leave empty to have one issued from the category prefix and a counter.
+          example: BHP-1
+        type: { $ref: '#/components/schemas/QuestionType' }
+        purpose: { $ref: '#/components/schemas/QuestionPurpose' }
+        categoryId: { type: string, format: uuid }
+        source: { $ref: '#/components/schemas/QuestionSource' }
+        sourceName: { type: string }
+        tagIds:
+          type: array
+          items: { type: string, format: uuid }
+        positionCodes:
+          type: array
+          items: { type: string }
+        version: { $ref: '#/components/schemas/QuestionVersionContent' }
+
+    UpdateClassificationRequest:
+      type: object
+      required: [categoryId, source]
+      properties:
+        categoryId: { type: string, format: uuid }
+        source: { $ref: '#/components/schemas/QuestionSource' }
+        sourceName: { type: string }
+        tagIds:
+          type: array
+          items: { type: string, format: uuid }
+        positionCodes:
+          type: array
+          items: { type: string }
+
+    QuestionListItem:
+      type: object
+      required: [id, businessKey, type, purpose, categoryName, status, versionNo, locales, hasMedia, updatedAt]
+      properties:
+        id: { type: string, format: uuid }
+        businessKey: { type: string, example: BHP-1 }
+        summary:
+          type: string
+          description: Beginning of the question body in the requested language.
+        type: { $ref: '#/components/schemas/QuestionType' }
+        purpose: { $ref: '#/components/schemas/QuestionPurpose' }
+        categoryName: { type: string }
+        positionCodes:
+          type: array
+          items: { type: string }
+        status:
+          allOf:
+            - $ref: '#/components/schemas/VersionStatus'
+          description: Status of the newest version.
+        versionNo: { type: integer, format: int32 }
+        locales:
+          type: array
+          description: Translation state per language, for spotting gaps without opening the question.
+          items: { $ref: '#/components/schemas/LocaleStatus' }
+        hasMedia: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+
+    LocaleStatus:
+      type: object
+      required: [locale, status]
+      properties:
+        locale: { type: string, example: pl }
+        status: { $ref: '#/components/schemas/TranslationStatus' }
+
+    QuestionPage:
+      type: object
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/QuestionListItem' }
+        page: { type: integer, format: int32 }
+        size: { type: integer, format: int32 }
+        totalElements: { type: integer, format: int64 }
+        totalPages: { type: integer, format: int32 }

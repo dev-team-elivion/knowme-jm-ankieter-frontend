@@ -17,26 +17,32 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface CategoryRequestDto
  */
-export interface CsrfTokenDto {
+export interface CategoryRequestDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof CategoryRequestDto
      */
-    'headerName': string;
+    'codePrefix': string;
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof CategoryRequestDto
      */
-    'parameterName': string;
+    'name': string;
     /**
      * 
-     * @type {string}
-     * @memberof CsrfTokenDto
+     * @type {number}
+     * @memberof CategoryRequestDto
      */
-    'token': string;
+    'displayOrder'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CategoryRequestDto
+     */
+    'active'?: boolean;
 }
 

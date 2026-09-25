@@ -17,26 +17,20 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface TagRequestDto
  */
-export interface CsrfTokenDto {
+export interface TagRequestDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof TagRequestDto
      */
-    'headerName': string;
+    'label': string;
     /**
      * 
-     * @type {string}
-     * @memberof CsrfTokenDto
+     * @type {boolean}
+     * @memberof TagRequestDto
      */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
+    'active'?: boolean;
 }
 

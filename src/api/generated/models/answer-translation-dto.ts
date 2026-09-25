@@ -17,26 +17,20 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface AnswerTranslationDto
  */
-export interface CsrfTokenDto {
+export interface AnswerTranslationDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof AnswerTranslationDto
      */
-    'headerName': string;
+    'locale': string;
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof AnswerTranslationDto
      */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
+    'body': string;
 }
 

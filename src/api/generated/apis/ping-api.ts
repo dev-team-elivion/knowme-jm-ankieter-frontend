@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Ankieter API
- * Ankieter 6.0 - kontrakt API (zrodlo prawdy dla backendu i frontu)
+ * Ankieter 6.0 - the API contract, source of truth for the backend and the frontend
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -30,8 +30,8 @@ import type { PingResponseDto } from '../models';
 export const PingApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
-         * @summary Publiczny health check aplikacji
+         * Unauthenticated endpoint the frontend uses to check whether the backend responds.
+         * @summary Public application health check
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -70,8 +70,8 @@ export const PingApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = PingApiAxiosParamCreator(configuration)
     return {
         /**
-         * Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
-         * @summary Publiczny health check aplikacji
+         * Unauthenticated endpoint the frontend uses to check whether the backend responds.
+         * @summary Public application health check
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -92,8 +92,8 @@ export const PingApiFactory = function (configuration?: Configuration, basePath?
     const localVarFp = PingApiFp(configuration)
     return {
         /**
-         * Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
-         * @summary Publiczny health check aplikacji
+         * Unauthenticated endpoint the frontend uses to check whether the backend responds.
+         * @summary Public application health check
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -110,8 +110,8 @@ export const PingApiFactory = function (configuration?: Configuration, basePath?
  */
 export interface PingApiInterface {
     /**
-     * Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
-     * @summary Publiczny health check aplikacji
+     * Unauthenticated endpoint the frontend uses to check whether the backend responds.
+     * @summary Public application health check
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PingApiInterface
@@ -128,8 +128,8 @@ export interface PingApiInterface {
  */
 export class PingApi extends BaseAPI implements PingApiInterface {
     /**
-     * Endpoint bez autoryzacji - front sprawdza nim, czy backend odpowiada.
-     * @summary Publiczny health check aplikacji
+     * Unauthenticated endpoint the frontend uses to check whether the backend responds.
+     * @summary Public application health check
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PingApi

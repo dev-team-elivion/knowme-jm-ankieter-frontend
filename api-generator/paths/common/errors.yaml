@@ -1,0 +1,100 @@
+# Shared error shape for the whole API.
+#
+# Every endpoint answers failures with the same body, so the frontend writes the handling once
+# instead of guessing per endpoint. The shape follows RFC 7807 (application/problem+json), which
+# Spring produces natively through ProblemDetail.
+#
+# The violations array is the part that matters for forms: it names the field that was rejected,
+# so a validation error can be shown next to the input rather than as a banner nobody reads.
+components:
+  schemas:
+
+    ProblemDetail:
+      type: object
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          format: uri
+          description: Identifier of the problem kind. "about:blank" when there is nothing more specific.
+          example: about:blank
+        title:
+          type: string
+          description: Short, human readable summary. Stable for a given problem kind.
+          example: Validation failed
+        status:
+          type: integer
+          format: int32
+          example: 400
+        detail:
+          type: string
+          description: What went wrong in this particular case.
+          example: A multiple choice question needs at least one correct answer.
+        instance:
+          type: string
+          format: uri
+          description: The request path the problem occurred on.
+          example: /api/v1/questions
+        violations:
+          type: array
+          description: >-
+            Field level errors, present on validation failures. Empty or absent when the problem
+            is not tied to specific fields.
+          items:
+            $ref: '#/components/schemas/Violation'
+
+    Violation:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          description: >-
+            Path to the rejected field as it appears in the request body, so the frontend can map
+            it onto an input. Nested paths use dots and indexes, for example answers[2].points.
+          example: version.maxPoints
+        message:
+          type: string
+          description: Message for the person filling the form.
+          example: Maximum points must be greater than zero.
+        code:
+          type: string
+          description: Stable machine readable reason, for cases where wording is not enough.
+          example: MUST_BE_POSITIVE
+
+  responses:
+
+    BadRequest:
+      description: The request was rejected. Field level reasons are in "violations".
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+
+    Unauthorized:
+      description: No signed-in session.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+
+    NotFound:
+      description: No such resource.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+
+    Conflict:
+      description: >-
+        The request clashes with the current state — activating a second version while one is
+        already active, reusing a business key, editing a retired version.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'

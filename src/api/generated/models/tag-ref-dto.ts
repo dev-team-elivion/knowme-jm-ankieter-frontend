@@ -17,26 +17,26 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface TagRefDto
  */
-export interface CsrfTokenDto {
+export interface TagRefDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof TagRefDto
      */
-    'headerName': string;
+    'id': string;
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof TagRefDto
      */
-    'parameterName': string;
+    'code': string;
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof TagRefDto
      */
-    'token': string;
+    'label': string;
 }
 

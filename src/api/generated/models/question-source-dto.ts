@@ -17,26 +17,17 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @enum {string}
  */
-export interface CsrfTokenDto {
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'headerName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
-}
+
+export const QuestionSourceDto = {
+    Procedure: 'PROCEDURE',
+    Operolka: 'OPEROLKA',
+    Handbook: 'HANDBOOK',
+    Other: 'OTHER'
+} as const;
+
+export type QuestionSourceDto = typeof QuestionSourceDto[keyof typeof QuestionSourceDto];
+
+
 

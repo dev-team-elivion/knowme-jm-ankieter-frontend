@@ -17,26 +17,38 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface TagDto
  */
-export interface CsrfTokenDto {
+export interface TagDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof TagDto
      */
-    'headerName': string;
+    'id': string;
+    /**
+     * Normalised form used for matching, so case and spacing do not create twins.
+     * @type {string}
+     * @memberof TagDto
+     */
+    'code': string;
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof TagDto
      */
-    'parameterName': string;
+    'label': string;
     /**
      * 
-     * @type {string}
-     * @memberof CsrfTokenDto
+     * @type {boolean}
+     * @memberof TagDto
      */
-    'token': string;
+    'active': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof TagDto
+     */
+    'questionCount': number;
 }
 

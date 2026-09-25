@@ -17,26 +17,16 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @enum {string}
  */
-export interface CsrfTokenDto {
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'headerName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'parameterName': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CsrfTokenDto
-     */
-    'token': string;
-}
+
+export const VersionStatusDto = {
+    Draft: 'DRAFT',
+    Active: 'ACTIVE',
+    Retired: 'RETIRED'
+} as const;
+
+export type VersionStatusDto = typeof VersionStatusDto[keyof typeof VersionStatusDto];
+
+
 

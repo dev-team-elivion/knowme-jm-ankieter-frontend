@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Ankieter API
- * Ankieter 6.0 - kontrakt API (zrodlo prawdy dla backendu i frontu)
+ * Ankieter 6.0 - the API contract, source of truth for the backend and the frontend
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -30,8 +30,8 @@ import type { CurrentUserDto } from '../models';
 export const CurrentUserApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Wymaga zalogowania przez SSO. Zrodlem danych jest token z Keycloaka.
-         * @summary Dane zalogowanego uzytkownika
+         * Requires an SSO session. The data comes from the Keycloak token.
+         * @summary Details of the signed-in user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -70,8 +70,8 @@ export const CurrentUserApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CurrentUserApiAxiosParamCreator(configuration)
     return {
         /**
-         * Wymaga zalogowania przez SSO. Zrodlem danych jest token z Keycloaka.
-         * @summary Dane zalogowanego uzytkownika
+         * Requires an SSO session. The data comes from the Keycloak token.
+         * @summary Details of the signed-in user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -92,8 +92,8 @@ export const CurrentUserApiFactory = function (configuration?: Configuration, ba
     const localVarFp = CurrentUserApiFp(configuration)
     return {
         /**
-         * Wymaga zalogowania przez SSO. Zrodlem danych jest token z Keycloaka.
-         * @summary Dane zalogowanego uzytkownika
+         * Requires an SSO session. The data comes from the Keycloak token.
+         * @summary Details of the signed-in user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -110,8 +110,8 @@ export const CurrentUserApiFactory = function (configuration?: Configuration, ba
  */
 export interface CurrentUserApiInterface {
     /**
-     * Wymaga zalogowania przez SSO. Zrodlem danych jest token z Keycloaka.
-     * @summary Dane zalogowanego uzytkownika
+     * Requires an SSO session. The data comes from the Keycloak token.
+     * @summary Details of the signed-in user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CurrentUserApiInterface
@@ -128,8 +128,8 @@ export interface CurrentUserApiInterface {
  */
 export class CurrentUserApi extends BaseAPI implements CurrentUserApiInterface {
     /**
-     * Wymaga zalogowania przez SSO. Zrodlem danych jest token z Keycloaka.
-     * @summary Dane zalogowanego uzytkownika
+     * Requires an SSO session. The data comes from the Keycloak token.
+     * @summary Details of the signed-in user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CurrentUserApi

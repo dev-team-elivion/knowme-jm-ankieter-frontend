@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Ankieter API
- * Ankieter 6.0 - kontrakt API (zrodlo prawdy dla backendu i frontu)
+ * Ankieter 6.0 - the API contract, source of truth for the backend and the frontend
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -30,8 +30,8 @@ import type { CsrfTokenDto } from '../models';
 export const CsrfApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Token jest stabilny w obrebie sesji (HttpSessionCsrfTokenRepository), wiec front pobiera go raz i dokleja do zadan zmieniajacych stan.
-         * @summary Token CSRF biezacej sesji
+         * The token is stable within a session (HttpSessionCsrfTokenRepository), so the frontend fetches it once and attaches it to every state-changing request.
+         * @summary CSRF token of the current session
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -70,8 +70,8 @@ export const CsrfApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CsrfApiAxiosParamCreator(configuration)
     return {
         /**
-         * Token jest stabilny w obrebie sesji (HttpSessionCsrfTokenRepository), wiec front pobiera go raz i dokleja do zadan zmieniajacych stan.
-         * @summary Token CSRF biezacej sesji
+         * The token is stable within a session (HttpSessionCsrfTokenRepository), so the frontend fetches it once and attaches it to every state-changing request.
+         * @summary CSRF token of the current session
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -92,8 +92,8 @@ export const CsrfApiFactory = function (configuration?: Configuration, basePath?
     const localVarFp = CsrfApiFp(configuration)
     return {
         /**
-         * Token jest stabilny w obrebie sesji (HttpSessionCsrfTokenRepository), wiec front pobiera go raz i dokleja do zadan zmieniajacych stan.
-         * @summary Token CSRF biezacej sesji
+         * The token is stable within a session (HttpSessionCsrfTokenRepository), so the frontend fetches it once and attaches it to every state-changing request.
+         * @summary CSRF token of the current session
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -110,8 +110,8 @@ export const CsrfApiFactory = function (configuration?: Configuration, basePath?
  */
 export interface CsrfApiInterface {
     /**
-     * Token jest stabilny w obrebie sesji (HttpSessionCsrfTokenRepository), wiec front pobiera go raz i dokleja do zadan zmieniajacych stan.
-     * @summary Token CSRF biezacej sesji
+     * The token is stable within a session (HttpSessionCsrfTokenRepository), so the frontend fetches it once and attaches it to every state-changing request.
+     * @summary CSRF token of the current session
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CsrfApiInterface
@@ -128,8 +128,8 @@ export interface CsrfApiInterface {
  */
 export class CsrfApi extends BaseAPI implements CsrfApiInterface {
     /**
-     * Token jest stabilny w obrebie sesji (HttpSessionCsrfTokenRepository), wiec front pobiera go raz i dokleja do zadan zmieniajacych stan.
-     * @summary Token CSRF biezacej sesji
+     * The token is stable within a session (HttpSessionCsrfTokenRepository), so the frontend fetches it once and attaches it to every state-changing request.
+     * @summary CSRF token of the current session
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CsrfApi

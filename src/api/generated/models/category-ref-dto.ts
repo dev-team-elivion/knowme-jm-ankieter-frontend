@@ -17,26 +17,26 @@
 /**
  * 
  * @export
- * @interface CsrfTokenDto
+ * @interface CategoryRefDto
  */
-export interface CsrfTokenDto {
+export interface CategoryRefDto {
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof CategoryRefDto
      */
-    'headerName': string;
+    'id': string;
     /**
      * 
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof CategoryRefDto
      */
-    'parameterName': string;
+    'name': string;
     /**
-     * 
+     * What question keys in this category are built from, for example BHP-1.
      * @type {string}
-     * @memberof CsrfTokenDto
+     * @memberof CategoryRefDto
      */
-    'token': string;
+    'codePrefix': string;
 }
 

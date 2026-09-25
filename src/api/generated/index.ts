@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Ankieter API
- * Ankieter 6.0 - kontrakt API (zrodlo prawdy dla backendu i frontu)
+ * Ankieter 6.0 - the API contract, source of truth for the backend and the frontend
  *
  * The version of the OpenAPI document: 0.0.1
  * 
