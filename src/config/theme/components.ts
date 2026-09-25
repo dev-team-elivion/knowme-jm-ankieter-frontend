@@ -52,6 +52,42 @@ export const components: Components<ThemeWithoutComponents> = {
       }),
     },
   },
+  MuiAutocomplete: {
+    styleOverrides: {
+      inputRoot: ({ theme }) => ({
+        gap: theme.spacing(0.5),
+        padding: theme.spacing(0.5, 1),
+      }),
+      listbox: {
+        padding: 4,
+      },
+      noOptions: ({ theme }) => ({
+        ...theme.typography.body2,
+        color: theme.colors.textSecondary,
+      }),
+      option: ({ theme }) => ({
+        ...theme.typography.body2,
+        '&.Mui-focused, &:hover': {
+          background: `${theme.colors.bgHover} !important`,
+        },
+        '&[aria-selected="true"]': {
+          background: `${theme.colors.accentBg} !important`,
+        },
+        borderRadius: 8,
+        color: theme.colors.textPrimary,
+        margin: '2px 0',
+        minHeight: 38,
+      }),
+      paper: ({ theme }) => ({
+        background: theme.colors.bgCard,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: 12,
+        boxShadow: theme.colors.shadowCard,
+        color: theme.colors.textPrimary,
+        marginTop: 6,
+      }),
+    },
+  },
   MuiAvatar: {
     styleOverrides: {
       root: ({ theme }) => ({
@@ -151,6 +187,25 @@ export const components: Components<ThemeWithoutComponents> = {
           color: theme.colors.accentInk,
         },
         color: theme.colors.fieldBorderHover,
+      }),
+    },
+  },
+  MuiChip: {
+    styleOverrides: {
+      deleteIcon: ({ theme }) => ({
+        '&:hover': {
+          color: theme.colors.textPrimary,
+        },
+        color: theme.colors.iconMuted,
+        fontSize: '16px',
+      }),
+      root: ({ theme }) => ({
+        ...theme.typography.caption,
+        background: theme.colors.bgCard3,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: 50,
+        color: theme.colors.textPrimary,
+        fontWeight: 600,
       }),
     },
   },
@@ -289,6 +344,16 @@ export const components: Components<ThemeWithoutComponents> = {
       }),
     },
   },
+  MuiRadio: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '&.Mui-checked': {
+          color: theme.colors.accentInk,
+        },
+        color: theme.colors.fieldBorderHover,
+      }),
+    },
+  },
   MuiSelect: {
     styleOverrides: {
       icon: ({ theme }) => ({
@@ -315,6 +380,20 @@ export const components: Components<ThemeWithoutComponents> = {
       },
     },
   },
+  MuiTab: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        ...theme.typography.body2,
+        '&.Mui-selected': {
+          color: theme.colors.textPrimary,
+        },
+        color: theme.colors.textSecondary,
+        fontWeight: 600,
+        minHeight: 44,
+        textTransform: 'none',
+      }),
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       root: ({ theme }) => ({
@@ -331,6 +410,18 @@ export const components: Components<ThemeWithoutComponents> = {
       }),
       select: {
         paddingRight: '28px !important',
+      },
+    },
+  },
+  MuiTabs: {
+    styleOverrides: {
+      indicator: ({ theme }) => ({
+        backgroundColor: theme.colors.accent,
+        borderRadius: 2,
+        height: 3,
+      }),
+      root: {
+        minHeight: 44,
       },
     },
   },
