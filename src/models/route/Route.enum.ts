@@ -4,6 +4,8 @@ export enum RouteEnum {
   PATHS = '/paths',
   PROCESSES = '/processes',
   QUESTION_BANK = '/question-bank',
+  QUESTION_CREATE = '/question-bank/new',
+  QUESTION_EDIT = '/question-bank/:questionId',
   ROOT = '/',
   SETTINGS = '/settings',
   SURVEYS = '/surveys',
