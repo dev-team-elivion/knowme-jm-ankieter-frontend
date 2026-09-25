@@ -6,7 +6,7 @@ Read this before writing code. It is the short version of decisions already made
 
 Look at two or three existing views or components that do the same kind of job, and copy their direction.
 
-Adding an admin table? Open `AdminDataTable` and an existing admin list first. Adding a dialog? Open an existing `AdminDialog` usage. Adding a form? Open an existing `FormProviderKnowMe` form. Adding a filter bar, an empty state, a status pill, a stats card: same rule.
+Adding a table? Open `DataTable` in `src/components/dataTable/` and `DevTableSection` in `src/views/devPatterns/` first. Adding a form? Open `DevFormSection` and the `FormProviderKnowMe` fields in `src/components/form/`. Adding a filter bar, an empty state, a status pill, a stats card: same rule.
 
 What you are looking for: which shared component already exists, which spacing and radius values are used, where the translation keys live, how loading and empty states are handled. Then match it. A new screen that looks like it came from a different app is a bug, even if it compiles.
 
@@ -70,10 +70,14 @@ How it works here:
 
 - English file defines the type and is the source of shape: `x.translation.en.ts` exports both `xTranslation` and the `XTranslation` interface.
 - Polish file imports that type and implements it: `x.translation.pl.ts`.
-- Files live under `src/assets/locales/`, mirroring the feature path (`views/usersList/`, `components/dialog/`, `dictionaries/roles/`).
-- Read them with `useTranslationWithPrefix('views.usersList')`, then `t('someKey')`.
+- Files live under `src/assets/locales/`, one pair per namespace (`components/components.translation.en.ts`, `views/views.translation.en.ts`). A feature adds a nested key block inside its namespace file.
+- Read them with `useTranslationWithPrefix('components.dataTable')`, then `t('someKey')`.
 - Both languages must be updated in the same commit. A missing PL key is a visible bug.
 - Keys for enum values use the actual DTO string, not the TypeScript property name: `DRAFT`, `ACTIVE`, not `draft` or `Draft`.
+- Countable strings in Polish need `_one`, `_few` and `_many`. A base key plus `_other` renders the singular for every count, with no warning ("204 osoba"). The EN interface declares `X_one` plus optional `X_few?`, `X_many?`, `X_other?`; EN implements `_one` and `_other`, PL implements `_one`, `_few` and `_many`. Check forms with `new Intl.PluralRules('pl').select(n)`.
+- Do not pass `defaultValue` to `t()`. It hides a missing key, and the default renders in the wrong language.
+- Read arrays and objects with `t(key, { returnObjects: true })`, never `i18n.getResourceBundle(i18n.language, ...)`, which skips language fallback.
+- If an untranslated string does not exist anywhere in the repo, it comes from the server. That is a backend fix, not a client-side override map.
 
 ## How the copy should read
 
@@ -119,14 +123,18 @@ Visual language for anything new. Tokens live in `src/config/theme/uiTokens.ts`,
 - Accent color carries emphasis. `accent`, `accentBg`, `accentBorder`, plus `gold` for highlight states. Do not introduce new hex values; if a color is missing, add it to `themeColors.ts`.
 - Info notices use `InfoCallout`, not MUI `Alert severity="info"`.
 - Dialogs use plain MUI `<Dialog>`. It is already themed globally in `components.ts`, so do not restyle paper, title, or actions locally.
-- Tables use `AdminDataTable` with the shared `CustomTable` style functions.
+- Tables use `DataTable` from `src/components/dataTable/` with its shared `DataTable.styles.ts`.
+- `MuiButton` defaults to `variant="contained"`, the gold fill. Cancel and tertiary buttons need an explicit `variant="text"`, secondary ones `variant="outlined"`. Without it, a text-color sx reads as a disabled button and a border sx renders as invisible text.
+- Readable text uses `textSecondary`. `textMuted` is about 1.5:1 on dark cards, so keep it for decorative fills.
+- `accent` and `gold` are the same `#F9BA42` in both modes, about 1.7:1 on white. Use them for fills, pills and borders, not as text color on light backgrounds.
+- Filter selects: style the trigger only. Do not override `MenuProps` paper or individual `MenuItem` styles; the global theme owns the dropdown.
+- Filter bars align to the bottom (`alignItems: 'flex-end'`). No helper text under a single filter, because it pushes that field out of line.
 
-Dark and light are both real. Anything you write with hardcoded colors will break one of them.
-Color themes should never come from themeColors as that locks the color to one theme and is not theme-aware. 
+Dark and light are both real. Anything you write with hardcoded colors will break one of them. Read color values from `theme.colors`, never from `themeColors.ts`, because those values are fixed to one mode. Importing the `ThemeColorSet` type from it is fine.
 
 ## Data fetching
 
-Every request lives in its own hook file. No exceptions. A component never calls `useApiClient`, `useQuery`, or `useMutation` directly.
+Every request lives in its own hook file, so query keys, cache invalidation, and DTO mapping stay in one place. A component never calls `useApiClient`, `useQuery`, or `useMutation` directly.
 
 File rules:
 
@@ -137,7 +145,7 @@ File rules:
 - The API instance comes from `useApiClient()`. Do not import axios or build URLs by hand.
 - Return a narrow object, not the whole react-query result. The component should get what it needs and no more.
 
-A read hook:
+A read hook. The names below are illustrative and do not exist in this repo; `src/hooks/useCurrentUser.util.ts` is the working example here.
 
 ```ts
 import { useQuery } from '@tanstack/react-query';
@@ -218,23 +226,23 @@ Three states, every time: loading, empty, loaded. A list that renders a blank bo
 
 ## Permissions and roles
 
-- Permission checks go through `usePermissions()` from `src/hooks/usePermissions.ts`: `hasPermission`, `hasAnyPermission`, `hasAllPermissions`, all typed against `UserPermissionDto`.
-- Current user data comes from `useUserContext()`. Do not re-fetch it.
-- Route-level gating lives in `src/models/route/routesPermissions.model.ts`.
+- There is no permission helper yet. When the first check is needed, add one `usePermissions` hook typed against the generated DTO and route every check through it.
+- Current user data comes from `useCurrentUserContext()`. Do not re-fetch it.
+- Routes are defined in `src/models/route/routes.ts`; route-level gating belongs there.
 - Hiding a button is not authorization. It is a courtesy so users do not click things that will fail. The server is what actually enforces access, so never assume a hidden control means an unreachable action, and never build a flow whose safety depends only on the UI.
 - Do not invent a new role check by reading a role string and comparing it. Use the permission that describes the capability.
 - When an action is unavailable, prefer showing it disabled with a reason over hiding it, unless the whole feature is irrelevant to that role.
+- Only a 401 redirects to SSO. A 403 is a refusal inside the app: reads render their own denied or empty state, writes show a permission message. Branch on the HTTP status, not on backend internal error codes.
 
 ## Dates
 
-Dates are where quiet production bugs come from. Use the shared helpers in `src/utils/formatDate.util.ts` and do not hand-roll formatting.
+Dates are where quiet production bugs come from. The repo has no date library or date helpers yet. When the first feature needs dates, ask which library to use, then put all formatting and parsing in `src/utils/formatDate.util.ts` so nothing hand-rolls it.
 
-- `formatDate(dayjs, { withTime })` for a Dayjs value, `formatDateString(str, { withTime, timeOnly })` for a server string. Display format is `YYYY-MM-DD`, plus `HH:mm` when time matters.
-- `toLocalMidnightISO(dateStr)` when sending a date-only value to the server. It attaches the local offset so the day does not shift.
-- `parseServerLocalDateTime(str)` when reading a timestamp. It trusts the offset the server sent, which is correct now; do not reintroduce any manual `Z` stripping.
-- `dayjs` is the date library. Do not add another one, and do not do arithmetic on raw `Date` objects.
-- Form date fields use `DateFormField` / `AppDatePicker` with Dayjs values in the form model.
-- Cross-field date validation belongs in the Yup schema, not in a submit handler. The `date.mustBeLaterThan` key already exists for range checks.
+- Display format is `YYYY-MM-DD`, plus `HH:mm` when time matters.
+- When sending a date-only value to the server, attach the local offset so the day does not shift.
+- When reading a timestamp, trust the offset the server sent.
+- Do not do arithmetic on raw `Date` objects.
+- Cross-field date validation belongs in the Yup schema, not in a submit handler, with its message in `validation.translation.*.ts`.
 
 ## Type safety
 
@@ -263,7 +271,6 @@ Everything is typed. `any` is a bug you have not hit yet.
 ### Theme access
 - `const theme = useTheme()` at the top, then `theme.colors.X`.
 - Prefer that over `sx={{ color: theme => theme.colors.X }}` callback form. This project uses the hook. 
-- NEVER use themeColors directly
 
 ### Context over prop drilling
 - If a context is available at the call site, consume it with its hook.
@@ -278,12 +285,12 @@ Everything is typed. `any` is a bug you have not hit yet.
 - Component files export components and nothing else.
 
 ### Shared infrastructure
-- SSE refresh: use `<ProfileSSERefresh>` from `components/shared/ProfileSSERefresh.comp.tsx`. Do not copy it.
 - Duplicate routes rendering the same component collapse into one `path="section/*"` Route.
 
 ### Forms
-- `FormProviderKnowMe` with react-hook-form and Yup, plus `TextFormField` / `DateFormField` / `SelectSearchFormField`.
+- `FormProviderKnowMe` with react-hook-form and Yup, plus `TextFormField` / `SelectFormField` from `src/components/form/`.
 - Validation messages come from `validation.translation.*.ts`, never inline strings.
+- Length and count limits go in the Yup schema. With `yupResolver`, field-level `rules` such as `maxLength` never run. For a hard input cap, add `inputProps={{ maxLength: N }}` as well.
 
 ### No comments
 - Do not add inline or block comments. Name things well instead.
