@@ -1,3 +1,11 @@
+import {
+  QuestionPurposeDto,
+  QuestionSourceDto,
+  QuestionTypeDto,
+  ScoringRuleDto,
+  TranslationStatusDto,
+  VersionStatusDto,
+} from '@/api/generated';
 import { ViewsTranslation } from '@/assets/locales/views/views.translation.en.ts';
 
 export const viewsTranslation: ViewsTranslation = {
@@ -72,11 +80,15 @@ export const viewsTranslation: ViewsTranslation = {
       FOOD_SAFETY: 'Bezpieczeństwo żywności',
       OCCUPATIONAL_SAFETY: 'BHP',
     },
+    questionPurpose: {
+      [QuestionPurposeDto.Survey]: 'Ankieta',
+      [QuestionPurposeDto.Test]: 'Test',
+    },
     questionSource: {
-      HANDBOOK: 'Podręcznik',
-      OPEROLKA: 'Operolka',
-      OTHER: 'Inne',
-      PROCEDURE: 'Procedura',
+      [QuestionSourceDto.Handbook]: 'Podręcznik',
+      [QuestionSourceDto.Operolka]: 'Operolka',
+      [QuestionSourceDto.Other]: 'Inne',
+      [QuestionSourceDto.Procedure]: 'Procedura',
     },
     questionStatus: {
       ACTIVE: 'Aktywne',
@@ -84,40 +96,116 @@ export const viewsTranslation: ViewsTranslation = {
       DRAFT: 'Szkic',
     },
     questionType: {
-      MULTIPLE_CHOICE: 'Wielokrotny wybór',
-      OPEN_TEXT: 'Pytanie otwarte',
-      ORDERING: 'Ustalanie kolejności',
-      PASS_FAIL: 'Zaliczone lub niezaliczone',
-      PRACTICAL: 'Zadanie praktyczne',
-      SINGLE_CHOICE: 'Jednokrotny wybór',
+      [QuestionTypeDto.MultipleChoice]: 'Wielokrotny wybór',
+      [QuestionTypeDto.OpenText]: 'Pytanie otwarte',
+      [QuestionTypeDto.Ordering]: 'Ustalanie kolejności',
+      [QuestionTypeDto.PassFail]: 'Zaliczone lub niezaliczone',
+      [QuestionTypeDto.Practical]: 'Zadanie praktyczne',
+      [QuestionTypeDto.SingleChoice]: 'Jednokrotny wybór',
     },
     scoringRule: {
-      ALL_OR_NOTHING: {
+      [ScoringRuleDto.AllOrNothing]: {
         description:
           'Punkty tylko za zaznaczenie wszystkich poprawnych odpowiedzi i żadnej błędnej.',
         label: 'Wszystko albo nic',
       },
-      PARTIAL: {
+      [ScoringRuleDto.Partial]: {
         description:
           'Punkty proporcjonalnie do zaznaczonych poprawnych odpowiedzi. Błędne zaznaczenia nic nie odejmują, więc zaznaczenie wszystkich daje komplet punktów.',
         label: 'Częściowa',
       },
-      PARTIAL_WITH_PENALTY: {
+      [ScoringRuleDto.PartialWithPenalty]: {
         description:
           'Każde błędne zaznaczenie odejmuje punkty. Wynik pytania nigdy nie spada poniżej zera.',
         label: 'Częściowa z karą',
       },
     },
     translationStatus: {
-      APPROVED: 'Zatwierdzone',
-      DRAFT: 'Szkic',
-      MISSING: 'Brak',
+      [TranslationStatusDto.Approved]: 'Zatwierdzone',
+      [TranslationStatusDto.Draft]: 'Szkic',
+      [TranslationStatusDto.Missing]: 'Brak',
     },
     versionStatus: {
-      ACTIVE: 'Aktywna',
-      DRAFT: 'Szkic',
-      RETIRED: 'Wyłączona',
+      [VersionStatusDto.Active]: 'Aktywna',
+      [VersionStatusDto.Draft]: 'Szkic',
+      [VersionStatusDto.Retired]: 'Wyłączona',
     },
+  },
+  questionBank: {
+    actions: {
+      duplicate: 'Duplikuj',
+      edit: 'Edytuj',
+      history: 'Historia wersji',
+      menu: 'Akcje dla pytania {{key}}',
+      preview: 'Podgląd jak u pracownika',
+      retire: 'Wyłącz',
+      retireUnavailable: 'Wyłączanie pytań nie jest jeszcze dostępne.',
+      unsupportedType: 'Pytań tego typu nie można jeszcze edytować.',
+    },
+    addQuestion: 'Dodaj pytanie',
+    columns: {
+      actions: 'Akcje',
+      category: 'Kategoria',
+      key: 'Klucz',
+      languages: 'Języki',
+      positions: 'Stanowiska',
+      status: 'Status',
+      summary: 'Treść',
+      type: 'Typ',
+      updatedAt: 'Zmieniono',
+      version: 'Wersja',
+    },
+    description:
+      'Wszystkie pytania w jednym miejscu. Zawęź listę filtrami albo wyszukaj po treści.',
+    empty: {
+      description: 'Dodaj pierwsze pytanie, a pojawi się na tej liście.',
+      title: 'Baza pytań jest pusta',
+    },
+    filters: {
+      activeSummary: 'Zawężono do',
+      all: 'Wszystkie',
+      author: 'Autor',
+      category: 'Kategoria',
+      changedFrom: 'Zmienione od',
+      changedTo: 'Zmienione do',
+      clearAll: 'Wyczyść filtry',
+      hide: 'Ukryj filtry',
+      noTags: 'Brak pasujących tagów',
+      positionCode: 'Stanowisko',
+      purpose: 'Przeznaczenie',
+      search: 'Treść',
+      show: 'Filtry',
+      showWithCount: 'Filtry ({{count}})',
+      source: 'Źródło',
+      status: 'Status',
+      tags: 'Tagi',
+      translationStatus: 'Tłumaczenie',
+      type: 'Typ',
+    },
+    hasMedia: 'Pytanie z materiałem',
+    history: {
+      close: 'Zamknij',
+      created: 'Utworzono {{date}}, autor: {{author}}',
+      description: 'Pytanie {{key}}. Najnowsza wersja jest na górze.',
+      retired: 'Wyłączono {{date}}',
+      title: 'Historia wersji',
+    },
+    languageStatus: '{{language}}: {{status}}',
+    noSummary: 'Brak treści w tym języku',
+    preview: {
+      close: 'Zamknij',
+      description: 'Tak pytanie zobaczy pracownik.',
+      fallbackLanguage:
+        'Pytanie nie ma jeszcze treści w wybranym języku, dlatego widać język źródłowy.',
+      noActiveVersion: 'Pytanie nie ma jeszcze wersji do pokazania.',
+      title: 'Podgląd pytania',
+    },
+    search: {
+      label: 'Szukaj w treści pytań i odpowiedzi',
+      language: 'Język',
+    },
+    tableLabel: 'Pytania',
+    title: 'Baza pytań',
   },
   questionForm: {
     actions: {
@@ -179,6 +267,7 @@ export const viewsTranslation: ViewsTranslation = {
     },
     create: {
       description: 'Szkic możesz zapisać w dowolnym momencie i dokończyć pytanie później.',
+      duplicateDescription: 'Kopia pytania {{key}}. Zapisz ją jako nowy szkic.',
       title: 'Nowe pytanie',
     },
     edit: {

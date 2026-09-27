@@ -1,3 +1,11 @@
+import {
+  QuestionPurposeDto,
+  QuestionSourceDto,
+  QuestionTypeDto,
+  ScoringRuleDto,
+  TranslationStatusDto,
+  VersionStatusDto,
+} from '@/api/generated';
 export type ViewsTranslation = {
   comingSoon: {
     description: string;
@@ -67,40 +75,91 @@ export type ViewsTranslation = {
       FOOD_SAFETY: string;
       OCCUPATIONAL_SAFETY: string;
     };
-    questionSource: {
-      HANDBOOK: string;
-      OPEROLKA: string;
-      OTHER: string;
-      PROCEDURE: string;
-    };
+    questionPurpose: Record<QuestionPurposeDto, string>;
+    questionSource: Record<QuestionSourceDto, string>;
     questionStatus: {
       ACTIVE: string;
       ARCHIVED: string;
       DRAFT: string;
     };
-    questionType: {
-      MULTIPLE_CHOICE: string;
-      OPEN_TEXT: string;
-      ORDERING: string;
-      PASS_FAIL: string;
-      PRACTICAL: string;
-      SINGLE_CHOICE: string;
+    questionType: Record<QuestionTypeDto, string>;
+    scoringRule: Record<ScoringRuleDto, ScoringRuleTranslation>;
+    translationStatus: Record<TranslationStatusDto, string>;
+    versionStatus: Record<VersionStatusDto, string>;
+  };
+  questionBank: {
+    actions: {
+      duplicate: string;
+      edit: string;
+      history: string;
+      menu: string;
+      preview: string;
+      retire: string;
+      retireUnavailable: string;
+      unsupportedType: string;
     };
-    scoringRule: {
-      ALL_OR_NOTHING: ScoringRuleTranslation;
-      PARTIAL: ScoringRuleTranslation;
-      PARTIAL_WITH_PENALTY: ScoringRuleTranslation;
+    addQuestion: string;
+    columns: {
+      actions: string;
+      category: string;
+      key: string;
+      languages: string;
+      positions: string;
+      status: string;
+      summary: string;
+      type: string;
+      updatedAt: string;
+      version: string;
     };
-    translationStatus: {
-      APPROVED: string;
-      DRAFT: string;
-      MISSING: string;
+    description: string;
+    empty: {
+      description: string;
+      title: string;
     };
-    versionStatus: {
-      ACTIVE: string;
-      DRAFT: string;
-      RETIRED: string;
+    filters: {
+      activeSummary: string;
+      all: string;
+      author: string;
+      category: string;
+      changedFrom: string;
+      changedTo: string;
+      clearAll: string;
+      hide: string;
+      noTags: string;
+      positionCode: string;
+      purpose: string;
+      search: string;
+      show: string;
+      showWithCount: string;
+      source: string;
+      status: string;
+      tags: string;
+      translationStatus: string;
+      type: string;
     };
+    hasMedia: string;
+    history: {
+      close: string;
+      created: string;
+      description: string;
+      retired: string;
+      title: string;
+    };
+    languageStatus: string;
+    noSummary: string;
+    preview: {
+      close: string;
+      description: string;
+      fallbackLanguage: string;
+      noActiveVersion: string;
+      title: string;
+    };
+    search: {
+      label: string;
+      language: string;
+    };
+    tableLabel: string;
+    title: string;
   };
   questionForm: {
     actions: {
@@ -161,6 +220,7 @@ export type ViewsTranslation = {
     };
     create: {
       description: string;
+      duplicateDescription: string;
       title: string;
     };
     edit: {
@@ -309,11 +369,15 @@ export const viewsTranslation: ViewsTranslation = {
       FOOD_SAFETY: 'Food safety',
       OCCUPATIONAL_SAFETY: 'Occupational safety',
     },
+    questionPurpose: {
+      [QuestionPurposeDto.Survey]: 'Survey',
+      [QuestionPurposeDto.Test]: 'Test',
+    },
     questionSource: {
-      HANDBOOK: 'Handbook',
-      OPEROLKA: 'Operolka',
-      OTHER: 'Other',
-      PROCEDURE: 'Procedure',
+      [QuestionSourceDto.Handbook]: 'Handbook',
+      [QuestionSourceDto.Operolka]: 'Operolka',
+      [QuestionSourceDto.Other]: 'Other',
+      [QuestionSourceDto.Procedure]: 'Procedure',
     },
     questionStatus: {
       ACTIVE: 'Active',
@@ -321,38 +385,113 @@ export const viewsTranslation: ViewsTranslation = {
       DRAFT: 'Draft',
     },
     questionType: {
-      MULTIPLE_CHOICE: 'Multiple choice',
-      OPEN_TEXT: 'Open question',
-      ORDERING: 'Put in order',
-      PASS_FAIL: 'Pass or fail',
-      PRACTICAL: 'Practical task',
-      SINGLE_CHOICE: 'Single choice',
+      [QuestionTypeDto.MultipleChoice]: 'Multiple choice',
+      [QuestionTypeDto.OpenText]: 'Open question',
+      [QuestionTypeDto.Ordering]: 'Put in order',
+      [QuestionTypeDto.PassFail]: 'Pass or fail',
+      [QuestionTypeDto.Practical]: 'Practical task',
+      [QuestionTypeDto.SingleChoice]: 'Single choice',
     },
     scoringRule: {
-      ALL_OR_NOTHING: {
+      [ScoringRuleDto.AllOrNothing]: {
         description: 'Points only for every correct answer ticked and no wrong one.',
         label: 'All or nothing',
       },
-      PARTIAL: {
+      [ScoringRuleDto.Partial]: {
         description:
           'Points in proportion to the correct answers ticked. Wrong ticks cost nothing, so ticking everything scores full points.',
         label: 'Partial',
       },
-      PARTIAL_WITH_PENALTY: {
+      [ScoringRuleDto.PartialWithPenalty]: {
         description: 'Each wrong tick takes points away. The question never scores below zero.',
         label: 'Partial with penalty',
       },
     },
     translationStatus: {
-      APPROVED: 'Approved',
-      DRAFT: 'Draft',
-      MISSING: 'Missing',
+      [TranslationStatusDto.Approved]: 'Approved',
+      [TranslationStatusDto.Draft]: 'Draft',
+      [TranslationStatusDto.Missing]: 'Missing',
     },
     versionStatus: {
-      ACTIVE: 'Active',
-      DRAFT: 'Draft',
-      RETIRED: 'Retired',
+      [VersionStatusDto.Active]: 'Active',
+      [VersionStatusDto.Draft]: 'Draft',
+      [VersionStatusDto.Retired]: 'Retired',
     },
+  },
+  questionBank: {
+    actions: {
+      duplicate: 'Duplicate',
+      edit: 'Edit',
+      history: 'Version history',
+      menu: 'Actions for question {{key}}',
+      preview: 'Preview as an employee',
+      retire: 'Retire',
+      retireUnavailable: 'Retiring questions is not available yet.',
+      unsupportedType: 'Questions of this type cannot be edited yet.',
+    },
+    addQuestion: 'Add question',
+    columns: {
+      actions: 'Actions',
+      category: 'Category',
+      key: 'Key',
+      languages: 'Languages',
+      positions: 'Positions',
+      status: 'Status',
+      summary: 'Question',
+      type: 'Type',
+      updatedAt: 'Changed',
+      version: 'Version',
+    },
+    description: 'Every question in one place. Narrow the list with filters or search the text.',
+    empty: {
+      description: 'Add the first question and it will appear here.',
+      title: 'The question bank is empty',
+    },
+    filters: {
+      activeSummary: 'Narrowed by',
+      all: 'All',
+      author: 'Author',
+      category: 'Category',
+      changedFrom: 'Changed from',
+      changedTo: 'Changed to',
+      clearAll: 'Clear filters',
+      hide: 'Hide filters',
+      noTags: 'No matching tags',
+      positionCode: 'Position',
+      purpose: 'Purpose',
+      search: 'Text',
+      show: 'Filters',
+      showWithCount: 'Filters ({{count}})',
+      source: 'Source',
+      status: 'Status',
+      tags: 'Tags',
+      translationStatus: 'Translation',
+      type: 'Type',
+    },
+    hasMedia: 'Question with media',
+    history: {
+      close: 'Close',
+      created: 'Created {{date}} by {{author}}',
+      description: 'Question {{key}}. Newest version first.',
+      retired: 'Retired {{date}}',
+      title: 'Version history',
+    },
+    languageStatus: '{{language}}: {{status}}',
+    noSummary: 'No text in this language',
+    preview: {
+      close: 'Close',
+      description: 'This is how an employee sees the question.',
+      fallbackLanguage:
+        'The question has no text in the chosen language yet, so the source language is shown.',
+      noActiveVersion: 'The question has no version to show yet.',
+      title: 'Question preview',
+    },
+    search: {
+      label: 'Search question and answer text',
+      language: 'Language',
+    },
+    tableLabel: 'Questions',
+    title: 'Question bank',
   },
   questionForm: {
     actions: {
@@ -414,6 +553,7 @@ export const viewsTranslation: ViewsTranslation = {
     },
     create: {
       description: 'Save a draft at any point and finish the question later.',
+      duplicateDescription: 'Copy of question {{key}}. Save it as a new draft.',
       title: 'New question',
     },
     edit: {

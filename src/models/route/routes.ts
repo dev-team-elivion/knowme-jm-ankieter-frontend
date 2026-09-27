@@ -16,6 +16,12 @@ const DevPatternsView = lazy(() =>
   })),
 );
 
+const QuestionBankView = lazy(() =>
+  import('@/views/questionBank/QuestionBank.view.tsx').then(module => ({
+    default: module.QuestionBankView,
+  })),
+);
+
 const QuestionCreateView = lazy(() =>
   import('@/views/questionForm/QuestionCreate.view.tsx').then(module => ({
     default: module.QuestionCreateView,
@@ -32,7 +38,7 @@ const MODULE_ROUTES: RouteModel[] = [
   { component: ComingSoonView, path: RouteEnum.DASHBOARD },
   { component: ComingSoonView, path: RouteEnum.PATHS },
   { component: ComingSoonView, path: RouteEnum.PROCESSES },
-  { component: ComingSoonView, path: RouteEnum.QUESTION_BANK },
+  { component: QuestionBankView, path: RouteEnum.QUESTION_BANK },
   { component: QuestionCreateView, path: RouteEnum.QUESTION_CREATE },
   { component: QuestionEditView, path: RouteEnum.QUESTION_EDIT },
   { component: ComingSoonView, path: RouteEnum.SETTINGS },

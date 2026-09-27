@@ -67,6 +67,23 @@ export const createEmptyQuestionForm = (): QuestionFormModel => ({
   type: QuestionTypeDto.SingleChoice,
 });
 
+export const findDisplayVersion = (question: QuestionDetailsDto): QuestionVersionDto | undefined =>
+  question.versions.find(version => version.status === VersionStatusDto.Active) ??
+  question.versions.at(0);
+
+export const toDuplicateQuestionForm = (
+  question: QuestionDetailsDto,
+  type: ChoiceQuestionType,
+): QuestionFormModel => {
+  const form = toQuestionForm(question, findDisplayVersion(question), type);
+  return {
+    ...form,
+    answers: form.answers.map(answer => ({ ...answer, optionId: null })),
+    businessKey: '',
+    hasManualKey: false,
+  };
+};
+
 export const findEditableVersion = (question: QuestionDetailsDto): QuestionVersionDto | undefined =>
   question.versions.find(version => version.status !== VersionStatusDto.Retired);
 
