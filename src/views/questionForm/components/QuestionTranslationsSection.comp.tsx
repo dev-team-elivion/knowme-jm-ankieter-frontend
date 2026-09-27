@@ -6,12 +6,12 @@ import { QuestionTranslationDto, QuestionVersionDto, TranslationStatusDto } from
 import { SectionPanel } from '@/components/page/SectionPanel.comp.tsx';
 import { InfoCallout } from '@/components/state/InfoCallout.comp.tsx';
 import { StatusPill } from '@/components/state/StatusPill.comp.tsx';
+import { formatLocaleName } from '@/utils/localeName.util.ts';
+import { getTranslationStatusTone } from '@/utils/questionStatusTone.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { TranslationPreview } from '@/views/questionForm/components/TranslationPreview.comp.tsx';
 import { SOURCE_LOCALE } from '@/views/questionForm/model/QuestionForm.constants.ts';
-import { formatLocaleName } from '@/views/questionForm/util/localeName.util.ts';
 import { getSourceLocale } from '@/views/questionForm/util/questionFormMapping.util.ts';
-import { getTranslationStatusTone } from '@/views/questionForm/util/questionStatusTone.util.ts';
 
 const NEW_QUESTION_TRANSLATIONS: QuestionTranslationDto[] = [
   { body: '', locale: SOURCE_LOCALE, status: TranslationStatusDto.Draft },

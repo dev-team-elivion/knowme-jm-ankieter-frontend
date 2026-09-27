@@ -6,12 +6,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { EmptyState } from '@/components/state/EmptyState.comp.tsx';
 import { ErrorState } from '@/components/state/ErrorState.comp.tsx';
 import { panelSx } from '@/config/theme/uiTokens.ts';
+import { useGetQuestion } from '@/hooks/useGetQuestion.util.ts';
 import { RouteEnum } from '@/models/route/Route.enum.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionEditForm } from '@/views/questionForm/components/QuestionEditForm.comp.tsx';
 import { QuestionFormSkeleton } from '@/views/questionForm/components/QuestionFormSkeleton.comp.tsx';
 import { isChoiceQuestionType } from '@/views/questionForm/util/questionEnums.guard.ts';
-import { useGetQuestion } from '@/views/questionForm/util/useGetQuestion.util.ts';
 
 export const QuestionEditView = (): JSX.Element => {
   const theme = useTheme();

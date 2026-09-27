@@ -6,6 +6,7 @@ import { useWatch } from 'react-hook-form';
 import { CategoryRefDto } from '@/api/generated';
 import { SelectFormField } from '@/components/form/SelectFormField.comp.tsx';
 import { SectionPanel } from '@/components/page/SectionPanel.comp.tsx';
+import { useGetCategories } from '@/hooks/useGetCategories.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { BusinessKeyField } from '@/views/questionForm/components/BusinessKeyField.comp.tsx';
 import { PositionCodesField } from '@/views/questionForm/components/PositionCodesField.comp.tsx';
@@ -13,7 +14,6 @@ import { SourceNameField } from '@/views/questionForm/components/SourceNameField
 import { TagsField } from '@/views/questionForm/components/TagsField.comp.tsx';
 import { QUESTION_SOURCES } from '@/views/questionForm/model/QuestionForm.constants.ts';
 import { QuestionFormModel } from '@/views/questionForm/model/QuestionForm.model.ts';
-import { useGetCategories } from '@/views/questionForm/util/useGetCategories.util.ts';
 
 const TWO_COLUMNS_SX = {
   columnGap: 2,

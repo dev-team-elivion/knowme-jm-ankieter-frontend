@@ -9,9 +9,9 @@ import { useNotifications } from '@/components/notifications/Notification.contex
 import { PageHeader } from '@/components/page/PageHeader.comp.tsx';
 import { StatusPill } from '@/components/state/StatusPill.comp.tsx';
 import { revealSx } from '@/config/theme/uiTokens.ts';
+import { getVersionStatusTone } from '@/utils/questionStatusTone.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { BackToBankButton } from '@/views/questionForm/components/BackToBankButton.comp.tsx';
-import { getVersionStatusTone } from '@/views/questionForm/util/questionStatusTone.util.ts';
 import { useActivateQuestionVersion } from '@/views/questionForm/util/useActivateQuestionVersion.util.ts';
 
 type Props = {
