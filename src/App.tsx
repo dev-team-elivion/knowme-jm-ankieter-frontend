@@ -6,6 +6,7 @@ import { AppErrorBoundary } from '@/components/appState/AppErrorBoundary.comp.ts
 import { BackendGate } from '@/components/appState/BackendGate.comp.tsx';
 import { AppLayout } from '@/components/layout/AppLayout.comp.tsx';
 import { NotificationProvider } from '@/components/notifications/Notification.provider.tsx';
+import { DateLocalizationProvider } from '@/config/dates/DateLocalization.provider.tsx';
 import { ThemeModeProvider } from '@/config/theme/ThemeMode.provider.tsx';
 import { CurrentUserProvider } from '@/contexts/currentUser/CurrentUser.provider.tsx';
 
@@ -24,13 +25,15 @@ const App = (): JSX.Element => (
     <ThemeModeProvider>
       <AppErrorBoundary variant="fullPage">
         <NotificationProvider>
-          <BrowserRouter>
-            <BackendGate>
-              <CurrentUserProvider>
-                <AppLayout />
-              </CurrentUserProvider>
-            </BackendGate>
-          </BrowserRouter>
+          <DateLocalizationProvider>
+            <BrowserRouter>
+              <BackendGate>
+                <CurrentUserProvider>
+                  <AppLayout />
+                </CurrentUserProvider>
+              </BackendGate>
+            </BrowserRouter>
+          </DateLocalizationProvider>
         </NotificationProvider>
       </AppErrorBoundary>
     </ThemeModeProvider>
