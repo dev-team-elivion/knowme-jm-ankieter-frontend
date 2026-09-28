@@ -20,7 +20,7 @@ type Props = {
 
 type SelectFilterKey = keyof Pick<
   QuestionBankFilters,
-  'categoryId' | 'purpose' | 'source' | 'status' | 'translationStatus' | 'type'
+  'categoryId' | 'purpose' | 'source' | 'status' | 'type'
 >;
 
 export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Element => {
@@ -33,11 +33,6 @@ export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Ele
     { key: 'purpose', label: t('purpose'), options: options.purposes },
     { key: 'status', label: t('status'), options: options.statuses },
     { key: 'source', label: t('source'), options: options.sources },
-    {
-      key: 'translationStatus',
-      label: t('translationStatus'),
-      options: options.translationStatuses,
-    },
   ];
 
   return (

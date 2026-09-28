@@ -6,14 +6,12 @@ export type QuestionBankFilters = {
   categoryId: string;
   changedFrom: string;
   changedTo: string;
-  locale: string;
   positionCode: string;
   purpose: string;
   q: string;
   source: string;
   status: string;
   tagIds: string;
-  translationStatus: string;
   type: string;
 };
 

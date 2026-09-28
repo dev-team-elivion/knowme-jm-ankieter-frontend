@@ -69,11 +69,7 @@ export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
       )}
       <FormProviderKnowMe {...form} validation={validation}>
         <Stack component="form" noValidate onSubmit={event => event.preventDefault()} spacing={3}>
-          <QuestionFormSections
-            currentCategory={question.category}
-            isEditing
-            version={baseVersion}
-          />
+          <QuestionFormSections currentCategory={question.category} isEditing />
           <QuestionFormActionBar>
             <QuestionEditActions
               canFixTypo={canFixTypo}

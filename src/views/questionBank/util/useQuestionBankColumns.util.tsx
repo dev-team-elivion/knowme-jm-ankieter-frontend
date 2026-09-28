@@ -9,7 +9,6 @@ import { numericSx } from '@/config/theme/uiTokens.ts';
 import { formatApiDate } from '@/utils/formatDate.util.ts';
 import { getVersionStatusTone } from '@/utils/questionStatusTone.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-import { LanguageBadges } from '@/views/questionBank/components/LanguageBadges.comp.tsx';
 import {
   QuestionRowActionHandlers,
   QuestionRowActions,
@@ -102,12 +101,6 @@ export const useQuestionBankColumns = (handlers: QuestionRowActionHandlers): Ret
         render: row => <span style={numericSx}>{row.versionNo}</span>,
         sortKey: QuestionSortKeyEnum.VERSION_NO,
         width: 90,
-      },
-      {
-        id: 'languages',
-        label: t('columns.languages'),
-        render: row => <LanguageBadges locales={row.locales} />,
-        width: 130,
       },
       {
         align: 'right',

@@ -3,7 +3,6 @@ import {
   QuestionSourceDto,
   QuestionTypeDto,
   ScoringRuleDto,
-  TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
 export type ViewsTranslation = {
@@ -84,7 +83,6 @@ export type ViewsTranslation = {
     };
     questionType: Record<QuestionTypeDto, string>;
     scoringRule: Record<ScoringRuleDto, ScoringRuleTranslation>;
-    translationStatus: Record<TranslationStatusDto, string>;
     versionStatus: Record<VersionStatusDto, string>;
   };
   questionBank: {
@@ -103,7 +101,6 @@ export type ViewsTranslation = {
       actions: string;
       category: string;
       key: string;
-      languages: string;
       positions: string;
       status: string;
       summary: string;
@@ -134,7 +131,6 @@ export type ViewsTranslation = {
       source: string;
       status: string;
       tags: string;
-      translationStatus: string;
       type: string;
     };
     hasMedia: string;
@@ -145,18 +141,15 @@ export type ViewsTranslation = {
       retired: string;
       title: string;
     };
-    languageStatus: string;
     noSummary: string;
     preview: {
       close: string;
       description: string;
-      fallbackLanguage: string;
       noActiveVersion: string;
       title: string;
     };
     search: {
       label: string;
-      language: string;
     };
     tableLabel: string;
     title: string;
@@ -281,13 +274,6 @@ export type ViewsTranslation = {
       sourceName: string;
       tags: string;
     };
-    translations: {
-      answers: string;
-      description: string;
-      missing: string;
-      sourceLanguage: string;
-      title: string;
-    };
   };
 };
 
@@ -407,11 +393,6 @@ export const viewsTranslation: ViewsTranslation = {
         label: 'Partial with penalty',
       },
     },
-    translationStatus: {
-      [TranslationStatusDto.Approved]: 'Approved',
-      [TranslationStatusDto.Draft]: 'Draft',
-      [TranslationStatusDto.Missing]: 'Missing',
-    },
     versionStatus: {
       [VersionStatusDto.Active]: 'Active',
       [VersionStatusDto.Draft]: 'Draft',
@@ -434,7 +415,6 @@ export const viewsTranslation: ViewsTranslation = {
       actions: 'Actions',
       category: 'Category',
       key: 'Key',
-      languages: 'Languages',
       positions: 'Positions',
       status: 'Status',
       summary: 'Question',
@@ -465,7 +445,6 @@ export const viewsTranslation: ViewsTranslation = {
       source: 'Source',
       status: 'Status',
       tags: 'Tags',
-      translationStatus: 'Translation',
       type: 'Type',
     },
     hasMedia: 'Question with media',
@@ -476,19 +455,15 @@ export const viewsTranslation: ViewsTranslation = {
       retired: 'Retired {{date}}',
       title: 'Version history',
     },
-    languageStatus: '{{language}}: {{status}}',
-    noSummary: 'No text in this language',
+    noSummary: 'No text yet',
     preview: {
       close: 'Close',
       description: 'This is how an employee sees the question.',
-      fallbackLanguage:
-        'The question has no text in the chosen language yet, so the source language is shown.',
       noActiveVersion: 'The question has no version to show yet.',
       title: 'Question preview',
     },
     search: {
       label: 'Search question and answer text',
-      language: 'Language',
     },
     tableLabel: 'Questions',
     title: 'Question bank',
@@ -496,10 +471,9 @@ export const viewsTranslation: ViewsTranslation = {
   questionForm: {
     actions: {
       fixTypo: 'Fix a typo',
-      fixTypoHint: 'Changes the current version. Translations keep their status.',
+      fixTypoHint: 'Changes the current version.',
       newVersion: 'New version',
-      newVersionHint:
-        'Use it when the meaning changes. The current version is retired and every translation has to be prepared again.',
+      newVersionHint: 'Use it when the meaning changes. The current version is retired.',
       saveDraft: 'Save draft',
     },
     answers: {
@@ -586,7 +560,7 @@ export const viewsTranslation: ViewsTranslation = {
       cancel: 'Cancel',
       confirm: 'Create new version',
       description:
-        'The current version will be retired. Translations of the new version lose their status and have to be prepared again. If you are only fixing a typo, choose Fix a typo instead.',
+        'The current version will be retired. If you are only fixing a typo, choose Fix a typo instead.',
       title: 'Create a new version?',
     },
     notifications: {
@@ -617,14 +591,6 @@ export const viewsTranslation: ViewsTranslation = {
       source: 'Choose a source.',
       sourceName: 'Check the source name.',
       tags: 'Check the tags.',
-    },
-    translations: {
-      answers: 'Answers',
-      description:
-        'Status of the question in each language. Questions are written in Polish for now.',
-      missing: 'Not translated yet.',
-      sourceLanguage: 'Source language. Edit its text in the Question section above.',
-      title: 'Translations',
     },
   },
 };

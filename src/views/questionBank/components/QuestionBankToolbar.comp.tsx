@@ -6,7 +6,6 @@ import { DataTableSearchField } from '@/components/dataTable/DataTableSearchFiel
 import { DataTableToolbar } from '@/components/dataTable/DataTableToolbar.comp.tsx';
 import { DataTableController } from '@/components/dataTable/model/DataTable.model.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-import { LanguageSelect } from '@/views/questionBank/components/filters/LanguageSelect.comp.tsx';
 import { QuestionBankActiveFilters } from '@/views/questionBank/components/filters/QuestionBankActiveFilters.comp.tsx';
 import { QuestionBankFilterPanel } from '@/views/questionBank/components/filters/QuestionBankFilterPanel.comp.tsx';
 import { QuestionBankFilters } from '@/views/questionBank/model/QuestionBank.model.ts';
@@ -48,12 +47,6 @@ export const QuestionBankToolbar = ({ controller }: Props): JSX.Element => {
           label={t('search.label')}
           onChange={value => controller.setFilter('q', value)}
           value={filters.q}
-        />
-        <LanguageSelect
-          label={t('search.language')}
-          onChange={value => controller.setFilter('locale', value)}
-          options={options.locales}
-          value={filters.locale}
         />
       </DataTableToolbar>
       <Collapse in={isPanelOpen} unmountOnExit>

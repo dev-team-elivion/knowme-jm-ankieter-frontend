@@ -3,7 +3,6 @@ import {
   QuestionSourceDto,
   QuestionTypeDto,
   ScoringRuleDto,
-  TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
 import { ViewsTranslation } from '@/assets/locales/views/views.translation.en.ts';
@@ -120,11 +119,6 @@ export const viewsTranslation: ViewsTranslation = {
         label: 'Częściowa z karą',
       },
     },
-    translationStatus: {
-      [TranslationStatusDto.Approved]: 'Zatwierdzone',
-      [TranslationStatusDto.Draft]: 'Szkic',
-      [TranslationStatusDto.Missing]: 'Brak',
-    },
     versionStatus: {
       [VersionStatusDto.Active]: 'Aktywna',
       [VersionStatusDto.Draft]: 'Szkic',
@@ -147,7 +141,6 @@ export const viewsTranslation: ViewsTranslation = {
       actions: 'Akcje',
       category: 'Kategoria',
       key: 'Klucz',
-      languages: 'Języki',
       positions: 'Stanowiska',
       status: 'Status',
       summary: 'Treść',
@@ -179,7 +172,6 @@ export const viewsTranslation: ViewsTranslation = {
       source: 'Źródło',
       status: 'Status',
       tags: 'Tagi',
-      translationStatus: 'Tłumaczenie',
       type: 'Typ',
     },
     hasMedia: 'Pytanie z materiałem',
@@ -190,19 +182,15 @@ export const viewsTranslation: ViewsTranslation = {
       retired: 'Wyłączono {{date}}',
       title: 'Historia wersji',
     },
-    languageStatus: '{{language}}: {{status}}',
-    noSummary: 'Brak treści w tym języku',
+    noSummary: 'Brak treści',
     preview: {
       close: 'Zamknij',
       description: 'Tak pytanie zobaczy pracownik.',
-      fallbackLanguage:
-        'Pytanie nie ma jeszcze treści w wybranym języku, dlatego widać język źródłowy.',
       noActiveVersion: 'Pytanie nie ma jeszcze wersji do pokazania.',
       title: 'Podgląd pytania',
     },
     search: {
       label: 'Szukaj w treści pytań i odpowiedzi',
-      language: 'Język',
     },
     tableLabel: 'Pytania',
     title: 'Baza pytań',
@@ -210,10 +198,9 @@ export const viewsTranslation: ViewsTranslation = {
   questionForm: {
     actions: {
       fixTypo: 'Popraw literówkę',
-      fixTypoHint: 'Zmienia bieżącą wersję. Tłumaczenia zachowują swój stan.',
+      fixTypoHint: 'Zmienia bieżącą wersję.',
       newVersion: 'Nowa wersja',
-      newVersionHint:
-        'Użyj, gdy zmienia się sens pytania. Obecna wersja zostanie wyłączona, a wszystkie tłumaczenia trzeba będzie przygotować od nowa.',
+      newVersionHint: 'Użyj, gdy zmienia się sens pytania. Obecna wersja zostanie wyłączona.',
       saveDraft: 'Zapisz szkic',
     },
     answers: {
@@ -299,7 +286,7 @@ export const viewsTranslation: ViewsTranslation = {
       cancel: 'Anuluj',
       confirm: 'Utwórz nową wersję',
       description:
-        'Obecna wersja zostanie wyłączona. Tłumaczenia nowej wersji stracą ważność i trzeba je będzie przygotować od nowa. Jeśli poprawiasz tylko literówkę, wybierz Popraw literówkę.',
+        'Obecna wersja zostanie wyłączona. Jeśli poprawiasz tylko literówkę, wybierz Popraw literówkę.',
       title: 'Utworzyć nową wersję?',
     },
     notifications: {
@@ -330,13 +317,6 @@ export const viewsTranslation: ViewsTranslation = {
       source: 'Wybierz źródło.',
       sourceName: 'Sprawdź nazwę źródła.',
       tags: 'Sprawdź wybrane tagi.',
-    },
-    translations: {
-      answers: 'Odpowiedzi',
-      description: 'Stan pytania w każdym języku. Na razie pytania powstają po polsku.',
-      missing: 'Brak tłumaczenia.',
-      sourceLanguage: 'Język źródłowy. Treść edytujesz w sekcji Treść powyżej.',
-      title: 'Tłumaczenia',
     },
   },
 };

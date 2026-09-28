@@ -82,11 +82,7 @@ export const QuestionBankView = (): JSX.Element => {
           toolbar={<QuestionBankToolbar controller={controller} />}
         />
       </Box>
-      <QuestionDetailDialog
-        dialog={dialog}
-        locale={controller.query.filters.locale}
-        onClose={() => setDialog(null)}
-      />
+      <QuestionDetailDialog dialog={dialog} onClose={() => setDialog(null)} />
     </Stack>
   );
 };

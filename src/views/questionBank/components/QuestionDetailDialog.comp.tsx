@@ -13,11 +13,10 @@ const STATE_MIN_HEIGHT = 200;
 
 type Props = {
   dialog: null | QuestionDialog;
-  locale: string;
   onClose: () => void;
 };
 
-export const QuestionDetailDialog = ({ dialog, locale, onClose }: Props): JSX.Element => {
+export const QuestionDetailDialog = ({ dialog, onClose }: Props): JSX.Element => {
   const titleId = useId();
   const { t } = useTranslationWithPrefix('views.questionBank');
   const { isError, isFetching, isPending, question, retry } = useGetQuestion(dialog?.questionId);
@@ -40,7 +39,7 @@ export const QuestionDetailDialog = ({ dialog, locale, onClose }: Props): JSX.El
           <LoadingState minHeight={STATE_MIN_HEIGHT} />
         )}
         {!isError && question !== undefined && isPreview && (
-          <QuestionPreviewContent locale={locale} question={question} />
+          <QuestionPreviewContent question={question} />
         )}
         {!isError && question !== undefined && !isPreview && (
           <QuestionHistoryContent question={question} />

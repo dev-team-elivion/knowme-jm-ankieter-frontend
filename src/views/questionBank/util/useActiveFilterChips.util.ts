@@ -15,7 +15,7 @@ export type ActiveFilterChip = {
 };
 
 type ChipSource = {
-  key: Exclude<keyof QuestionBankFilters, 'locale' | 'tagIds'>;
+  key: Exclude<keyof QuestionBankFilters, 'tagIds'>;
   label: string;
   options?: FilterOption[];
 };
@@ -39,11 +39,6 @@ export const useActiveFilterChips = (
       { key: 'purpose', label: t('purpose'), options: options.purposes },
       { key: 'status', label: t('status'), options: options.statuses },
       { key: 'source', label: t('source'), options: options.sources },
-      {
-        key: 'translationStatus',
-        label: t('translationStatus'),
-        options: options.translationStatuses,
-      },
       { key: 'positionCode', label: t('positionCode') },
       { key: 'author', label: t('author') },
       { key: 'changedFrom', label: t('changedFrom') },

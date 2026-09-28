@@ -2,10 +2,12 @@ import {
   QuestionPurposeDto,
   QuestionSourceDto,
   QuestionTypeDto,
-  TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
-import { TAG_ID_SEPARATOR } from '@/views/questionBank/model/questionBank.constants.ts';
+import {
+  QUESTION_LOCALE,
+  TAG_ID_SEPARATOR,
+} from '@/views/questionBank/model/questionBank.constants.ts';
 import { QuestionBankQuery } from '@/views/questionBank/model/QuestionBank.model.ts';
 
 export type QuestionListParams = {
@@ -23,7 +25,6 @@ export type QuestionListParams = {
   source?: QuestionSourceDto;
   status?: VersionStatusDto;
   tagId?: string[];
-  translationStatus?: TranslationStatusDto;
   type?: QuestionTypeDto;
 };
 
@@ -50,7 +51,7 @@ export const toQuestionListParams = ({
     categoryId: toOptional(filters.categoryId),
     changedFrom: toOptional(filters.changedFrom),
     changedTo: toOptional(filters.changedTo),
-    locale: filters.locale,
+    locale: QUESTION_LOCALE,
     page,
     positionCode: toOptional(filters.positionCode),
     purpose: pickEnum(Object.values(QuestionPurposeDto), filters.purpose),
@@ -60,7 +61,6 @@ export const toQuestionListParams = ({
     source: pickEnum(Object.values(QuestionSourceDto), filters.source),
     status: pickEnum(Object.values(VersionStatusDto), filters.status),
     tagId: tagIds.length > 0 ? tagIds : undefined,
-    translationStatus: pickEnum(Object.values(TranslationStatusDto), filters.translationStatus),
     type: pickEnum(Object.values(QuestionTypeDto), filters.type),
   };
 };
