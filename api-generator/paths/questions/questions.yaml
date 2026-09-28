@@ -51,8 +51,10 @@ questions:
         description: >-
           Searches the question body and its answers in "locale", by fragment: "olej" finds
           "oleju". Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so
-          matching whole words would miss most of what people type.
-        schema: { type: string }
+          matching whole words would miss most of what people type. At least three characters:
+          the search index works on three-letter fragments, and anything shorter would read
+          every question in the bank. Leave the parameter out to list without searching.
+        schema: { type: string, minLength: 3 }
       - { name: changedFrom, in: query, schema: { type: string, format: date } }
       - { name: changedTo, in: query, schema: { type: string, format: date } }
       - { name: page, in: query, schema: { type: integer, format: int32, default: 0, minimum: 0 } }
@@ -146,7 +148,8 @@ question-versions:
     description: >-
       For a substantive rewrite. The currently active version becomes RETIRED, and every
       translation of the new version except the source language starts as MISSING — which is how
-      the list of questions awaiting translation writes itself.
+      the list of questions awaiting translation writes itself. The new version takes over the
+      pictures and films of the newest one, and those of every answer it names by id.
     operationId: createQuestionVersion
     parameters:
       - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
@@ -166,13 +169,36 @@ question-versions:
       404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
 
 question-version-by-id:
+  get:
+    tags: [Questions]
+    summary: One version in full
+    description: >-
+      Any version, a retired one included, exactly as it was worded while it was in force — an
+      attempt from years ago has to be reproducible in the words the employee read. Comparing
+      two versions is left to the interface: it fetches both in full, because what a difference
+      should show changes more often than this contract.
+    operationId: getQuestionVersion
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+      - { name: versionId, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      200:
+        description: The version
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionVersion' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+
   patch:
     tags: [Questions]
     summary: Correct a version in place
     description: >-
       For a typo or a clarification that does not change the meaning. Translation statuses are
       left alone, because the translations still say the same thing. Retired versions cannot be
-      edited: history that can be corrected is not history.
+      edited: history that can be corrected is not history. Name every answer that stays by its
+      id: an answer left out is removed with its pictures and films, which a version in force
+      refuses with 409.
     operationId: updateQuestionVersion
     parameters:
       - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
@@ -223,7 +249,8 @@ components:
       description: >-
         How an answer is given. Belongs to the question, not to a version: changing it would make
         historical results incomparable, so a different type means a different question.
-      enum: [SINGLE_CHOICE, MULTIPLE_CHOICE, PASS_FAIL, OPEN_TEXT, PRACTICAL, ORDERING]
+      enum: [SINGLE_CHOICE, MULTIPLE_CHOICE, PASS_FAIL, OPEN_TEXT, PRACTICAL, ORDERING,
+             EXPECTED_ANSWER]
 
     QuestionPurpose:
       type: string
@@ -281,9 +308,15 @@ components:
 
     AnswerOption:
       type: object
-      required: [id, displayOrder, isCorrect, translations]
+      required: [id, displayOrder, isCorrect, translations, media]
       properties:
-        id: { type: string, format: uuid }
+        id:
+          type: string
+          format: uuid
+          description: >-
+            Stays the same through every correction that names it in NewAnswerOption.id, so
+            material can hang on it.
+
         displayOrder:
           type: integer
           format: int32
@@ -293,7 +326,7 @@ components:
           type: boolean
           description: >-
             Lives on the option, never on a translation, so the answer key cannot drift between
-            language versions of the same question.
+            language versions of the same question. Kept off the attempt API, like answerKey.
         points:
           type: number
           format: double
@@ -301,11 +334,17 @@ components:
         correctOrder:
           type: integer
           format: int32
-          description: Position in the correct sequence. Only for ORDERING questions.
+          description: >-
+            Place in the correct sequence, ORDERING only. In a test every option has one and they
+            run from 1 without gaps or repeats. Kept off the attempt API, like answerKey.
           minimum: 1
         translations:
           type: array
           items: { $ref: '#/components/schemas/AnswerTranslation' }
+        media:
+          type: array
+          description: Pictures and films of this answer, in the order they were added.
+          items: { $ref: '../media/media.yaml#/components/schemas/MediaAsset' }
 
     QuestionTranslation:
       type: object
@@ -320,14 +359,33 @@ components:
         answerKey:
           type: string
           description: >-
-            The examiner's reference for open, pass/fail and practical questions. Never leaves
+            The examiner's reference for open, pass/fail and practical questions — required in
+            every language when the question is part of a test. Never leaves
             this endpoint: the API used during an attempt returns a different shape that has no
             such field, because hiding it in the interface would not stop anyone reading the
             network response.
+        expectedAnswers:
+          type: array
+          maxItems: 20
+          description: >-
+            EXPECTED_ANSWER only, and then at least one in every language: what counts as right
+            when the answer is typed in. Letter case and surplus spaces are ignored; any other
+            difference, a typo included, makes the answer wrong. The comparison is on text, so
+            "4" and "4,0" are two different answers — list both if both are right. Kept off the
+            attempt API for the same reason as answerKey.
+          items: { type: string, maxLength: 200 }
+        topics:
+          type: array
+          maxItems: 50
+          description: >-
+            PRACTICAL only: the topics the examiner picks from, at least one. A topic is known by
+            its place in the list, so every language holds the same number of them. Kept off the
+            attempt API for the same reason as answerKey.
+          items: { type: string, maxLength: 500 }
 
     QuestionVersion:
       type: object
-      required: [id, versionNo, status, maxPoints, scoringRule, sourceLocale, translations, answers, createdAt, createdBy]
+      required: [id, versionNo, status, maxPoints, scoringRule, sourceLocale, translations, answers, media, createdAt, createdBy]
       properties:
         id: { type: string, format: uuid }
         versionNo: { type: integer, format: int32 }
@@ -344,6 +402,13 @@ components:
           type: integer
           format: int32
           description: Upper bound of a practical question's 0..N scale.
+        topicsToPick:
+          type: integer
+          format: int32
+          description: PRACTICAL only — how many of the topics the examiner picks.
+        examinerCommentRequired:
+          type: boolean
+          description: PASS_FAIL only — whether the examiner has to justify the verdict.
         sourceLocale:
           type: string
           description: Language the version was written in. Other languages are translations of it.
@@ -354,6 +419,12 @@ components:
         answers:
           type: array
           items: { $ref: '#/components/schemas/AnswerOption' }
+        media:
+          type: array
+          description: >-
+            Pictures and films of the version itself, in the order they were added; an answer's
+            material is listed with that answer.
+          items: { $ref: '../media/media.yaml#/components/schemas/MediaAsset' }
         createdAt: { type: string, format: date-time }
         createdBy: { type: string }
         retiredAt: { type: string, format: date-time }
@@ -394,6 +465,15 @@ components:
       type: object
       required: [displayOrder, isCorrect, translations]
       properties:
+        id:
+          type: string
+          format: uuid
+          description: >-
+            An option that already exists. In a correction it is that very option, updated in
+            place, so the material on it stays; an option left out of a correction is removed
+            with its material, which a version in force refuses. In a new version it is the
+            option of the newest version this one continues, and its material comes along. Leave
+            it out for a new option. Naming an option of any other version is refused.
         displayOrder: { type: integer, format: int32, minimum: 1 }
         isCorrect: { type: boolean }
         points: { type: number, format: double }
@@ -412,7 +492,22 @@ components:
       properties:
         maxPoints: { type: number, format: double, minimum: 0, exclusiveMinimum: true }
         scoringRule: { $ref: '#/components/schemas/ScoringRule' }
-        scaleMax: { type: integer, format: int32, minimum: 1 }
+        scaleMax:
+          type: integer
+          format: int32
+          minimum: 1
+          description: PRACTICAL only, and required there — the top of the 0..N scale.
+        topicsToPick:
+          type: integer
+          format: int32
+          minimum: 1
+          description: >-
+            PRACTICAL only, and required there — how many topics the examiner picks. Cannot be
+            more than there are.
+        examinerCommentRequired:
+          type: boolean
+          default: false
+          description: PASS_FAIL only — whether the examiner has to justify the verdict.
         sourceLocale: { type: string, default: pl }
         translations:
           type: array
@@ -422,8 +517,9 @@ components:
         answers:
           type: array
           description: >-
-            Empty for PASS_FAIL, OPEN_TEXT and PRACTICAL, which have no options. At least two
-            for the choice types.
+            Empty for PASS_FAIL, OPEN_TEXT, PRACTICAL and EXPECTED_ANSWER, which have no options.
+            At least two for the choice types. In a test a single choice has exactly one correct
+            option and a multiple choice at least one; a survey marks none.
           items: { $ref: '#/components/schemas/NewAnswerOption' }
 
     CreateQuestionRequest:

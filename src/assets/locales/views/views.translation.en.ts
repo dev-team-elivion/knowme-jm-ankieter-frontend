@@ -371,6 +371,7 @@ export const viewsTranslation: ViewsTranslation = {
       DRAFT: 'Draft',
     },
     questionType: {
+      [QuestionTypeDto.ExpectedAnswer]: 'Expected answer',
       [QuestionTypeDto.MultipleChoice]: 'Multiple choice',
       [QuestionTypeDto.OpenText]: 'Open question',
       [QuestionTypeDto.Ordering]: 'Put in order',

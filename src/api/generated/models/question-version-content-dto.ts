@@ -42,11 +42,23 @@ export interface QuestionVersionContentDto {
      */
     'scoringRule': ScoringRuleDto;
     /**
-     * 
+     * PRACTICAL only, and required there — the top of the 0..N scale.
      * @type {number}
      * @memberof QuestionVersionContentDto
      */
     'scaleMax'?: number;
+    /**
+     * PRACTICAL only, and required there — how many topics the examiner picks. Cannot be more than there are.
+     * @type {number}
+     * @memberof QuestionVersionContentDto
+     */
+    'topicsToPick'?: number;
+    /**
+     * PASS_FAIL only — whether the examiner has to justify the verdict.
+     * @type {boolean}
+     * @memberof QuestionVersionContentDto
+     */
+    'examinerCommentRequired'?: boolean;
     /**
      * 
      * @type {string}
@@ -60,7 +72,7 @@ export interface QuestionVersionContentDto {
      */
     'translations': Array<QuestionTranslationDto>;
     /**
-     * Empty for PASS_FAIL, OPEN_TEXT and PRACTICAL, which have no options. At least two for the choice types.
+     * Empty for PASS_FAIL, OPEN_TEXT, PRACTICAL and EXPECTED_ANSWER, which have no options. At least two for the choice types. In a test a single choice has exactly one correct option and a multiple choice at least one; a survey marks none.
      * @type {Array<NewAnswerOptionDto>}
      * @memberof QuestionVersionContentDto
      */

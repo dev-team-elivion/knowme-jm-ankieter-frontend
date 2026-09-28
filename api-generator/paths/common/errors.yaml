@@ -83,6 +83,13 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetail'
 
+    Forbidden:
+      description: Signed in, but without the right to this.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+
     NotFound:
       description: No such resource.
       content:

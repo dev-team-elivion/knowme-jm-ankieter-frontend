@@ -14,10 +14,18 @@
 
 
 
-export * from './apis/csrf-api';
-export * from './apis/current-user-api';
-export * from './apis/dictionaries-api';
-export * from './apis/media-api';
-export * from './apis/ping-api';
-export * from './apis/questions-api';
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const MediaKindDto = {
+    Image: 'IMAGE',
+    Video: 'VIDEO'
+} as const;
+
+export type MediaKindDto = typeof MediaKindDto[keyof typeof MediaKindDto];
+
+
 

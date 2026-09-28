@@ -26,7 +26,8 @@ export const QuestionTypeDto = {
     PassFail: 'PASS_FAIL',
     OpenText: 'OPEN_TEXT',
     Practical: 'PRACTICAL',
-    Ordering: 'ORDERING'
+    Ordering: 'ORDERING',
+    ExpectedAnswer: 'EXPECTED_ANSWER'
 } as const;
 
 export type QuestionTypeDto = typeof QuestionTypeDto[keyof typeof QuestionTypeDto];

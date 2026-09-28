@@ -29,6 +29,15 @@ paths:
     $ref: "./paths/questions/questions.yaml#/question-version-by-id"
   /api/v1/questions/{questionId}/versions/{versionId}/activate:
     $ref: "./paths/questions/questions.yaml#/question-version-activate"
+  /api/v1/questions/{questionId}/history:
+    $ref: "./paths/questions/questions-history.yaml#/question-history"
+  #Question media:
+  /api/v1/questions/{questionId}/versions/{versionId}/media:
+    $ref: "./paths/media/media.yaml#/question-version-media"
+  /api/v1/answers/{answerId}/media:
+    $ref: "./paths/media/media.yaml#/answer-media"
+  /api/v1/media/{assetId}:
+    $ref: "./paths/media/media.yaml#/media-by-id"
 
   #Dictionaries:
   /api/v1/categories:

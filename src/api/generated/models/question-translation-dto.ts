@@ -48,11 +48,23 @@ export interface QuestionTranslationDto {
      */
     'explanation'?: string;
     /**
-     * The examiner\'s reference for open, pass/fail and practical questions. Never leaves this endpoint: the API used during an attempt returns a different shape that has no such field, because hiding it in the interface would not stop anyone reading the network response.
+     * The examiner\'s reference for open, pass/fail and practical questions — required in every language when the question is part of a test. Never leaves this endpoint: the API used during an attempt returns a different shape that has no such field, because hiding it in the interface would not stop anyone reading the network response.
      * @type {string}
      * @memberof QuestionTranslationDto
      */
     'answerKey'?: string;
+    /**
+     * EXPECTED_ANSWER only, and then at least one in every language: what counts as right when the answer is typed in. Letter case and surplus spaces are ignored; any other difference, a typo included, makes the answer wrong. The comparison is on text, so \"4\" and \"4,0\" are two different answers — list both if both are right. Kept off the attempt API for the same reason as answerKey.
+     * @type {Array<string>}
+     * @memberof QuestionTranslationDto
+     */
+    'expectedAnswers'?: Array<string>;
+    /**
+     * PRACTICAL only: the topics the examiner picks from, at least one. A topic is known by its place in the list, so every language holds the same number of them. Kept off the attempt API for the same reason as answerKey.
+     * @type {Array<string>}
+     * @memberof QuestionTranslationDto
+     */
+    'topics'?: Array<string>;
 }
 
 

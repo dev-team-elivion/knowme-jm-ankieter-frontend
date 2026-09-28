@@ -1,0 +1,245 @@
+# Pictures and films shown with a question or with one of its answers.
+#
+# Material is a stimulus, not a kind of question: "look at the shelf and say what is wrong" is an
+# ordinary single choice with a picture. It hangs on a version, or on a single answer ("pick the
+# right display" with four photos). A different picture is a different question, so material goes
+# into a draft and comes out of a draft, nowhere else, and a new version takes over the material
+# of the one it follows.
+#
+# The file travels through the server rather than straight to the store: at 20 MB that costs
+# nothing worth measuring, and the store's credentials never leave the server. Reading goes the
+# other way — the server answers with a link that works for a few minutes, and the browser reads
+# the bytes from the store itself.
+
+question-version-media:
+  post:
+    tags: [Media]
+    summary: Attach a picture or a film to a version
+    description: >-
+      Draft versions only. What the file is gets read from its content, never from its name:
+      pictures as JPEG, PNG or WebP up to 5 MB and 4000 px along the longer side; films as MP4
+      with H.264 picture and AAC sound, up to 20 MB, 90 seconds and 720p, with the index at the
+      front ("fast start") so that playing starts before the download ends. A refused file comes
+      back with the reason and the numbers behind it — say in the interface what is wrong with
+      the file, not that the upload failed. Checking the size before sending saves the author a
+      long wait for a refusal.
+    operationId: uploadQuestionMedia
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+      - { name: versionId, in: path, required: true, schema: { type: string, format: uuid } }
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema: { $ref: '#/components/schemas/MediaUploadForm' }
+    responses:
+      201:
+        description: Taken. The material is now listed with the version.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MediaAsset' }
+      400: { $ref: '#/components/responses/MediaRejected' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      403: { $ref: '../common/errors.yaml#/components/responses/Forbidden' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+      409: { $ref: '#/components/responses/NotADraft' }
+      413: { $ref: '#/components/responses/MediaTooLarge' }
+      503: { $ref: '#/components/responses/MediaUnavailable' }
+
+answer-media:
+  post:
+    tags: [Media]
+    summary: Attach a picture or a film to one answer
+    description: >-
+      Same rules as for a version, and the same draft-only condition — the one the answer
+      belongs to. The answer is named by its id, which stays the same through a correction that
+      names it; see NewAnswerOption.id.
+    operationId: uploadAnswerMedia
+    parameters:
+      - { name: answerId, in: path, required: true, schema: { type: string, format: uuid } }
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema: { $ref: '#/components/schemas/MediaUploadForm' }
+    responses:
+      201:
+        description: Taken. The material is now listed with the answer.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MediaAsset' }
+      400: { $ref: '#/components/responses/MediaRejected' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      403: { $ref: '../common/errors.yaml#/components/responses/Forbidden' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+      409: { $ref: '#/components/responses/NotADraft' }
+      413: { $ref: '#/components/responses/MediaTooLarge' }
+      503: { $ref: '#/components/responses/MediaUnavailable' }
+
+media-by-id:
+  get:
+    tags: [Media]
+    summary: Read a picture or a film
+    description: >-
+      Answers with a redirect to a link that works for a few minutes, so this address goes
+      straight into an img or video element. The link names neither the file nor the question,
+      and the store behind it is private: without a session here there is no way to the bytes,
+      and a link copied out of the browser stops working within minutes. Questions are exam
+      material; a picture at a public, guessable address would leak the bank no matter how well
+      the rest is guarded.
+    operationId: getMedia
+    parameters:
+      - { name: assetId, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      302:
+        description: The file is at the address in Location, for a few minutes.
+        headers:
+          Location:
+            description: A signed address in the media store.
+            schema: { type: string, format: uri }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      403: { $ref: '../common/errors.yaml#/components/responses/Forbidden' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+      503: { $ref: '#/components/responses/MediaUnavailable' }
+
+  delete:
+    tags: [Media]
+    summary: Remove a picture or a film
+    description: >-
+      Draft versions only. Material of a version in force or a retired one stays, because an
+      attempt has to be reproducible with the picture the employee actually saw. The file leaves
+      the store only when no other version still shows it — a newer version may have taken it
+      over.
+    operationId: deleteMedia
+    parameters:
+      - { name: assetId, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      204:
+        description: Removed.
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      403: { $ref: '../common/errors.yaml#/components/responses/Forbidden' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+      409: { $ref: '#/components/responses/NotADraft' }
+
+components:
+  schemas:
+
+    MediaKind:
+      type: string
+      enum: [IMAGE, VIDEO]
+
+    MediaAsset:
+      type: object
+      required: [id, kind, filename, mimeType, sizeBytes, width, height, createdAt, createdBy]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Read the file at /api/v1/media/{id}.
+        kind: { $ref: '#/components/schemas/MediaKind' }
+        locale:
+          type: string
+          description: >-
+            The language the material is for. Absent when it serves every language: a photo of a
+            shelf does, a film with a Polish voice-over does not.
+          example: pl
+        filename:
+          type: string
+          description: What the author's computer called the file. For people only.
+          example: shelf-before.jpg
+        mimeType:
+          type: string
+          description: Read from the content, not from the name.
+          example: image/jpeg
+        sizeBytes: { type: integer, format: int64 }
+        width:
+          type: integer
+          format: int32
+          description: As shown, a photo or film taken upright on a phone included.
+        height: { type: integer, format: int32 }
+        durationMs:
+          type: integer
+          format: int32
+          description: VIDEO only. Counts towards the time a test allows.
+        createdAt: { type: string, format: date-time }
+        createdBy: { type: string }
+
+    MediaUploadForm:
+      type: object
+      required: [file]
+      properties:
+        file:
+          type: string
+          format: binary
+        locale:
+          type: string
+          description: >-
+            The language the material is for, such as pl or pt-BR. Leave it out for material
+            that serves every language — the usual case for a picture.
+
+    MediaRejectionReason:
+      type: string
+      description: >-
+        Why a file was refused. The unit of limit and actual depends on the reason:
+        FILE_TOO_LARGE in bytes, IMAGE_TOO_LARGE in pixels along the longer side, VIDEO_TOO_LONG
+        in whole seconds, VIDEO_RESOLUTION_TOO_HIGH in pixels along the shorter side (which is
+        what 720p counts). UNSUPPORTED_TYPE covers anything that is not JPEG, PNG, WebP or MP4,
+        HEIC photos and QuickTime films included; UNREADABLE a file that claims to be one of them
+        but is cut short or damaged; VIDEO_CODEC_UNSUPPORTED a picture that is not H.264 in a
+        profile browsers play, or sound that is not AAC; VIDEO_NOT_FASTSTART a film whose index
+        sits after the picture, which makes a browser download all of it before playing.
+      enum: [UNSUPPORTED_TYPE, UNREADABLE, FILE_TOO_LARGE, IMAGE_TOO_LARGE, VIDEO_TOO_LONG,
+             VIDEO_RESOLUTION_TOO_HIGH, VIDEO_CODEC_UNSUPPORTED, VIDEO_NOT_FASTSTART]
+
+    MediaRejection:
+      description: >-
+        The usual problem, with what the interface needs to explain it in its own words: "the
+        film runs 3 minutes, we take 90 seconds" rather than "upload failed". detail carries the
+        same in English.
+      allOf:
+        - $ref: '../common/errors.yaml#/components/schemas/ProblemDetail'
+        - type: object
+          properties:
+            reason: { $ref: '#/components/schemas/MediaRejectionReason' }
+            limit:
+              type: integer
+              format: int64
+              description: What the rule allows, in the unit of the reason.
+            actual:
+              type: integer
+              format: int64
+              description: What the file has, in the unit of the reason.
+
+  responses:
+
+    MediaRejected:
+      description: >-
+        The file was refused, and reason says why. A bad locale comes back here as well, as an
+        ordinary violation without a reason.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/MediaRejection' }
+
+    MediaTooLarge:
+      description: >-
+        The file is over the size limit: 5 MB for a picture, 20 MB for a film. reason is
+        FILE_TOO_LARGE; actual is absent when the file was stopped before it was all read.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/MediaRejection' }
+
+    NotADraft:
+      description: >-
+        The version is in force or retired. Material changes only in a draft; create a new
+        version to change it.
+      content:
+        application/problem+json:
+          schema: { $ref: '../common/errors.yaml#/components/schemas/ProblemDetail' }
+
+    MediaUnavailable:
+      description: >-
+        No media store is configured here, or it did not answer. Only material is affected;
+        everything else works.
+      content:
+        application/problem+json:
+          schema: { $ref: '../common/errors.yaml#/components/schemas/ProblemDetail' }

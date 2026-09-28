@@ -16,6 +16,9 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import type { AnswerTranslationDto } from './answer-translation-dto';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { MediaAssetDto } from './media-asset-dto';
 
 /**
  * 
@@ -24,7 +27,7 @@ import type { AnswerTranslationDto } from './answer-translation-dto';
  */
 export interface AnswerOptionDto {
     /**
-     * 
+     * Stays the same through every correction that names it in NewAnswerOption.id, so material can hang on it.
      * @type {string}
      * @memberof AnswerOptionDto
      */
@@ -36,7 +39,7 @@ export interface AnswerOptionDto {
      */
     'displayOrder': number;
     /**
-     * Lives on the option, never on a translation, so the answer key cannot drift between language versions of the same question.
+     * Lives on the option, never on a translation, so the answer key cannot drift between language versions of the same question. Kept off the attempt API, like answerKey.
      * @type {boolean}
      * @memberof AnswerOptionDto
      */
@@ -48,7 +51,7 @@ export interface AnswerOptionDto {
      */
     'points'?: number;
     /**
-     * Position in the correct sequence. Only for ORDERING questions.
+     * Place in the correct sequence, ORDERING only. In a test every option has one and they run from 1 without gaps or repeats. Kept off the attempt API, like answerKey.
      * @type {number}
      * @memberof AnswerOptionDto
      */
@@ -59,5 +62,11 @@ export interface AnswerOptionDto {
      * @memberof AnswerOptionDto
      */
     'translations': Array<AnswerTranslationDto>;
+    /**
+     * Pictures and films of this answer, in the order they were added.
+     * @type {Array<MediaAssetDto>}
+     * @memberof AnswerOptionDto
+     */
+    'media': Array<MediaAssetDto>;
 }
 

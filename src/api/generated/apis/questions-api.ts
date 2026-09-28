@@ -28,6 +28,8 @@ import type { ProblemDetailDto } from '../models';
 // @ts-ignore
 import type { QuestionDetailsDto } from '../models';
 // @ts-ignore
+import type { QuestionHistoryDto } from '../models';
+// @ts-ignore
 import type { QuestionPageDto } from '../models';
 // @ts-ignore
 import type { QuestionPurposeDto } from '../models';
@@ -126,7 +128,7 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself.
+         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
          * @summary Create a new version of a question
          * @param {string} questionId 
          * @param {QuestionVersionContentDto} questionVersionContentDto 
@@ -200,6 +202,78 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
+         * Versions newest first, each with its events newest first, and apart from them the changes of the question\'s classification. Answers the question asked at the first dispute about a result: how was this worded when the employee answered, and who has changed it since.
+         * @summary What happened to a question, version by version
+         * @param {string} questionId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQuestionHistory: async (questionId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'questionId' is not null or undefined
+            assertParamExists('getQuestionHistory', 'questionId', questionId)
+            const localVarPath = `/api/v1/questions/{questionId}/history`
+                .replace(`{${"questionId"}}`, encodeURIComponent(String(questionId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Any version, a retired one included, exactly as it was worded while it was in force — an attempt from years ago has to be reproducible in the words the employee read. Comparing two versions is left to the interface: it fetches both in full, because what a difference should show changes more often than this contract.
+         * @summary One version in full
+         * @param {string} questionId 
+         * @param {string} versionId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQuestionVersion: async (questionId: string, versionId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'questionId' is not null or undefined
+            assertParamExists('getQuestionVersion', 'questionId', questionId)
+            // verify required parameter 'versionId' is not null or undefined
+            assertParamExists('getQuestionVersion', 'versionId', versionId)
+            const localVarPath = `/api/v1/questions/{questionId}/versions/{versionId}`
+                .replace(`{${"questionId"}}`, encodeURIComponent(String(questionId)))
+                .replace(`{${"versionId"}}`, encodeURIComponent(String(versionId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
          * @summary List questions
          * @param {string} [categoryId] 
@@ -212,7 +286,7 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
          * @param {string} [locale] Language the summary text and the full text search use. Defaults to pl.
          * @param {TranslationStatusDto} [translationStatus] Finds questions whose translation into \&quot;locale\&quot; is in this state.
          * @param {string} [author] Who created the question, matched exactly. Stored as the sign-in name rather than an id, because authors come from the identity provider and are not a table here.
-         * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type.
+         * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type. At least three characters: the search index works on three-letter fragments, and anything shorter would read every question in the bank. Leave the parameter out to list without searching.
          * @param {string} [changedFrom] 
          * @param {string} [changedTo] 
          * @param {number} [page] 
@@ -354,7 +428,7 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history.
+         * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history. Name every answer that stays by its id: an answer left out is removed with its pictures and films, which a version in force refuses with 409.
          * @summary Correct a version in place
          * @param {string} questionId 
          * @param {string} versionId 
@@ -435,7 +509,7 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself.
+         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
          * @summary Create a new version of a question
          * @param {string} questionId 
          * @param {QuestionVersionContentDto} questionVersionContentDto 
@@ -462,6 +536,33 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Versions newest first, each with its events newest first, and apart from them the changes of the question\'s classification. Answers the question asked at the first dispute about a result: how was this worded when the employee answered, and who has changed it since.
+         * @summary What happened to a question, version by version
+         * @param {string} questionId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getQuestionHistory(questionId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuestionHistoryDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQuestionHistory(questionId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QuestionsApi.getQuestionHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Any version, a retired one included, exactly as it was worded while it was in force — an attempt from years ago has to be reproducible in the words the employee read. Comparing two versions is left to the interface: it fetches both in full, because what a difference should show changes more often than this contract.
+         * @summary One version in full
+         * @param {string} questionId 
+         * @param {string} versionId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuestionVersionDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQuestionVersion(questionId, versionId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QuestionsApi.getQuestionVersion']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
          * @summary List questions
          * @param {string} [categoryId] 
@@ -474,7 +575,7 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
          * @param {string} [locale] Language the summary text and the full text search use. Defaults to pl.
          * @param {TranslationStatusDto} [translationStatus] Finds questions whose translation into \&quot;locale\&quot; is in this state.
          * @param {string} [author] Who created the question, matched exactly. Stored as the sign-in name rather than an id, because authors come from the identity provider and are not a table here.
-         * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type.
+         * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type. At least three characters: the search index works on three-letter fragments, and anything shorter would read every question in the bank. Leave the parameter out to list without searching.
          * @param {string} [changedFrom] 
          * @param {string} [changedTo] 
          * @param {number} [page] 
@@ -504,7 +605,7 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history.
+         * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history. Name every answer that stays by its id: an answer left out is removed with its pictures and films, which a version in force refuses with 409.
          * @summary Correct a version in place
          * @param {string} questionId 
          * @param {string} versionId 
@@ -550,7 +651,7 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
             return localVarFp.createQuestion(createQuestionRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself.
+         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
          * @summary Create a new version of a question
          * @param {string} questionId 
          * @param {QuestionVersionContentDto} questionVersionContentDto 
@@ -571,6 +672,27 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
             return localVarFp.getQuestion(questionId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Versions newest first, each with its events newest first, and apart from them the changes of the question\'s classification. Answers the question asked at the first dispute about a result: how was this worded when the employee answered, and who has changed it since.
+         * @summary What happened to a question, version by version
+         * @param {string} questionId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQuestionHistory(questionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionHistoryDto> {
+            return localVarFp.getQuestionHistory(questionId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Any version, a retired one included, exactly as it was worded while it was in force — an attempt from years ago has to be reproducible in the words the employee read. Comparing two versions is left to the interface: it fetches both in full, because what a difference should show changes more often than this contract.
+         * @summary One version in full
+         * @param {string} questionId 
+         * @param {string} versionId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto> {
+            return localVarFp.getQuestionVersion(questionId, versionId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
          * @summary List questions
          * @param {string} [categoryId] 
@@ -583,7 +705,7 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
          * @param {string} [locale] Language the summary text and the full text search use. Defaults to pl.
          * @param {TranslationStatusDto} [translationStatus] Finds questions whose translation into \&quot;locale\&quot; is in this state.
          * @param {string} [author] Who created the question, matched exactly. Stored as the sign-in name rather than an id, because authors come from the identity provider and are not a table here.
-         * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type.
+         * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type. At least three characters: the search index works on three-letter fragments, and anything shorter would read every question in the bank. Leave the parameter out to list without searching.
          * @param {string} [changedFrom] 
          * @param {string} [changedTo] 
          * @param {number} [page] 
@@ -607,7 +729,7 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
             return localVarFp.updateQuestionClassification(questionId, updateClassificationRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history.
+         * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history. Name every answer that stays by its id: an answer left out is removed with its pictures and films, which a version in force refuses with 409.
          * @summary Correct a version in place
          * @param {string} questionId 
          * @param {string} versionId 
@@ -649,7 +771,7 @@ export interface QuestionsApiInterface {
     createQuestion(createQuestionRequestDto: CreateQuestionRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<QuestionDetailsDto>;
 
     /**
-     * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself.
+     * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
      * @summary Create a new version of a question
      * @param {string} questionId 
      * @param {QuestionVersionContentDto} questionVersionContentDto 
@@ -670,6 +792,27 @@ export interface QuestionsApiInterface {
     getQuestion(questionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionDetailsDto>;
 
     /**
+     * Versions newest first, each with its events newest first, and apart from them the changes of the question\'s classification. Answers the question asked at the first dispute about a result: how was this worded when the employee answered, and who has changed it since.
+     * @summary What happened to a question, version by version
+     * @param {string} questionId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof QuestionsApiInterface
+     */
+    getQuestionHistory(questionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionHistoryDto>;
+
+    /**
+     * Any version, a retired one included, exactly as it was worded while it was in force — an attempt from years ago has to be reproducible in the words the employee read. Comparing two versions is left to the interface: it fetches both in full, because what a difference should show changes more often than this contract.
+     * @summary One version in full
+     * @param {string} questionId 
+     * @param {string} versionId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof QuestionsApiInterface
+     */
+    getQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto>;
+
+    /**
      * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
      * @summary List questions
      * @param {string} [categoryId] 
@@ -682,7 +825,7 @@ export interface QuestionsApiInterface {
      * @param {string} [locale] Language the summary text and the full text search use. Defaults to pl.
      * @param {TranslationStatusDto} [translationStatus] Finds questions whose translation into \&quot;locale\&quot; is in this state.
      * @param {string} [author] Who created the question, matched exactly. Stored as the sign-in name rather than an id, because authors come from the identity provider and are not a table here.
-     * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type.
+     * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type. At least three characters: the search index works on three-letter fragments, and anything shorter would read every question in the bank. Leave the parameter out to list without searching.
      * @param {string} [changedFrom] 
      * @param {string} [changedTo] 
      * @param {number} [page] 
@@ -706,7 +849,7 @@ export interface QuestionsApiInterface {
     updateQuestionClassification(questionId: string, updateClassificationRequestDto: UpdateClassificationRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<QuestionDetailsDto>;
 
     /**
-     * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history.
+     * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history. Name every answer that stays by its id: an answer left out is removed with its pictures and films, which a version in force refuses with 409.
      * @summary Correct a version in place
      * @param {string} questionId 
      * @param {string} versionId 
@@ -752,7 +895,7 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
     }
 
     /**
-     * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself.
+     * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
      * @summary Create a new version of a question
      * @param {string} questionId 
      * @param {QuestionVersionContentDto} questionVersionContentDto 
@@ -777,6 +920,31 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
     }
 
     /**
+     * Versions newest first, each with its events newest first, and apart from them the changes of the question\'s classification. Answers the question asked at the first dispute about a result: how was this worded when the employee answered, and who has changed it since.
+     * @summary What happened to a question, version by version
+     * @param {string} questionId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof QuestionsApi
+     */
+    public getQuestionHistory(questionId: string, options?: RawAxiosRequestConfig) {
+        return QuestionsApiFp(this.configuration).getQuestionHistory(questionId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Any version, a retired one included, exactly as it was worded while it was in force — an attempt from years ago has to be reproducible in the words the employee read. Comparing two versions is left to the interface: it fetches both in full, because what a difference should show changes more often than this contract.
+     * @summary One version in full
+     * @param {string} questionId 
+     * @param {string} versionId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof QuestionsApi
+     */
+    public getQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig) {
+        return QuestionsApiFp(this.configuration).getQuestionVersion(questionId, versionId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
      * @summary List questions
      * @param {string} [categoryId] 
@@ -789,7 +957,7 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
      * @param {string} [locale] Language the summary text and the full text search use. Defaults to pl.
      * @param {TranslationStatusDto} [translationStatus] Finds questions whose translation into \&quot;locale\&quot; is in this state.
      * @param {string} [author] Who created the question, matched exactly. Stored as the sign-in name rather than an id, because authors come from the identity provider and are not a table here.
-     * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type.
+     * @param {string} [q] Searches the question body and its answers in \&quot;locale\&quot;, by fragment: \&quot;olej\&quot; finds \&quot;oleju\&quot;. Polish inflects every ending, and PostgreSQL ships no Polish dictionary, so matching whole words would miss most of what people type. At least three characters: the search index works on three-letter fragments, and anything shorter would read every question in the bank. Leave the parameter out to list without searching.
      * @param {string} [changedFrom] 
      * @param {string} [changedTo] 
      * @param {number} [page] 
@@ -817,7 +985,7 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
     }
 
     /**
-     * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history.
+     * For a typo or a clarification that does not change the meaning. Translation statuses are left alone, because the translations still say the same thing. Retired versions cannot be edited: history that can be corrected is not history. Name every answer that stays by its id: an answer left out is removed with its pictures and films, which a version in force refuses with 409.
      * @summary Correct a version in place
      * @param {string} questionId 
      * @param {string} versionId 

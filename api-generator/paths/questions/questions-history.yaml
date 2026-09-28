@@ -1,0 +1,138 @@
+# History of a question.
+#
+# A correction changes a version in place and creates no new version, so without a record of it
+# a typo fix is an operation without a trace: after the fifth correction nobody can say who
+# changed what. Every change leaves an event here — to a version its creation, a correction field
+# by field, a change of status, material added or removed; to the question itself a change of
+# classification — and nothing can edit or remove one.
+#
+# Comparing two versions is not here: the interface fetches both in full with getQuestionVersion
+# and works out the difference itself.
+
+question-history:
+  get:
+    tags: [Questions]
+    summary: What happened to a question, version by version
+    description: >-
+      Versions newest first, each with its events newest first, and apart from them the changes
+      of the question's classification. Answers the question asked at the first dispute about a
+      result: how was this worded when the employee answered, and who has changed it since.
+    operationId: getQuestionHistory
+    parameters:
+      - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      200:
+        description: The history
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionHistory' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      404: { $ref: '../common/errors.yaml#/components/responses/NotFound' }
+
+components:
+  schemas:
+
+    QuestionHistory:
+      type: object
+      required: [questionId, businessKey, events, versions]
+      properties:
+        questionId: { type: string, format: uuid }
+        businessKey: { type: string, example: BHP-1 }
+        events:
+          type: array
+          description: >-
+            Changes of the question itself — category, source, tags, positions — newest first.
+            Classification hangs on the key, not on the wording, so these belong to no version.
+            A tag merged into another shows here on every question it retagged. Only changes are
+            recorded, not the classification a question was created with.
+          items: { $ref: '#/components/schemas/HistoryEvent' }
+        versions:
+          type: array
+          description: Newest first, retired versions included.
+          items: { $ref: '#/components/schemas/VersionHistory' }
+
+    VersionHistory:
+      type: object
+      description: >-
+        The same fields as in QuestionVersion, so that a list of versions reads the same from
+        either; the wording itself is at getQuestionVersion.
+      required: [id, versionNo, status, createdAt, createdBy, events]
+      properties:
+        id: { type: string, format: uuid }
+        versionNo: { type: integer, format: int32 }
+        status: { $ref: './questions.yaml#/components/schemas/VersionStatus' }
+        createdAt: { type: string, format: date-time }
+        createdBy: { type: string }
+        retiredAt: { type: string, format: date-time }
+        events:
+          type: array
+          description: >-
+            Newest first. Versions created before the history was kept start with their
+            creation only: earlier corrections and changes of status were never recorded.
+          items: { $ref: '#/components/schemas/HistoryEvent' }
+
+    HistoryEventKind:
+      type: string
+      description: >-
+        CREATED — the version came into being. CORRECTED — changed in place, the fields listed.
+        STATUS_CHANGED — put in force or retired, as the field status. MEDIA_ADDED and
+        MEDIA_REMOVED — a picture or film added to or taken out of a draft.
+        CLASSIFICATION_CHANGED — category, source, tags or positions of the question changed;
+        the only kind listed under the question rather than a version.
+      enum: [CREATED, CORRECTED, STATUS_CHANGED, MEDIA_ADDED, MEDIA_REMOVED,
+             CLASSIFICATION_CHANGED]
+
+    HistoryEvent:
+      type: object
+      required: [id, at, by, kind, changes]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: One operation. All its changes carry the same moment and author.
+        at: { type: string, format: date-time }
+        by:
+          type: string
+          description: The sign-in name of whoever made the change.
+        kind: { $ref: '#/components/schemas/HistoryEventKind' }
+        changes:
+          type: array
+          description: Empty for CREATED.
+          items: { $ref: '#/components/schemas/FieldChange' }
+
+    FieldChange:
+      type: object
+      required: [field]
+      description: >-
+        One field, before and after. A side is absent when the thing did not exist on it: an
+        added answer has no before, a removed one no after.
+      properties:
+        field:
+          type: string
+          description: >-
+            Named as in the version's contract. Of the version: maxPoints, scoringRule,
+            scaleMax, topicsToPick, examinerCommentRequired, sourceLocale, status. Of a language,
+            with locale: translation (the whole language added or removed), body, explanation,
+            answerKey, expectedAnswers, topics. Of an answer, with answerId: answer (the whole
+            answer added or removed, its material included), answer.displayOrder,
+            answer.isCorrect, answer.points, answer.correctOrder, and answer.body with locale.
+            media, with answerId when the material hangs on an answer. Of the question: category
+            (an object with id and name), source, sourceName, tags (the labels, sorted) and
+            positionCodes (sorted).
+          example: body
+        locale:
+          type: string
+          description: The language of a worded field.
+          example: pl
+        answerId:
+          type: string
+          format: uuid
+          description: >-
+            The answer the field belongs to. It may no longer exist in the version — a removed
+            answer is exactly what the entry records.
+        before:
+          description: >-
+            The value before: text, a number, true or false, a list of texts, or an object for
+            a whole answer, language or picture.
+        after:
+          description: The value after, in the same shapes as before.

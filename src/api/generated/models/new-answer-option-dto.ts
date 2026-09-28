@@ -24,6 +24,12 @@ import type { AnswerTranslationDto } from './answer-translation-dto';
  */
 export interface NewAnswerOptionDto {
     /**
+     * An option that already exists. In a correction it is that very option, updated in place, so the material on it stays; an option left out of a correction is removed with its material, which a version in force refuses. In a new version it is the option of the newest version this one continues, and its material comes along. Leave it out for a new option. Naming an option of any other version is refused.
+     * @type {string}
+     * @memberof NewAnswerOptionDto
+     */
+    'id'?: string;
+    /**
      * 
      * @type {number}
      * @memberof NewAnswerOptionDto

@@ -18,6 +18,9 @@
 import type { AnswerOptionDto } from './answer-option-dto';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { MediaAssetDto } from './media-asset-dto';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { QuestionTranslationDto } from './question-translation-dto';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -69,6 +72,18 @@ export interface QuestionVersionDto {
      */
     'scaleMax'?: number;
     /**
+     * PRACTICAL only — how many of the topics the examiner picks.
+     * @type {number}
+     * @memberof QuestionVersionDto
+     */
+    'topicsToPick'?: number;
+    /**
+     * PASS_FAIL only — whether the examiner has to justify the verdict.
+     * @type {boolean}
+     * @memberof QuestionVersionDto
+     */
+    'examinerCommentRequired'?: boolean;
+    /**
      * Language the version was written in. Other languages are translations of it.
      * @type {string}
      * @memberof QuestionVersionDto
@@ -86,6 +101,12 @@ export interface QuestionVersionDto {
      * @memberof QuestionVersionDto
      */
     'answers': Array<AnswerOptionDto>;
+    /**
+     * Pictures and films of the version itself, in the order they were added; an answer\'s material is listed with that answer.
+     * @type {Array<MediaAssetDto>}
+     * @memberof QuestionVersionDto
+     */
+    'media': Array<MediaAssetDto>;
     /**
      * 
      * @type {string}

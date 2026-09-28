@@ -95,6 +95,7 @@ export const viewsTranslation: ViewsTranslation = {
       DRAFT: 'Szkic',
     },
     questionType: {
+      [QuestionTypeDto.ExpectedAnswer]: 'Oczekiwana odpowiedź',
       [QuestionTypeDto.MultipleChoice]: 'Wielokrotny wybór',
       [QuestionTypeDto.OpenText]: 'Pytanie otwarte',
       [QuestionTypeDto.Ordering]: 'Ustalanie kolejności',
