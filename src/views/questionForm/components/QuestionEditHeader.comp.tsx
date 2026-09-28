@@ -1,6 +1,8 @@
+import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import { Box, Button } from '@mui/material';
 import { JSX } from 'react';
+import { Link } from 'react-router-dom';
 
 import { QuestionDetailsDto, QuestionVersionDto, VersionStatusDto } from '@/api/generated';
 import { hasHttpStatus } from '@/api/guards/isAxiosError.guard.ts';
@@ -12,6 +14,7 @@ import { revealSx } from '@/config/theme/uiTokens.ts';
 import { getVersionStatusTone } from '@/utils/questionStatusTone.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { BackToBankButton } from '@/views/questionForm/components/BackToBankButton.comp.tsx';
+import { buildQuestionHistoryPath } from '@/views/questionForm/util/questionRoutes.util.ts';
 import { useActivateQuestionVersion } from '@/views/questionForm/util/useActivateQuestionVersion.util.ts';
 
 type Props = {
@@ -62,6 +65,14 @@ export const QuestionEditHeader = ({ question, version }: Props): JSX.Element =>
                 {t('edit.activateVersion')}
               </Button>
             )}
+            <Button
+              component={Link}
+              startIcon={<HistoryRoundedIcon />}
+              to={buildQuestionHistoryPath(question.id)}
+              variant="text"
+            >
+              {t('edit.history')}
+            </Button>
             <BackToBankButton />
           </>
         }

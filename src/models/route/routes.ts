@@ -34,6 +34,12 @@ const QuestionEditView = lazy(() =>
   })),
 );
 
+const QuestionHistoryView = lazy(() =>
+  import('@/views/questionHistory/QuestionHistory.view.tsx').then(module => ({
+    default: module.QuestionHistoryView,
+  })),
+);
+
 const MODULE_ROUTES: RouteModel[] = [
   { component: ComingSoonView, path: RouteEnum.DASHBOARD },
   { component: ComingSoonView, path: RouteEnum.PATHS },
@@ -41,6 +47,7 @@ const MODULE_ROUTES: RouteModel[] = [
   { component: QuestionBankView, path: RouteEnum.QUESTION_BANK },
   { component: QuestionCreateView, path: RouteEnum.QUESTION_CREATE },
   { component: QuestionEditView, path: RouteEnum.QUESTION_EDIT },
+  { component: QuestionHistoryView, path: RouteEnum.QUESTION_HISTORY },
   { component: ComingSoonView, path: RouteEnum.SETTINGS },
   { component: ComingSoonView, path: RouteEnum.SURVEYS },
   { component: ComingSoonView, path: RouteEnum.TESTS },

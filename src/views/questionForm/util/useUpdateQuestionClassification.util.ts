@@ -30,6 +30,9 @@ export const useUpdateQuestionClassification = (): Return => {
     },
     onSuccess: question => {
       queryClient.setQueryData([QueryKeyEnum.QUESTION_DETAIL, question.id], question);
+      void queryClient.invalidateQueries({
+        queryKey: [QueryKeyEnum.QUESTION_HISTORY, question.id],
+      });
       void queryClient.invalidateQueries({ queryKey: [QueryKeyEnum.LIST_QUESTIONS] });
       void queryClient.invalidateQueries({ queryKey: [QueryKeyEnum.LIST_CATEGORIES] });
     },

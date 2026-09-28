@@ -1,10 +1,13 @@
 import {
+  HistoryEventKindDto,
   QuestionPurposeDto,
   QuestionSourceDto,
   QuestionTypeDto,
   ScoringRuleDto,
+  TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
+import { HistoryField } from '@/views/questionHistory/model/HistoryField.model.ts';
 export type ViewsTranslation = {
   comingSoon: {
     description: string;
@@ -83,6 +86,7 @@ export type ViewsTranslation = {
     };
     questionType: Record<QuestionTypeDto, string>;
     scoringRule: Record<ScoringRuleDto, ScoringRuleTranslation>;
+    translationStatus: Record<TranslationStatusDto, string>;
     versionStatus: Record<VersionStatusDto, string>;
   };
   questionBank: {
@@ -101,6 +105,7 @@ export type ViewsTranslation = {
       actions: string;
       category: string;
       key: string;
+      languages: string;
       positions: string;
       status: string;
       summary: string;
@@ -131,25 +136,23 @@ export type ViewsTranslation = {
       source: string;
       status: string;
       tags: string;
+      translationStatus: string;
       type: string;
     };
     hasMedia: string;
-    history: {
-      close: string;
-      created: string;
-      description: string;
-      retired: string;
-      title: string;
-    };
+    languageStatus: string;
     noSummary: string;
     preview: {
+      answerPlaceholder: string;
       close: string;
       description: string;
+      fallbackLanguage: string;
       noActiveVersion: string;
       title: string;
     };
     search: {
       label: string;
+      language: string;
     };
     tableLabel: string;
     title: string;
@@ -218,6 +221,7 @@ export type ViewsTranslation = {
     };
     edit: {
       activateVersion: string;
+      history: string;
       noEditableVersion: {
         description: string;
         title: string;
@@ -285,6 +289,76 @@ export type ViewsTranslation = {
       source: string;
       sourceName: string;
       tags: string;
+    };
+    translations: {
+      answers: string;
+      description: string;
+      missing: string;
+      sourceLanguage: string;
+      title: string;
+    };
+  };
+  questionHistory: {
+    classification: {
+      description: string;
+      empty: string;
+      title: string;
+    };
+    compare: {
+      answers: string;
+      body: string;
+      expectedAnswers: string;
+      explanation: string;
+      from: string;
+      maxPoints: string;
+      needTwo: string;
+      noChanges: string;
+      scoringRule: string;
+      to: string;
+    };
+    created: string;
+    description: string;
+    editQuestion: string;
+    eventMeta: string;
+    events: Record<HistoryEventKindDto, string>;
+    fields: Record<HistoryField, string>;
+    notFound: {
+      description: string;
+      title: string;
+    };
+    otherField: string;
+    panel: {
+      compare: string;
+      description: string;
+      preview: string;
+      title: string;
+    };
+    preview: {
+      answers: string;
+      body: string;
+      correct: string;
+      expectedAnswers: string;
+      explanation: string;
+      maxPoints: string;
+      scoringRule: string;
+    };
+    readOnly: string;
+    retired: string;
+    title: string;
+    values: {
+      added: string;
+      correct: string;
+      empty: string;
+      incorrect: string;
+      item: string;
+      no: string;
+      removed: string;
+      yes: string;
+    };
+    versionLabel: string;
+    versions: {
+      description: string;
+      title: string;
     };
   };
 };
@@ -406,6 +480,11 @@ export const viewsTranslation: ViewsTranslation = {
         label: 'Partial with penalty',
       },
     },
+    translationStatus: {
+      [TranslationStatusDto.Approved]: 'Approved',
+      [TranslationStatusDto.Draft]: 'Draft',
+      [TranslationStatusDto.Missing]: 'Missing',
+    },
     versionStatus: {
       [VersionStatusDto.Active]: 'Active',
       [VersionStatusDto.Draft]: 'Draft',
@@ -428,6 +507,7 @@ export const viewsTranslation: ViewsTranslation = {
       actions: 'Actions',
       category: 'Category',
       key: 'Key',
+      languages: 'Languages',
       positions: 'Positions',
       status: 'Status',
       summary: 'Question',
@@ -458,25 +538,24 @@ export const viewsTranslation: ViewsTranslation = {
       source: 'Source',
       status: 'Status',
       tags: 'Tags',
+      translationStatus: 'Translation',
       type: 'Type',
     },
     hasMedia: 'Question with media',
-    history: {
-      close: 'Close',
-      created: 'Created {{date}} by {{author}}',
-      description: 'Question {{key}}. Newest version first.',
-      retired: 'Retired {{date}}',
-      title: 'Version history',
-    },
+    languageStatus: '{{language}}: {{status}}',
     noSummary: 'No text yet',
     preview: {
+      answerPlaceholder: 'Type your answer',
       close: 'Close',
       description: 'This is how an employee sees the question.',
+      fallbackLanguage:
+        'The question has no text in the chosen language yet, so the source language is shown.',
       noActiveVersion: 'The question has no version to show yet.',
       title: 'Question preview',
     },
     search: {
       label: 'Search question and answer text',
+      language: 'Language',
     },
     tableLabel: 'Questions',
     title: 'Question bank',
@@ -545,6 +624,7 @@ export const viewsTranslation: ViewsTranslation = {
     },
     edit: {
       activateVersion: 'Activate version',
+      history: 'Version history',
       noEditableVersion: {
         description:
           'Every version of this question is retired. Create a new version to change it.',
@@ -618,6 +698,110 @@ export const viewsTranslation: ViewsTranslation = {
       source: 'Choose a source.',
       sourceName: 'Check the source name.',
       tags: 'Check the tags.',
+    },
+    translations: {
+      answers: 'Answers',
+      description: 'Status of the question in each language.',
+      missing: 'Not translated yet.',
+      sourceLanguage: 'Source language. Edit its text in the Question section above.',
+      title: 'Translations',
+    },
+  },
+  questionHistory: {
+    classification: {
+      description:
+        'Changes of category, source, tags and positions. They belong to the question, not to a version.',
+      empty: 'The classification has not changed since the question was created.',
+      title: 'Classification',
+    },
+    compare: {
+      answers: 'Answers',
+      body: 'Question',
+      expectedAnswers: 'Expected answers',
+      explanation: 'Explanation after the test',
+      from: 'Earlier version',
+      maxPoints: 'Points',
+      needTwo: 'The question has only one version, so there is nothing to compare.',
+      noChanges: 'These versions have the same text, answers and scoring.',
+      scoringRule: 'Scoring rule',
+      to: 'Later version',
+    },
+    created: 'Created {{date}} by {{author}}',
+    description: 'Question {{key}}. Newest version first, each with its changes.',
+    editQuestion: 'Edit question',
+    eventMeta: '{{date}}, {{author}}',
+    events: {
+      [HistoryEventKindDto.ClassificationChanged]: 'Classification changed',
+      [HistoryEventKindDto.Corrected]: 'Corrected in place',
+      [HistoryEventKindDto.Created]: 'Version created',
+      [HistoryEventKindDto.MediaAdded]: 'Material added',
+      [HistoryEventKindDto.MediaRemoved]: 'Material removed',
+      [HistoryEventKindDto.StatusChanged]: 'Status changed',
+    },
+    fields: {
+      answer: 'Answer',
+      'answer.body': 'Answer text',
+      'answer.correctOrder': 'Place in the correct order',
+      'answer.displayOrder': 'Answer order',
+      'answer.isCorrect': 'Correct answer',
+      'answer.points': 'Points for the answer',
+      answerKey: 'Examiner key',
+      body: 'Question',
+      category: 'Category',
+      examinerCommentRequired: 'Examiner comment required',
+      expectedAnswers: 'Expected answers',
+      explanation: 'Explanation after the test',
+      maxPoints: 'Points',
+      media: 'Material',
+      positionCodes: 'Job positions',
+      scaleMax: 'Top of the scale',
+      scoringRule: 'Scoring rule',
+      source: 'Source',
+      sourceName: 'Source name',
+      status: 'Status',
+      tags: 'Tags',
+      topics: 'Topics',
+      topicsToPick: 'Topics to pick',
+    },
+    notFound: {
+      description:
+        'The link may be out of date. Go back to the question bank and open the question from there.',
+      title: 'Question not found',
+    },
+    otherField: 'Other change',
+    panel: {
+      compare: 'Compare',
+      description: 'The text exactly as it was while the version was in force.',
+      preview: 'Preview',
+      title: 'Version {{number}}',
+    },
+    preview: {
+      answers: 'Answers',
+      body: 'Question',
+      correct: 'Correct',
+      expectedAnswers: 'Expected answers',
+      explanation: 'Explanation after the test',
+      maxPoints: 'Points',
+      scoringRule: 'Scoring rule',
+    },
+    readOnly:
+      'The history cannot be changed. To go back to older text, create a new version in the question form.',
+    retired: 'Retired {{date}}',
+    title: 'Question history',
+    values: {
+      added: 'Added',
+      correct: 'correct',
+      empty: 'none',
+      incorrect: 'not correct',
+      item: 'item',
+      no: 'no',
+      removed: 'Removed',
+      yes: 'yes',
+    },
+    versionLabel: 'Version {{number}}',
+    versions: {
+      description: 'Choose a version to see its text.',
+      title: 'Versions',
     },
   },
 };

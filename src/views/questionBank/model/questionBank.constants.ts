@@ -1,6 +1,7 @@
 import { QuestionBankQuery } from '@/views/questionBank/model/QuestionBank.model.ts';
 import { QuestionSortKeyEnum } from '@/views/questionBank/model/QuestionSortKey.enum.ts';
 
+export const SUPPORTED_LOCALES = ['pl', 'uk', 'en'] as const;
 export const QUESTION_LOCALE = 'pl';
 export const TAG_ID_SEPARATOR = ',';
 

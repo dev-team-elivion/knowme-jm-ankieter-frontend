@@ -1,4 +1,4 @@
-import { Box, Checkbox, Radio, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Checkbox, Radio, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { JSX } from 'react';
 
 import { QuestionDetailsDto, QuestionTypeDto, VersionStatusDto } from '@/api/generated';
@@ -7,10 +7,11 @@ import { innerPanelSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 
 type Props = {
+  locale?: string;
   question: QuestionDetailsDto;
 };
 
-export const QuestionPreviewContent = ({ question }: Props): JSX.Element => {
+export const QuestionPreviewContent = ({ locale, question }: Props): JSX.Element => {
   const theme = useTheme();
   const { t } = useTranslationWithPrefix('views.questionBank.preview');
   const version =
@@ -21,13 +22,15 @@ export const QuestionPreviewContent = ({ question }: Props): JSX.Element => {
     return <InfoCallout>{t('noActiveVersion')}</InfoCallout>;
   }
 
-  const { sourceLocale } = version;
-  const body = version.translations.find(item => item.locale === sourceLocale)?.body;
+  const hasLocale =
+    locale === undefined || version.translations.some(item => item.locale === locale && item.body);
+  const shownLocale = hasLocale && locale !== undefined ? locale : version.sourceLocale;
+  const body = version.translations.find(item => item.locale === shownLocale)?.body;
   const Marker = question.type === QuestionTypeDto.SingleChoice ? Radio : Checkbox;
   const answers = [...version.answers]
     .sort((first, second) => first.displayOrder - second.displayOrder)
     .map(answer => ({
-      body: answer.translations.find(item => item.locale === sourceLocale)?.body ?? '',
+      body: answer.translations.find(item => item.locale === shownLocale)?.body ?? '',
       id: answer.id,
     }));
 
@@ -36,10 +39,19 @@ export const QuestionPreviewContent = ({ question }: Props): JSX.Element => {
       <Typography sx={{ color: theme.colors.textSecondary }} variant="body2">
         {t('description')}
       </Typography>
+      {!hasLocale && <InfoCallout tone="warning">{t('fallbackLanguage')}</InfoCallout>}
       <Stack spacing={2} sx={{ ...innerPanelSx(theme.colors), p: 3 }}>
         <Typography sx={{ color: theme.colors.textPrimary }} variant="h4">
           {body}
         </Typography>
+        {question.type === QuestionTypeDto.ExpectedAnswer && (
+          <TextField
+            disabled
+            fullWidth
+            placeholder={t('answerPlaceholder')}
+            slotProps={{ htmlInput: { 'aria-label': t('answerPlaceholder') } }}
+          />
+        )}
         {answers.length > 0 && (
           <Stack spacing={1}>
             {answers.map(answer => (

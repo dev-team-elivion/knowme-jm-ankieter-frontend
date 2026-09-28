@@ -16,8 +16,3 @@ export type QuestionBankFilters = {
 };
 
 export type QuestionBankQuery = DataTableQuery<QuestionSortKeyEnum, QuestionBankFilters>;
-
-export type QuestionDialog = {
-  kind: 'history' | 'preview';
-  questionId: string;
-};

@@ -31,6 +31,8 @@ export const useUpdateQuestionVersion = (): Return => {
     },
     onSuccess: (_version, { questionId }) => {
       void queryClient.invalidateQueries({ queryKey: [QueryKeyEnum.QUESTION_DETAIL, questionId] });
+      void queryClient.invalidateQueries({ queryKey: [QueryKeyEnum.QUESTION_HISTORY, questionId] });
+      void queryClient.invalidateQueries({ queryKey: [QueryKeyEnum.QUESTION_VERSION, questionId] });
       void queryClient.invalidateQueries({ queryKey: [QueryKeyEnum.LIST_QUESTIONS] });
     },
   });

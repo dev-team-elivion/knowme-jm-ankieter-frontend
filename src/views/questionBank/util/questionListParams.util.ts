@@ -2,6 +2,7 @@ import {
   QuestionPurposeDto,
   QuestionSourceDto,
   QuestionTypeDto,
+  TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
 import {
@@ -25,6 +26,7 @@ export type QuestionListParams = {
   source?: QuestionSourceDto;
   status?: VersionStatusDto;
   tagId?: string[];
+  translationStatus?: TranslationStatusDto;
   type?: QuestionTypeDto;
 };
 

@@ -26,7 +26,7 @@ export const useGetQuestionList = (
         params.tagId,
         params.positionCode,
         params.locale,
-        undefined,
+        params.translationStatus,
         params.author,
         params.q,
         params.changedFrom,

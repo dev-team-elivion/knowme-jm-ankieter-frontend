@@ -12,24 +12,24 @@ import { revealSx } from '@/config/theme/uiTokens.ts';
 import { RouteEnum } from '@/models/route/Route.enum.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionBankToolbar } from '@/views/questionBank/components/QuestionBankToolbar.comp.tsx';
-import { QuestionDetailDialog } from '@/views/questionBank/components/QuestionDetailDialog.comp.tsx';
+import { QuestionPreviewDialog } from '@/views/questionBank/components/QuestionPreviewDialog.comp.tsx';
 import { QuestionRowActionHandlers } from '@/views/questionBank/components/QuestionRowActions.comp.tsx';
 import {
   QUESTION_BANK_DEFAULTS,
   QUESTION_SORT_KEYS,
 } from '@/views/questionBank/model/questionBank.constants.ts';
-import { QuestionDialog } from '@/views/questionBank/model/QuestionBank.model.ts';
 import { useGetQuestionList } from '@/views/questionBank/util/useGetQuestionList.util.ts';
 import { useQuestionBankColumns } from '@/views/questionBank/util/useQuestionBankColumns.util.tsx';
 import {
   buildQuestionDuplicatePath,
   buildQuestionEditPath,
+  buildQuestionHistoryPath,
 } from '@/views/questionForm/util/questionRoutes.util.ts';
 
 export const QuestionBankView = (): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionBank');
   const navigate = useNavigate();
-  const [dialog, setDialog] = useState<null | QuestionDialog>(null);
+  const [previewQuestionId, setPreviewQuestionId] = useState<null | string>(null);
   const controller = useDataTableQuery({
     defaults: QUESTION_BANK_DEFAULTS,
     sortKeys: QUESTION_SORT_KEYS,
@@ -40,8 +40,8 @@ export const QuestionBankView = (): JSX.Element => {
     () => ({
       onDuplicate: question => void navigate(buildQuestionDuplicatePath(question.id)),
       onEdit: question => void navigate(buildQuestionEditPath(question.id)),
-      onHistory: question => setDialog({ kind: 'history', questionId: question.id }),
-      onPreview: question => setDialog({ kind: 'preview', questionId: question.id }),
+      onHistory: question => void navigate(buildQuestionHistoryPath(question.id)),
+      onPreview: question => setPreviewQuestionId(question.id),
     }),
     [navigate],
   );
@@ -82,7 +82,10 @@ export const QuestionBankView = (): JSX.Element => {
           toolbar={<QuestionBankToolbar controller={controller} />}
         />
       </Box>
-      <QuestionDetailDialog dialog={dialog} onClose={() => setDialog(null)} />
+      <QuestionPreviewDialog
+        onClose={() => setPreviewQuestionId(null)}
+        questionId={previewQuestionId}
+      />
     </Stack>
   );
 };
