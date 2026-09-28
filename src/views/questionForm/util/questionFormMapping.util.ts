@@ -135,6 +135,7 @@ const toAnswerOption = (
   return {
     correctOrder: original?.correctOrder,
     displayOrder: index + 1,
+    id: original?.id,
     isCorrect: form.purpose === QuestionPurposeDto.Test && answer.isCorrect,
     points: original?.points,
     translations: [
