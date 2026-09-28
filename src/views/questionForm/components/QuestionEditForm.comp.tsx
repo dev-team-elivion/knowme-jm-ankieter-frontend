@@ -13,8 +13,8 @@ import { QuestionEditHeader } from '@/views/questionForm/components/QuestionEdit
 import { QuestionFormActionBar } from '@/views/questionForm/components/QuestionFormActionBar.comp.tsx';
 import { QuestionFormSections } from '@/views/questionForm/components/QuestionFormSections.comp.tsx';
 import {
-  ChoiceQuestionType,
   QuestionFormModel,
+  QuestionFormType,
 } from '@/views/questionForm/model/QuestionForm.model.ts';
 import { useQuestionFormValidation } from '@/views/questionForm/model/useQuestionFormValidation.validation.ts';
 import {
@@ -25,7 +25,7 @@ import { useEditQuestionSubmit } from '@/views/questionForm/util/useEditQuestion
 
 type Props = {
   question: QuestionDetailsDto;
-  type: ChoiceQuestionType;
+  type: QuestionFormType;
 };
 
 export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {

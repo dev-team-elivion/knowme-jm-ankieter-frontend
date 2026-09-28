@@ -8,7 +8,7 @@ import { useGetQuestion } from '@/hooks/useGetQuestion.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionCreateForm } from '@/views/questionForm/components/QuestionCreateForm.comp.tsx';
 import { QuestionFormSkeleton } from '@/views/questionForm/components/QuestionFormSkeleton.comp.tsx';
-import { isChoiceQuestionType } from '@/views/questionForm/util/questionEnums.guard.ts';
+import { isQuestionFormType } from '@/views/questionForm/util/questionEnums.guard.ts';
 import {
   createEmptyQuestionForm,
   toDuplicateQuestionForm,
@@ -39,7 +39,7 @@ export const QuestionCreateView = (): JSX.Element => {
     return <QuestionFormSkeleton />;
   }
 
-  if (!isChoiceQuestionType(question.type)) {
+  if (!isQuestionFormType(question.type)) {
     return <QuestionCreateForm defaultValues={emptyForm} description={t('description')} />;
   }
 

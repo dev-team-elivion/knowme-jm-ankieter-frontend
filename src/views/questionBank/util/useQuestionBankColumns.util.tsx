@@ -14,7 +14,7 @@ import {
   QuestionRowActions,
 } from '@/views/questionBank/components/QuestionRowActions.comp.tsx';
 import { QuestionSortKeyEnum } from '@/views/questionBank/model/QuestionSortKey.enum.ts';
-import { isChoiceQuestionType } from '@/views/questionForm/util/questionEnums.guard.ts';
+import { isQuestionFormType } from '@/views/questionForm/util/questionEnums.guard.ts';
 
 type Return = DataTableColumn<QuestionListItemDto, QuestionSortKeyEnum>[];
 
@@ -120,7 +120,7 @@ export const useQuestionBankColumns = (handlers: QuestionRowActionHandlers): Ret
         label: t('columns.actions'),
         render: row => (
           <QuestionRowActions
-            canDuplicate={isChoiceQuestionType(row.type)}
+            canDuplicate={isQuestionFormType(row.type)}
             question={row}
             {...handlers}
           />

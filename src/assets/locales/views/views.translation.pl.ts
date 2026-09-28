@@ -283,6 +283,17 @@ export const viewsTranslation: ViewsTranslation = {
       keyTaken: 'Ten klucz jest już zajęty. Wpisz inny.',
       notFound: 'To pytanie już nie istnieje. Wróć do bazy pytań.',
     },
+    expectedAnswers: {
+      add: 'Dodaj oczekiwaną odpowiedź',
+      addDisabled: 'Pytanie może mieć najwyżej {{max}} oczekiwanych odpowiedzi.',
+      answerLabel: 'Oczekiwana odpowiedź {{number}}',
+      answerPlaceholder: 'Na przykład: 4',
+      description:
+        'Pracownik wpisuje odpowiedź, a system porównuje ją z tą listą. Wielkość liter i zbędne spacje się nie liczą, każda inna różnica już tak. Dlatego „4” i „4,0” to dwie różne odpowiedzi. Jeśli obie są poprawne, dodaj obie.',
+      remove: 'Usuń oczekiwaną odpowiedź {{number}}',
+      removeDisabled: 'Pytanie potrzebuje co najmniej jednej oczekiwanej odpowiedzi.',
+      title: 'Oczekiwane odpowiedzi',
+    },
     newVersionDialog: {
       cancel: 'Anuluj',
       confirm: 'Utwórz nową wersję',
@@ -299,6 +310,8 @@ export const viewsTranslation: ViewsTranslation = {
     },
     scoring: {
       description: 'Ile punktów jest warte pytanie i jak się je liczy.',
+      expectedAnswerRule:
+        'Pytanie daje komplet punktów, gdy odpowiedź zgadza się z którąkolwiek oczekiwaną odpowiedzią, a w przeciwnym razie zero.',
       maxPoints: 'Liczba punktów',
       scoringRule: 'Reguła punktacji',
       singleChoiceRule:
@@ -312,6 +325,8 @@ export const viewsTranslation: ViewsTranslation = {
       body: 'Wpisz treść pytania.',
       businessKey: 'Sprawdź klucz pytania.',
       categoryId: 'Wybierz kategorię.',
+      expectedAnswers:
+        'Sprawdź oczekiwane odpowiedzi. Każda musi mieć treść i może wystąpić tylko raz.',
       maxPoints: 'Wpisz liczbę punktów większą od zera.',
       positionCodes: 'Sprawdź wybrane stanowiska.',
       scoringRule: 'Wybierz regułę punktacji.',

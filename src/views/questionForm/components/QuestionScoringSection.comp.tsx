@@ -34,10 +34,12 @@ export const QuestionScoringSection = ({ revealIndex }: Props): JSX.Element => {
             type="number"
           />
         </Box>
-        {type === QuestionTypeDto.MultipleChoice ? (
-          <ScoringRuleField label={t('scoringRule')} />
-        ) : (
+        {type === QuestionTypeDto.MultipleChoice && <ScoringRuleField label={t('scoringRule')} />}
+        {type === QuestionTypeDto.SingleChoice && (
           <InfoCallout>{t('singleChoiceRule')}</InfoCallout>
+        )}
+        {type === QuestionTypeDto.ExpectedAnswer && (
+          <InfoCallout>{t('expectedAnswerRule')}</InfoCallout>
         )}
       </Stack>
     </SectionPanel>

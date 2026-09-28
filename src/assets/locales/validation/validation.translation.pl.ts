@@ -5,6 +5,10 @@ export const validationTranslation: ValidationTranslation = {
   answersMin: 'Dodaj co najmniej dwie odpowiedzi.',
   answersSingleCorrect: 'Zaznacz dokładnie jedną poprawną odpowiedź.',
   email: 'Wpisz poprawny adres e-mail.',
+  expectedAnswersMax: 'Dodaj najwyżej {{max}} oczekiwanych odpowiedzi.',
+  expectedAnswersMin: 'Dodaj co najmniej jedną oczekiwaną odpowiedź.',
+  expectedAnswersUnique:
+    'Każda oczekiwana odpowiedź może wystąpić tylko raz. Wielkość liter i spacje nie mają znaczenia.',
   maxLength: 'Wpisz najwyżej {{max}} znaków.',
   minLength: 'Wpisz co najmniej {{min}} znaków.',
   number: 'Wpisz liczbę.',

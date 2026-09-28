@@ -11,7 +11,7 @@ import { RouteEnum } from '@/models/route/Route.enum.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionEditForm } from '@/views/questionForm/components/QuestionEditForm.comp.tsx';
 import { QuestionFormSkeleton } from '@/views/questionForm/components/QuestionFormSkeleton.comp.tsx';
-import { isChoiceQuestionType } from '@/views/questionForm/util/questionEnums.guard.ts';
+import { isQuestionFormType } from '@/views/questionForm/util/questionEnums.guard.ts';
 
 export const QuestionEditView = (): JSX.Element => {
   const theme = useTheme();
@@ -51,7 +51,7 @@ export const QuestionEditView = (): JSX.Element => {
     return <QuestionFormSkeleton />;
   }
 
-  if (!isChoiceQuestionType(question.type)) {
+  if (!isQuestionFormType(question.type)) {
     return (
       <Box sx={panelSx(theme.colors)}>
         <EmptyState

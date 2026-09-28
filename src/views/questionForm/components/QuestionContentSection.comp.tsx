@@ -8,7 +8,7 @@ import { SelectFormField } from '@/components/form/SelectFormField.comp.tsx';
 import { TextFormField } from '@/components/form/TextFormField.comp.tsx';
 import { SectionPanel } from '@/components/page/SectionPanel.comp.tsx';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-import { CHOICE_QUESTION_TYPES } from '@/views/questionForm/model/QuestionForm.constants.ts';
+import { QUESTION_FORM_TYPES } from '@/views/questionForm/model/QuestionForm.constants.ts';
 import { QuestionFormModel } from '@/views/questionForm/model/QuestionForm.model.ts';
 
 type Props = {
@@ -36,7 +36,7 @@ export const QuestionContentSection = ({ isTypeLocked, revealIndex }: Props): JS
 
   const typeOptions = useMemo(
     () =>
-      CHOICE_QUESTION_TYPES.map(value => ({
+      QUESTION_FORM_TYPES.map(value => ({
         label: tDictionary(`questionType.${value}`),
         value,
       })),

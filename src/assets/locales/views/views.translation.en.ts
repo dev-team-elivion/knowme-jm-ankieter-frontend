@@ -240,6 +240,16 @@ export type ViewsTranslation = {
       keyTaken: string;
       notFound: string;
     };
+    expectedAnswers: {
+      add: string;
+      addDisabled: string;
+      answerLabel: string;
+      answerPlaceholder: string;
+      description: string;
+      remove: string;
+      removeDisabled: string;
+      title: string;
+    };
     newVersionDialog: {
       cancel: string;
       confirm: string;
@@ -255,6 +265,7 @@ export type ViewsTranslation = {
     };
     scoring: {
       description: string;
+      expectedAnswerRule: string;
       maxPoints: string;
       scoringRule: string;
       singleChoiceRule: string;
@@ -267,6 +278,7 @@ export type ViewsTranslation = {
       body: string;
       businessKey: string;
       categoryId: string;
+      expectedAnswers: string;
       maxPoints: string;
       positionCodes: string;
       scoringRule: string;
@@ -557,6 +569,17 @@ export const viewsTranslation: ViewsTranslation = {
       keyTaken: 'This key is already taken. Enter a different one.',
       notFound: 'The question no longer exists. Go back to the question bank.',
     },
+    expectedAnswers: {
+      add: 'Add expected answer',
+      addDisabled: 'A question can have at most {{max}} expected answers.',
+      answerLabel: 'Expected answer {{number}}',
+      answerPlaceholder: 'For example: 4',
+      description:
+        'The employee types the answer and it is marked against this list. Letter case and extra spaces do not count; any other difference does, so "4" and "4,0" are different answers. If both are right, add both.',
+      remove: 'Remove expected answer {{number}}',
+      removeDisabled: 'A question needs at least one expected answer.',
+      title: 'Expected answers',
+    },
     newVersionDialog: {
       cancel: 'Cancel',
       confirm: 'Create new version',
@@ -573,6 +596,8 @@ export const viewsTranslation: ViewsTranslation = {
     },
     scoring: {
       description: 'How many points the question is worth and how they are counted.',
+      expectedAnswerRule:
+        'The question scores full points when the answer matches any expected answer, and zero otherwise.',
       maxPoints: 'Points',
       scoringRule: 'Scoring rule',
       singleChoiceRule:
@@ -586,6 +611,7 @@ export const viewsTranslation: ViewsTranslation = {
       body: 'Enter the question text.',
       businessKey: 'Check the question key.',
       categoryId: 'Choose a category.',
+      expectedAnswers: 'Check the expected answers. Each needs text and can appear only once.',
       maxPoints: 'Enter a number of points greater than zero.',
       positionCodes: 'Check the job positions.',
       scoringRule: 'Choose a scoring rule.',

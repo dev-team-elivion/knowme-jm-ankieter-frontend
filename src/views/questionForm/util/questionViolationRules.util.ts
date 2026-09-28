@@ -28,6 +28,10 @@ const VIOLATION_RULES: ViolationRule[] = [
   { pattern: /^answers\.\d+\.isCorrect$/, toMatch: fixed('answers', 'answersCorrect') },
   { pattern: /^answers(\.|$)/, toMatch: fixed('answers', 'answers') },
   { pattern: /^maxPoints$/, toMatch: fixed('maxPoints', 'maxPoints') },
+  {
+    pattern: /^translations\.[\d.]*expectedAnswers/,
+    toMatch: fixed('expectedAnswers', 'expectedAnswers'),
+  },
   { pattern: /^(translations|sourceLocale)(\.|$)/, toMatch: fixed('body', 'body') },
   { pattern: /^scoringRule$/, toMatch: fixed('scoringRule', 'scoringRule') },
   { pattern: /^categoryId$/, toMatch: fixed('categoryId', 'categoryId') },

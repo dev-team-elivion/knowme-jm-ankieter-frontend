@@ -20,10 +20,14 @@ import {
 } from '@/views/questionForm/model/QuestionForm.constants.ts';
 import {
   AnswerFormModel,
-  ChoiceQuestionType,
   QuestionFormModel,
+  QuestionFormType,
 } from '@/views/questionForm/model/QuestionForm.model.ts';
-import { isQuestionSource } from '@/views/questionForm/util/questionEnums.guard.ts';
+import { createEmptyExpectedAnswer } from '@/views/questionForm/util/expectedAnswer.util.ts';
+import {
+  isChoiceQuestionType,
+  isQuestionSource,
+} from '@/views/questionForm/util/questionEnums.guard.ts';
 
 type Localized = {
   locale: string;
@@ -55,6 +59,7 @@ export const createEmptyQuestionForm = (): QuestionFormModel => ({
   body: '',
   businessKey: '',
   categoryId: '',
+  expectedAnswers: [createEmptyExpectedAnswer()],
   explanation: '',
   hasManualKey: false,
   maxPoints: DEFAULT_MAX_POINTS,
@@ -73,7 +78,7 @@ export const findDisplayVersion = (question: QuestionDetailsDto): QuestionVersio
 
 export const toDuplicateQuestionForm = (
   question: QuestionDetailsDto,
-  type: ChoiceQuestionType,
+  type: QuestionFormType,
 ): QuestionFormModel => {
   const form = toQuestionForm(question, findDisplayVersion(question), type);
   return {
@@ -93,13 +98,14 @@ export const getSourceLocale = (version: QuestionVersionDto | undefined): string
 export const toQuestionForm = (
   question: QuestionDetailsDto,
   version: QuestionVersionDto | undefined,
-  type: ChoiceQuestionType,
+  type: QuestionFormType,
 ): QuestionFormModel => {
   const sourceLocale = getSourceLocale(version);
   const sourceTranslation = version && findLocale(version.translations, sourceLocale);
   const answers = [...(version?.answers ?? [])].sort(
     (first, second) => first.displayOrder - second.displayOrder,
   );
+  const expectedAnswers = sourceTranslation?.expectedAnswers ?? [];
 
   return {
     answers: answers.map(answer => ({
@@ -110,6 +116,10 @@ export const toQuestionForm = (
     body: sourceTranslation?.body ?? '',
     businessKey: question.businessKey,
     categoryId: question.category.id,
+    expectedAnswers:
+      expectedAnswers.length > 0
+        ? expectedAnswers.map(value => ({ value }))
+        : [createEmptyExpectedAnswer()],
     explanation: sourceTranslation?.explanation ?? '',
     hasManualKey: false,
     maxPoints: version?.maxPoints ?? DEFAULT_MAX_POINTS,
@@ -152,18 +162,24 @@ export const toVersionContent = (
   const sourceLocale = getSourceLocale(base);
   const baseTranslations = base?.translations ?? [];
   const baseSource = findLocale(baseTranslations, sourceLocale);
+  const isChoice = isChoiceQuestionType(form.type);
 
   return {
-    answers: form.answers.map((answer, index) => toAnswerOption(answer, index, form, base)),
+    answers: isChoice
+      ? form.answers.map((answer, index) => toAnswerOption(answer, index, form, base))
+      : [],
     maxPoints: form.maxPoints,
     scaleMax: base?.scaleMax,
     scoringRule:
-      form.type === QuestionTypeDto.SingleChoice ? ScoringRuleDto.AllOrNothing : form.scoringRule,
+      form.type === QuestionTypeDto.MultipleChoice ? form.scoringRule : ScoringRuleDto.AllOrNothing,
     sourceLocale,
     translations: [
       {
         answerKey: baseSource?.answerKey,
         body: form.body.trim(),
+        expectedAnswers: isChoice
+          ? undefined
+          : form.expectedAnswers.map(answer => answer.value.trim()),
         explanation: toOptionalText(form.explanation),
         locale: sourceLocale,
         status: baseSource?.status ?? TranslationStatusDto.Draft,
