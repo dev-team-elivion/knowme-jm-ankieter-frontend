@@ -39,4 +39,8 @@ export const componentsTranslation: ComponentsTranslation = {
     clear: 'Wyczyść wyszukiwanie',
     placeholder: 'Szukaj',
   },
+  uploadField: {
+    tooLarge: 'Plik jest za duży. Limit to {{maxFileSize}}.',
+    wrongFormat: 'Ten format pliku nie jest obsługiwany.',
+  },
 };

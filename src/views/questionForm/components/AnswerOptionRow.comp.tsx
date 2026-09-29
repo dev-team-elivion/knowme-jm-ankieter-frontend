@@ -8,6 +8,7 @@ import { useWatch } from 'react-hook-form';
 import { TextFormField } from '@/components/form/TextFormField.comp.tsx';
 import { innerPanelSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
+import { AnswerMediaField } from '@/views/questionForm/components/AnswerMediaField.comp.tsx';
 import { QuestionFormModel } from '@/views/questionForm/model/QuestionForm.model.ts';
 
 const CONTROL_ROW_SX = { alignItems: 'center', display: 'flex', height: 40, mt: 3 } as const;
@@ -77,6 +78,7 @@ export const AnswerOptionRow = ({
           name={`answers.${index}.body`}
           placeholder={t('answerPlaceholder')}
         />
+        <AnswerMediaField index={index} />
       </Box>
       <Stack direction="row" spacing={0.25} sx={CONTROL_ROW_SX}>
         <Tooltip title={t('moveUp', { number })}>

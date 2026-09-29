@@ -37,6 +37,10 @@ export type ComponentsTranslation = {
     clear: string;
     placeholder: string;
   };
+  uploadField: {
+    tooLarge: string;
+    wrongFormat: string;
+  };
 };
 
 export const componentsTranslation: ComponentsTranslation = {
@@ -77,5 +81,9 @@ export const componentsTranslation: ComponentsTranslation = {
   searchField: {
     clear: 'Clear search',
     placeholder: 'Search',
+  },
+  uploadField: {
+    tooLarge: 'The file is too large. The limit is {{maxFileSize}}.',
+    wrongFormat: 'This file format is not supported.',
   },
 };

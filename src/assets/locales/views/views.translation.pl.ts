@@ -451,6 +451,89 @@ export const viewsTranslation: ViewsTranslation = {
       removeDisabled: 'Pytanie potrzebuje co najmniej jednej oczekiwanej odpowiedzi.',
       title: 'Oczekiwane odpowiedzi',
     },
+    media: {
+      actions: {
+        remove: 'Usuń {{name}}',
+      },
+      answerLabel: 'Materiał odpowiedzi {{number}}',
+      deleteDialog: {
+        cancel: 'Anuluj',
+        confirm: 'Usuń',
+        description: 'Materiał {{name}} zostanie usunięty z tej wersji pytania.',
+        title: 'Usunąć materiał?',
+      },
+      description: 'Zdjęcie lub film, który pracownik zobaczy przy pytaniu.',
+      disabled: {
+        unsaved: 'Materiał dodasz po zapisaniu pytania.',
+        unsavedAnswer: 'Materiał dodasz po zapisaniu tej odpowiedzi.',
+      },
+      dropzone: {
+        answerLabel: 'Przeciągnij materiał do tej odpowiedzi albo kliknij, żeby go dodać',
+        formats: 'Zdjęcie JPEG, PNG lub WebP albo film MP4',
+        label: 'Przeciągnij zdjęcie lub film tutaj albo kliknij, żeby go dodać',
+        limits: 'Zdjęcie do 5 MB, film do 20 MB i 90 s',
+      },
+      empty: 'Pytanie nie ma jeszcze materiału.',
+      errors: {
+        FILE_TOO_LARGE:
+          'Plik ma {{actual}}, a limit to {{limit}}. Zmniejsz plik i dodaj go ponownie.',
+        fileTooLargeWithoutActual:
+          'Plik ma więcej niż {{limit}}. Zmniejsz plik i dodaj go ponownie.',
+        fileTooLargeWithoutLimit: 'Plik jest za duży. Zdjęcie może mieć do 5 MB, a film do 20 MB.',
+        forbidden: 'Nie masz uprawnień do zmiany materiału w tym pytaniu.',
+        IMAGE_TOO_LARGE:
+          'Dłuższy bok zdjęcia ma {{actual}} px, a limit to {{limit}} px. Zmniejsz zdjęcie i dodaj je ponownie.',
+        notADraft: 'Materiał zmienisz tylko w szkicu. Utwórz nową wersję i dodaj materiał w niej.',
+        outOfLimits:
+          'Plik nie spełnia wymagań. Zdjęcia: JPEG, PNG lub WebP do 5 MB. Filmy: MP4 do 20 MB i 90 sekund.',
+        removeFailed: 'Nie udało się usunąć materiału. Spróbuj ponownie.',
+        unavailable: 'Materiały są teraz niedostępne. Spróbuj ponownie za chwilę.',
+        unknown: 'Nie udało się dodać pliku. Spróbuj ponownie.',
+        UNREADABLE:
+          'Nie udało się odczytać pliku. Może być uszkodzony albo niepełny. Zapisz go ponownie i dodaj jeszcze raz.',
+        UNSUPPORTED_TYPE:
+          'Ten format pliku nie jest obsługiwany. Dodaj zdjęcie JPEG, PNG lub WebP albo film MP4.',
+        unsupportedHeic:
+          'Zdjęcia HEIC z telefonu nie są obsługiwane. Zapisz zdjęcie jako JPEG i dodaj je ponownie.',
+        unsupportedQuickTime:
+          'Filmy MOV nie są obsługiwane. Zapisz film jako MP4 i dodaj go ponownie.',
+        VIDEO_CODEC_UNSUPPORTED:
+          'Przeglądarka nie odtworzy tego filmu. Zapisz go jako MP4 z obrazem H.264 i dźwiękiem AAC, a potem dodaj ponownie.',
+        VIDEO_NOT_FASTSTART:
+          'Film musi się pobrać w całości, zanim ruszy. Wyeksportuj go z włączoną opcją Fast start lub Optymalizuj dla sieci i dodaj ponownie.',
+        VIDEO_RESOLUTION_TOO_HIGH:
+          'Film ma rozdzielczość {{actual}}p, a limit to {{limit}}p. Wyeksportuj go w niższej jakości i dodaj ponownie.',
+        VIDEO_TOO_LONG:
+          'Film trwa {{actual}}, a limit to {{limit}}. Skróć film i dodaj go ponownie.',
+      },
+      kind: {
+        IMAGE: 'Zdjęcie',
+        VIDEO: 'Film',
+      },
+      notifications: {
+        removed: 'Usunięto materiał.',
+        uploaded: 'Dodano materiał.',
+      },
+      preview: {
+        imageAlt: 'Materiał: {{name}}',
+        loadFailed: 'Nie udało się wczytać materiału.',
+        retry: 'Wczytaj ponownie',
+      },
+      readOnly: {
+        description:
+          'Materiał zmienia się tylko w szkicu, żeby pracownicy widzieli to samo co w teście. Aby go zmienić, utwórz nową wersję.',
+        title: 'Materiał zmienisz w nowej wersji',
+      },
+      title: 'Materiał',
+      units: {
+        dimensions: '{{width}} × {{height}} px',
+        megabytes: '{{value}} MB',
+        minutes: '{{minutes}} min',
+        minutesSeconds: '{{minutes}} min {{seconds}} s',
+        seconds: '{{seconds}} s',
+      },
+      uploading: 'Dodawanie materiału {{name}}',
+    },
     newVersionDialog: {
       cancel: 'Anuluj',
       confirm: 'Utwórz nową wersję',

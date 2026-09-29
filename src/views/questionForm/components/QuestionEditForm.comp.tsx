@@ -12,6 +12,7 @@ import { QuestionEditActions } from '@/views/questionForm/components/QuestionEdi
 import { QuestionEditHeader } from '@/views/questionForm/components/QuestionEditHeader.comp.tsx';
 import { QuestionFormActionBar } from '@/views/questionForm/components/QuestionFormActionBar.comp.tsx';
 import { QuestionFormSections } from '@/views/questionForm/components/QuestionFormSections.comp.tsx';
+import { QuestionMediaProvider } from '@/views/questionForm/context/QuestionMedia.provider.tsx';
 import {
   QuestionFormModel,
   QuestionFormType,
@@ -69,7 +70,9 @@ export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
       )}
       <FormProviderKnowMe {...form} validation={validation}>
         <Stack component="form" noValidate onSubmit={event => event.preventDefault()} spacing={3}>
-          <QuestionFormSections currentCategory={question.category} isEditing />
+          <QuestionMediaProvider questionId={question.id} version={baseVersion}>
+            <QuestionFormSections currentCategory={question.category} isEditing />
+          </QuestionMediaProvider>
           <QuestionFormActionBar>
             <QuestionEditActions
               canFixTypo={canFixTypo}

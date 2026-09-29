@@ -385,6 +385,76 @@ export type ViewsTranslation = {
       removeDisabled: string;
       title: string;
     };
+    media: {
+      actions: {
+        remove: string;
+      };
+      answerLabel: string;
+      deleteDialog: {
+        cancel: string;
+        confirm: string;
+        description: string;
+        title: string;
+      };
+      description: string;
+      disabled: {
+        unsaved: string;
+        unsavedAnswer: string;
+      };
+      dropzone: {
+        answerLabel: string;
+        formats: string;
+        label: string;
+        limits: string;
+      };
+      empty: string;
+      errors: {
+        FILE_TOO_LARGE: string;
+        fileTooLargeWithoutActual: string;
+        fileTooLargeWithoutLimit: string;
+        forbidden: string;
+        IMAGE_TOO_LARGE: string;
+        notADraft: string;
+        outOfLimits: string;
+        removeFailed: string;
+        unavailable: string;
+        unknown: string;
+        UNREADABLE: string;
+        UNSUPPORTED_TYPE: string;
+        unsupportedHeic: string;
+        unsupportedQuickTime: string;
+        VIDEO_CODEC_UNSUPPORTED: string;
+        VIDEO_NOT_FASTSTART: string;
+        VIDEO_RESOLUTION_TOO_HIGH: string;
+        VIDEO_TOO_LONG: string;
+      };
+      kind: {
+        IMAGE: string;
+        VIDEO: string;
+      };
+      notifications: {
+        removed: string;
+        uploaded: string;
+      };
+      preview: {
+        imageAlt: string;
+        loadFailed: string;
+        retry: string;
+      };
+      readOnly: {
+        description: string;
+        title: string;
+      };
+      title: string;
+      units: {
+        dimensions: string;
+        megabytes: string;
+        minutes: string;
+        minutesSeconds: string;
+        seconds: string;
+      };
+      uploading: string;
+    };
     newVersionDialog: {
       cancel: string;
       confirm: string;
@@ -932,6 +1002,91 @@ export const viewsTranslation: ViewsTranslation = {
       remove: 'Remove expected answer {{number}}',
       removeDisabled: 'A question needs at least one expected answer.',
       title: 'Expected answers',
+    },
+    media: {
+      actions: {
+        remove: 'Remove {{name}}',
+      },
+      answerLabel: 'Media for answer {{number}}',
+      deleteDialog: {
+        cancel: 'Cancel',
+        confirm: 'Remove',
+        description: 'The media {{name}} will be removed from this version of the question.',
+        title: 'Remove media?',
+      },
+      description: 'A photo or video the employee sees with the question.',
+      disabled: {
+        unsaved: 'You can add media after you save the question.',
+        unsavedAnswer: 'You can add media after you save this answer.',
+      },
+      dropzone: {
+        answerLabel: 'Drag media for this answer here or click to add it',
+        formats: 'A JPEG, PNG or WebP photo, or an MP4 video',
+        label: 'Drag a photo or video here or click to add it',
+        limits: 'Photo up to 5 MB, video up to 20 MB and 90 s',
+      },
+      empty: 'This question has no media yet.',
+      errors: {
+        FILE_TOO_LARGE:
+          'The file is {{actual}} and the limit is {{limit}}. Make the file smaller and add it again.',
+        fileTooLargeWithoutActual:
+          'The file is larger than {{limit}}. Make the file smaller and add it again.',
+        fileTooLargeWithoutLimit:
+          'The file is too large. A photo can be up to 5 MB and a video up to 20 MB.',
+        forbidden: 'You do not have permission to change media for this question.',
+        IMAGE_TOO_LARGE:
+          'The longer side of the photo is {{actual}} px and the limit is {{limit}} px. Resize the photo and add it again.',
+        notADraft:
+          'Media can be changed only in a draft. Create a new version and add the media there.',
+        outOfLimits:
+          'The file does not meet the requirements. Photos: JPEG, PNG or WebP up to 5 MB. Videos: MP4 up to 20 MB and 90 seconds.',
+        removeFailed: 'Could not remove the media. Try again.',
+        unavailable: 'Media is not available right now. Try again in a moment.',
+        unknown: 'Could not add the file. Try again.',
+        UNREADABLE:
+          'Could not read the file. It may be damaged or incomplete. Save it again and add it once more.',
+        UNSUPPORTED_TYPE:
+          'This file format is not supported. Add a JPEG, PNG or WebP photo, or an MP4 video.',
+        unsupportedHeic:
+          'HEIC photos from a phone are not supported. Save the photo as JPEG and add it again.',
+        unsupportedQuickTime:
+          'MOV videos are not supported. Save the video as MP4 and add it again.',
+        VIDEO_CODEC_UNSUPPORTED:
+          'Browsers cannot play this video. Save it as MP4 with H.264 video and AAC sound, then add it again.',
+        VIDEO_NOT_FASTSTART:
+          'The video has to download in full before it can play. Export it with the Fast start or Optimize for web option turned on, then add it again.',
+        VIDEO_RESOLUTION_TOO_HIGH:
+          'The video is {{actual}}p and the limit is {{limit}}p. Export it at a lower quality and add it again.',
+        VIDEO_TOO_LONG:
+          'The video runs {{actual}} and the limit is {{limit}}. Shorten the video and add it again.',
+      },
+      kind: {
+        IMAGE: 'Photo',
+        VIDEO: 'Video',
+      },
+      notifications: {
+        removed: 'Media removed.',
+        uploaded: 'Media added.',
+      },
+      preview: {
+        imageAlt: 'Media: {{name}}',
+        loadFailed: 'Could not load the media.',
+        retry: 'Load again',
+      },
+      readOnly: {
+        description:
+          'Media changes only in a draft, so employees see the same thing as in the test. To change it, create a new version.',
+        title: 'Change media in a new version',
+      },
+      title: 'Media',
+      units: {
+        dimensions: '{{width}} × {{height}} px',
+        megabytes: '{{value}} MB',
+        minutes: '{{minutes}} min',
+        minutesSeconds: '{{minutes}} min {{seconds}} s',
+        seconds: '{{seconds}} s',
+      },
+      uploading: 'Adding media {{name}}',
     },
     newVersionDialog: {
       cancel: 'Cancel',

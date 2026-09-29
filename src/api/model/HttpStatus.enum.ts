@@ -4,4 +4,6 @@ export enum HttpStatusEnum {
   FORBIDDEN = 403,
   NOT_FOUND = 404,
   CONFLICT = 409,
+  PAYLOAD_TOO_LARGE = 413,
+  SERVICE_UNAVAILABLE = 503,
 }

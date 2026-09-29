@@ -8,6 +8,7 @@ import {
   CsrfApiFactory,
   CurrentUserApiFactory,
   DictionariesApiFactory,
+  MediaApiFactory,
   PingApiFactory,
   QuestionsApiFactory,
 } from './generated';
@@ -21,6 +22,7 @@ export const useApiClient = () => {
       csrfApi: CsrfApiFactory(configuration, undefined, axiosInstance),
       currentUserApi: CurrentUserApiFactory(configuration, undefined, axiosInstance),
       dictionariesApi: DictionariesApiFactory(configuration, undefined, axiosInstance),
+      mediaApi: MediaApiFactory(configuration, undefined, axiosInstance),
       pingApi: PingApiFactory(configuration, undefined, axiosInstance),
       questionsApi: QuestionsApiFactory(configuration, undefined, axiosInstance),
     }),
