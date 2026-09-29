@@ -1,20 +1,14 @@
-import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
-import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import { JSX } from 'react';
-import { Link } from 'react-router-dom';
 
 import { QuestionDetailsDto, QuestionVersionDto, VersionStatusDto } from '@/api/generated';
 import { hasHttpStatus } from '@/api/guards/isAxiosError.guard.ts';
 import { HttpStatusEnum } from '@/api/model/HttpStatus.enum.ts';
 import { useNotifications } from '@/components/notifications/Notification.context.ts';
-import { PageHeader } from '@/components/page/PageHeader.comp.tsx';
-import { StatusPill } from '@/components/state/StatusPill.comp.tsx';
-import { revealSx } from '@/config/theme/uiTokens.ts';
-import { getVersionStatusTone } from '@/utils/questionStatusTone.util.ts';
+import { pressableSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-import { BackToBankButton } from '@/views/questionForm/components/BackToBankButton.comp.tsx';
-import { buildQuestionHistoryPath } from '@/views/questionForm/util/questionRoutes.util.ts';
+import { QuestionPageHeader } from '@/views/questionForm/components/QuestionPageHeader.comp.tsx';
+import { QuestionPageViewEnum } from '@/views/questionForm/model/QuestionPageView.enum.ts';
 import { useActivateQuestionVersion } from '@/views/questionForm/util/useActivateQuestionVersion.util.ts';
 
 type Props = {
@@ -24,13 +18,8 @@ type Props = {
 
 export const QuestionEditHeader = ({ question, version }: Props): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionForm');
-  const { t: tDictionary } = useTranslationWithPrefix('views.dictionaries');
   const { notifyError, notifySuccess } = useNotifications();
   const { activateVersion, isPending } = useActivateQuestionVersion();
-
-  const description = version
-    ? `${question.businessKey} · ${t('edit.versionLabel', { number: version.versionNo })}`
-    : question.businessKey;
 
   const handleActivate = async (versionId: string): Promise<void> => {
     try {
@@ -46,40 +35,25 @@ export const QuestionEditHeader = ({ question, version }: Props): JSX.Element =>
   };
 
   return (
-    <Box sx={{ ...revealSx(0), pb: 1 }}>
-      <PageHeader
-        actions={
-          <>
-            {version && (
-              <StatusPill
-                label={tDictionary(`versionStatus.${version.status}`)}
-                tone={getVersionStatusTone(version.status)}
-              />
-            )}
-            {version?.status === VersionStatusDto.Draft && (
-              <Button
-                disabled={isPending}
-                onClick={() => void handleActivate(version.id)}
-                variant="outlined"
-              >
-                {t('edit.activateVersion')}
-              </Button>
-            )}
-            <Button
-              component={Link}
-              startIcon={<HistoryRoundedIcon />}
-              to={buildQuestionHistoryPath(question.id)}
-              variant="text"
-            >
-              {t('edit.history')}
-            </Button>
-            <BackToBankButton />
-          </>
-        }
-        description={description}
-        icon={LibraryBooksOutlinedIcon}
-        title={t('edit.title')}
-      />
-    </Box>
+    <QuestionPageHeader
+      actions={
+        version?.status === VersionStatusDto.Draft && (
+          <Button
+            disabled={isPending}
+            loading={isPending}
+            onClick={() => void handleActivate(version.id)}
+            sx={pressableSx}
+            variant="outlined"
+          >
+            {t('edit.activateVersion')}
+          </Button>
+        )
+      }
+      activeView={QuestionPageViewEnum.EDIT}
+      businessKey={question.businessKey}
+      description={version && t('edit.versionLabel', { number: version.versionNo })}
+      questionId={question.id}
+      version={version}
+    />
   );
 };

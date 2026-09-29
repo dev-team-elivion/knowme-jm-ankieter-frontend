@@ -11,6 +11,7 @@ import {
   DictionarySectionEnum,
   DictionaryStatusFilterEnum,
 } from '@/views/dictionaryManagement/model/DictionaryManagement.enum.ts';
+import { QuestionPageViewEnum } from '@/views/questionForm/model/QuestionPageView.enum.ts';
 import { HistoryField } from '@/views/questionHistory/model/HistoryField.model.ts';
 export type ViewsTranslation = {
   comingSoon: {
@@ -479,6 +480,11 @@ export type ViewsTranslation = {
       typoFixed: string;
       versionCreated: string;
     };
+    page: {
+      title: string;
+      views: Record<QuestionPageViewEnum, string>;
+      viewsLabel: string;
+    };
     scoring: {
       description: string;
       expectedAnswerRule: string;
@@ -530,7 +536,6 @@ export type ViewsTranslation = {
     };
     created: string;
     description: string;
-    editQuestion: string;
     eventMeta: string;
     events: Record<HistoryEventKindDto, string>;
     fields: Record<HistoryField, string>;
@@ -542,6 +547,7 @@ export type ViewsTranslation = {
     panel: {
       compare: string;
       description: string;
+      modeLabel: string;
       preview: string;
       title: string;
     };
@@ -1125,6 +1131,14 @@ export const viewsTranslation: ViewsTranslation = {
       typoFixed: 'Correction saved.',
       versionCreated: 'New version created.',
     },
+    page: {
+      title: 'Question {{key}}',
+      views: {
+        [QuestionPageViewEnum.EDIT]: 'Edit',
+        [QuestionPageViewEnum.HISTORY]: 'Version history',
+      },
+      viewsLabel: 'Question view',
+    },
     scoring: {
       description: 'How many points the question is worth and how they are counted.',
       expectedAnswerRule:
@@ -1178,8 +1192,7 @@ export const viewsTranslation: ViewsTranslation = {
       to: 'Later version',
     },
     created: 'Created {{date}} by {{author}}',
-    description: 'Question {{key}}. Newest version first, each with its changes.',
-    editQuestion: 'Edit question',
+    description: 'Newest version first, each with its changes.',
     eventMeta: '{{date}}, {{author}}',
     events: {
       [HistoryEventKindDto.ClassificationChanged]: 'Classification changed',
@@ -1223,6 +1236,7 @@ export const viewsTranslation: ViewsTranslation = {
     panel: {
       compare: 'Compare',
       description: 'The text exactly as it was while the version was in force.',
+      modeLabel: 'Version view',
       preview: 'Preview',
       title: 'Version {{number}}',
     },

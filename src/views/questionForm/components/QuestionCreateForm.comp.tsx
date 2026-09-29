@@ -48,7 +48,7 @@ export const QuestionCreateForm = ({ defaultValues, description }: Props): JSX.E
     <Stack spacing={3}>
       <Box sx={{ ...revealSx(0), pb: 1 }}>
         <PageHeader
-          actions={<BackToBankButton />}
+          backAction={<BackToBankButton />}
           description={description}
           icon={LibraryAddOutlinedIcon}
           title={t('create.title')}

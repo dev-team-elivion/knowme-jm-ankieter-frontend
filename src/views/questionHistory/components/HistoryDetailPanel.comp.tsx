@@ -1,10 +1,10 @@
 import CompareArrowsRoundedIcon from '@mui/icons-material/CompareArrowsRounded';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import { Tab, Tabs } from '@mui/material';
 import { JSX, useState } from 'react';
 
 import { VersionHistoryDto } from '@/api/generated';
 import { SectionPanel } from '@/components/page/SectionPanel.comp.tsx';
+import { SegmentedControl } from '@/components/segmentedControl/SegmentedControl.comp.tsx';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { VersionCompareContent } from '@/views/questionHistory/components/VersionCompareContent.comp.tsx';
 import { VersionPreviewContent } from '@/views/questionHistory/components/VersionPreviewContent.comp.tsx';
@@ -39,10 +39,15 @@ export const HistoryDetailPanel = ({
   return (
     <SectionPanel
       actions={
-        <Tabs onChange={(_event, value: HistoryPanelMode) => setMode(value)} value={mode}>
-          <Tab label={t('preview')} value="preview" />
-          <Tab label={t('compare')} value="compare" />
-        </Tabs>
+        <SegmentedControl<HistoryPanelMode>
+          ariaLabel={t('modeLabel')}
+          items={[
+            { icon: <VisibilityOutlinedIcon />, label: t('preview'), value: 'preview' },
+            { icon: <CompareArrowsRoundedIcon />, label: t('compare'), value: 'compare' },
+          ]}
+          onChange={setMode}
+          value={mode}
+        />
       }
       description={isPreview ? t('description') : undefined}
       icon={isPreview ? VisibilityOutlinedIcon : CompareArrowsRoundedIcon}

@@ -76,7 +76,11 @@ export const QuestionHistoryView = (): JSX.Element => {
 
   return (
     <Stack spacing={3}>
-      <QuestionHistoryHeader businessKey={history.businessKey} questionId={history.questionId} />
+      <QuestionHistoryHeader
+        businessKey={history.businessKey}
+        latestVersion={history.versions.at(0)}
+        questionId={history.questionId}
+      />
       <InfoCallout>{t('readOnly')}</InfoCallout>
       <Box sx={LAYOUT_SX}>
         <Stack spacing={3}>

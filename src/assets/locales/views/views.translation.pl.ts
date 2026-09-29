@@ -12,6 +12,7 @@ import {
   DictionarySectionEnum,
   DictionaryStatusFilterEnum,
 } from '@/views/dictionaryManagement/model/DictionaryManagement.enum.ts';
+import { QuestionPageViewEnum } from '@/views/questionForm/model/QuestionPageView.enum.ts';
 
 export const viewsTranslation: ViewsTranslation = {
   comingSoon: {
@@ -560,6 +561,14 @@ export const viewsTranslation: ViewsTranslation = {
       typoFixed: 'Zapisano poprawkę.',
       versionCreated: 'Utworzono nową wersję.',
     },
+    page: {
+      title: 'Pytanie {{key}}',
+      views: {
+        [QuestionPageViewEnum.EDIT]: 'Edycja',
+        [QuestionPageViewEnum.HISTORY]: 'Historia wersji',
+      },
+      viewsLabel: 'Widok pytania',
+    },
     scoring: {
       description: 'Ile punktów jest warte pytanie i jak się je liczy.',
       expectedAnswerRule:
@@ -614,8 +623,7 @@ export const viewsTranslation: ViewsTranslation = {
       to: 'Wersja późniejsza',
     },
     created: 'Utworzono {{date}}, autor: {{author}}',
-    description: 'Pytanie {{key}}. Najnowsza wersja jest na górze, każda z listą zmian.',
-    editQuestion: 'Edytuj pytanie',
+    description: 'Najnowsza wersja jest na górze, każda z listą zmian.',
     eventMeta: '{{date}}, {{author}}',
     events: {
       [HistoryEventKindDto.ClassificationChanged]: 'Zmieniono klasyfikację',
@@ -658,6 +666,7 @@ export const viewsTranslation: ViewsTranslation = {
     panel: {
       compare: 'Porównanie',
       description: 'Treść dokładnie taka, jaka obowiązywała w tej wersji.',
+      modeLabel: 'Widok wersji',
       preview: 'Podgląd',
       title: 'Wersja {{number}}',
     },
