@@ -1,5 +1,5 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { Button, Stack, Typography, useTheme } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { JSX, useMemo, useState } from 'react';
 
 import { CategoryDto } from '@/api/generated';
@@ -27,7 +27,6 @@ import { useGetCategoryDictionary } from '@/views/dictionaryManagement/util/useG
 type FormState = { category: CategoryDto | null } | null;
 
 export const CategoriesSection = (): JSX.Element => {
-  const theme = useTheme();
   const { t } = useTranslationWithPrefix('views.dictionaryManagement.categories');
   const [formState, setFormState] = useState<FormState>(null);
   const [deactivating, setDeactivating] = useState<CategoryDto | null>(null);
@@ -72,7 +71,9 @@ export const CategoriesSection = (): JSX.Element => {
 
   return (
     <Stack spacing={2}>
-      <InfoCallout>{t('prefixNotice')}</InfoCallout>
+      <InfoCallout>
+        {t('prefixNotice')} {t('orderHint')}
+      </InfoCallout>
       <DataTable
         ariaLabel={t('tableLabel')}
         columns={columns}
@@ -94,11 +95,7 @@ export const CategoriesSection = (): JSX.Element => {
                 {t('add')}
               </Button>
             }
-          >
-            <Typography sx={{ color: theme.colors.textSecondary }} variant="body2">
-              {t('orderHint')}
-            </Typography>
-          </DataTableToolbar>
+          />
         }
       />
       {formState && (

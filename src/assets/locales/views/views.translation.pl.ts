@@ -222,6 +222,7 @@ export const viewsTranslation: ViewsTranslation = {
       [DictionarySectionEnum.PROCEDURE_NAMES]: 'Nazwy procedur',
       [DictionarySectionEnum.TAGS]: 'Tagi',
     },
+    sectionsLabel: 'Słownik',
     tags: {
       actions: {
         menu: 'Akcje dla tagu {{label}}',

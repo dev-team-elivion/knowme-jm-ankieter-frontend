@@ -3,7 +3,7 @@ import { JSX, ReactNode } from 'react';
 
 type Props = {
   actions?: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export const DataTableToolbar = ({ actions, children }: Props): JSX.Element => (
@@ -12,7 +12,7 @@ export const DataTableToolbar = ({ actions, children }: Props): JSX.Element => (
       {children}
     </Stack>
     {actions && (
-      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', ml: 'auto' }}>
         {actions}
       </Stack>
     )}

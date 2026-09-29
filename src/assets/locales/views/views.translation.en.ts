@@ -169,6 +169,7 @@ export type ViewsTranslation = {
     questionCount_one: string;
     questionCount_other?: string;
     sections: Record<DictionarySectionEnum, string>;
+    sectionsLabel: string;
     tags: {
       actions: {
         menu: string;
@@ -792,6 +793,7 @@ export const viewsTranslation: ViewsTranslation = {
       [DictionarySectionEnum.PROCEDURE_NAMES]: 'Procedure names',
       [DictionarySectionEnum.TAGS]: 'Tags',
     },
+    sectionsLabel: 'Dictionary',
     tags: {
       actions: {
         menu: 'Actions for tag {{label}}',
