@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import { JSX, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { QuestionDetailsDto } from '@/api/generated';
+import { QuestionDetailsDto, VersionStatusDto } from '@/api/generated';
 import { FormProviderKnowMe } from '@/components/form/FormProviderKnowMe.comp.tsx';
 import { InfoCallout } from '@/components/state/InfoCallout.comp.tsx';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
@@ -51,7 +51,7 @@ export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
     question,
   });
   const canFixTypo = editableVersion !== undefined;
-  const canSave = form.formState.isDirty || !canFixTypo;
+  const isDraft = editableVersion?.status === VersionStatusDto.Draft;
 
   const handleConfirmNewVersion = (): void => {
     void form.handleSubmit(async submitted => {
@@ -76,7 +76,8 @@ export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
           <QuestionFormActionBar>
             <QuestionEditActions
               canFixTypo={canFixTypo}
-              canSave={canSave}
+              isDirty={form.formState.isDirty}
+              isDraft={isDraft}
               isSaving={isSaving || form.formState.isSubmitting}
               onFixTypo={() => void form.handleSubmit(fixTypo)()}
               onNewVersion={() => void form.handleSubmit(() => setIsNewVersionDialogOpen(true))()}

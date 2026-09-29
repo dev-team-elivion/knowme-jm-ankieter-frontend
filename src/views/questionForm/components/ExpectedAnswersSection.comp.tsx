@@ -70,7 +70,6 @@ export const ExpectedAnswersSection = ({ revealIndex }: Props): JSX.Element => {
                       aria-label={t('remove', { number })}
                       disabled={!canRemove}
                       onClick={() => handleRemove(index)}
-                      size="small"
                     >
                       <DeleteOutlineRoundedIcon />
                     </IconButton>

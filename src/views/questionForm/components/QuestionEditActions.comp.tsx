@@ -1,14 +1,14 @@
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import { Button, Stack, Typography, useTheme } from '@mui/material';
+import { Button, Stack, Tooltip } from '@mui/material';
 import { JSX } from 'react';
 
+import { pressableSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-
-const OPTION_SX = { alignItems: 'flex-end', maxWidth: 300 } as const;
+import { QuestionEditStatus } from '@/views/questionForm/components/QuestionEditStatus.comp.tsx';
 
 type Props = {
   canFixTypo: boolean;
-  canSave: boolean;
+  isDirty: boolean;
+  isDraft: boolean;
   isSaving: boolean;
   onFixTypo: () => void;
   onNewVersion: () => void;
@@ -16,37 +16,46 @@ type Props = {
 
 export const QuestionEditActions = ({
   canFixTypo,
-  canSave,
+  isDirty,
+  isDraft,
   isSaving,
   onFixTypo,
   onNewVersion,
 }: Props): JSX.Element => {
-  const theme = useTheme();
   const { t } = useTranslationWithPrefix('views.questionForm.actions');
+  const canSave = isDirty || !canFixTypo;
+  const state = canFixTypo ? (isDirty ? 'dirty' : 'clean') : 'locked';
 
   return (
     <>
-      <Stack spacing={0.75} sx={OPTION_SX}>
-        <Button disabled={!canSave || isSaving} onClick={onNewVersion} variant="outlined">
-          {t('newVersion')}
-        </Button>
-        <Stack direction="row" spacing={0.75} sx={{ alignItems: 'flex-start' }}>
-          <WarningAmberRoundedIcon sx={{ color: theme.colors.orange, fontSize: 16, mt: 0.25 }} />
-          <Typography sx={{ color: theme.colors.textSecondary }} variant="caption">
-            {t('newVersionHint')}
-          </Typography>
-        </Stack>
-      </Stack>
-      <Stack spacing={0.75} sx={OPTION_SX}>
-        <Button disabled={!canFixTypo || !canSave || isSaving} onClick={onFixTypo}>
-          {t('fixTypo')}
-        </Button>
-        <Typography
-          sx={{ color: theme.colors.textSecondary, textAlign: 'right' }}
-          variant="caption"
-        >
-          {t('fixTypoHint')}
-        </Typography>
+      <QuestionEditStatus isDraft={isDraft} state={state} />
+      <Stack direction="row" spacing={1.5} sx={{ flexShrink: 0 }}>
+        <Tooltip title={t('newVersionHint')}>
+          <span>
+            <Button
+              disabled={!canSave || isSaving}
+              onClick={onNewVersion}
+              sx={pressableSx}
+              variant="outlined"
+            >
+              {t('newVersion')}
+            </Button>
+          </span>
+        </Tooltip>
+        {canFixTypo && (
+          <Tooltip title={isDraft ? t('saveDraftHint') : t('fixTypoHint')}>
+            <span>
+              <Button
+                disabled={!isDirty || isSaving}
+                loading={isSaving}
+                onClick={onFixTypo}
+                sx={pressableSx}
+              >
+                {isDraft ? t('saveDraft') : t('fixTypo')}
+              </Button>
+            </span>
+          </Tooltip>
+        )}
       </Stack>
     </>
   );

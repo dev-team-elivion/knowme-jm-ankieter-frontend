@@ -87,7 +87,6 @@ export const AnswerOptionRow = ({
               aria-label={t('moveUp', { number })}
               disabled={index === 0}
               onClick={() => onMove(index, index - 1)}
-              size="small"
             >
               <ArrowUpwardRoundedIcon />
             </IconButton>
@@ -99,7 +98,6 @@ export const AnswerOptionRow = ({
               aria-label={t('moveDown', { number })}
               disabled={isLast}
               onClick={() => onMove(index, index + 1)}
-              size="small"
             >
               <ArrowDownwardRoundedIcon />
             </IconButton>
@@ -111,7 +109,6 @@ export const AnswerOptionRow = ({
               aria-label={t('remove', { number })}
               disabled={!canRemove}
               onClick={() => onRemove(index)}
-              size="small"
             >
               <DeleteOutlineRoundedIcon />
             </IconButton>

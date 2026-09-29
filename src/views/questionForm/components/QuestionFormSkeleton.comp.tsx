@@ -3,7 +3,13 @@ import { JSX } from 'react';
 
 import { panelSx } from '@/config/theme/uiTokens.ts';
 
-const SKELETON_SECTIONS = ['content', 'answers', 'scoring'] as const;
+const SKELETON_SECTIONS = [
+  { bodyHeights: [40, 88], key: 'content' },
+  { bodyHeights: [132], key: 'media' },
+  { bodyHeights: [40, 88], key: 'answers' },
+  { bodyHeights: [40, 88], key: 'scoring' },
+  { bodyHeights: [40, 88], key: 'classification' },
+] as const;
 
 export const QuestionFormSkeleton = (): JSX.Element => {
   const theme = useTheme();
@@ -18,14 +24,15 @@ export const QuestionFormSkeleton = (): JSX.Element => {
         </Stack>
       </Stack>
       {SKELETON_SECTIONS.map(section => (
-        <Box key={section} sx={{ ...panelSx(theme.colors), p: 3 }}>
+        <Box key={section.key} sx={{ ...panelSx(theme.colors), p: 3 }}>
           <Stack spacing={2}>
             <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
               <Skeleton height={40} variant="rounded" width={40} />
               <Skeleton height={24} width="25%" />
             </Stack>
-            <Skeleton height={40} />
-            <Skeleton height={88} />
+            {section.bodyHeights.map(height => (
+              <Skeleton height={height} key={`${section.key}-${height}`} />
+            ))}
           </Stack>
         </Box>
       ))}

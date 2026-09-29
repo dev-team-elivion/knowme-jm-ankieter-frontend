@@ -13,15 +13,16 @@ export const QuestionFormActionBar = ({ children }: Props): JSX.Element => {
   return (
     <Stack
       direction="row"
-      spacing={2}
+      spacing={3}
       sx={{
         ...panelSx(theme.colors),
         ...revealSx(6),
-        alignItems: 'flex-start',
+        alignItems: 'center',
         bottom: 16,
         justifyContent: 'flex-end',
-        p: 2,
         position: 'sticky',
+        px: 3,
+        py: 2,
         zIndex: 2,
       }}
     >

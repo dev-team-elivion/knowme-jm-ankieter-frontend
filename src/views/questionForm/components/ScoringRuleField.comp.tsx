@@ -41,13 +41,16 @@ export const ScoringRuleField = ({ label }: Props): JSX.Element => {
               spacing={1}
               sx={{
                 ...innerPanelSx(theme.colors),
-                '&:hover': { borderColor: theme.colors.borderStrong },
+                '&:focus-within': { borderColor: theme.colors.accentBorder },
+                '&:hover': {
+                  borderColor: isSelected ? theme.colors.accentBorder : theme.colors.borderStrong,
+                },
                 alignItems: 'flex-start',
                 background: isSelected ? theme.colors.accentBg : theme.colors.bgCard2,
                 borderColor: isSelected ? theme.colors.accentBorder : theme.colors.border,
                 cursor: 'pointer',
                 p: 1.5,
-                transition: 'border-color 0.18s, background 0.18s',
+                transition: 'border-color 0.18s ease-out, background-color 0.18s ease-out',
               }}
             >
               <Radio

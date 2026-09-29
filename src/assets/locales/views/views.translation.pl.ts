@@ -355,10 +355,22 @@ export const viewsTranslation: ViewsTranslation = {
   questionForm: {
     actions: {
       fixTypo: 'Popraw literówkę',
-      fixTypoHint: 'Zmienia bieżącą wersję.',
+      fixTypoHint: 'Zapisuje zmiany w bieżącej wersji.',
       newVersion: 'Nowa wersja',
       newVersionHint: 'Użyj, gdy zmienia się sens pytania. Obecna wersja zostanie wyłączona.',
       saveDraft: 'Zapisz szkic',
+      saveDraftHint: 'Zapisuje zmiany w tym szkicu.',
+      status: {
+        clean: 'Brak zmian',
+        cleanDescription: 'Zmień pytanie powyżej, a potem wybierz sposób zapisu.',
+        cleanDraftDescription: 'Zmień pytanie powyżej, a potem zapisz szkic.',
+        dirty: 'Niezapisane zmiany',
+        dirtyDescription:
+          'Poprawka literówki zostaje w bieżącej wersji. Zmiana sensu pytania wymaga nowej wersji, a obecna zostanie wyłączona.',
+        dirtyDraftDescription: 'Zapisz szkic, aby zachować zmiany.',
+        locked: 'Ta wersja jest wyłączona',
+        lockedDescription: 'Zmiany zapiszesz jako nową wersję.',
+      },
     },
     answers: {
       add: 'Dodaj odpowiedź',

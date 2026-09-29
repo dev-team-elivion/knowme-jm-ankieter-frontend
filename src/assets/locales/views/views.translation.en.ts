@@ -295,6 +295,17 @@ export type ViewsTranslation = {
       newVersion: string;
       newVersionHint: string;
       saveDraft: string;
+      saveDraftHint: string;
+      status: {
+        clean: string;
+        cleanDescription: string;
+        cleanDraftDescription: string;
+        dirty: string;
+        dirtyDescription: string;
+        dirtyDraftDescription: string;
+        locked: string;
+        lockedDescription: string;
+      };
     };
     answers: {
       add: string;
@@ -906,10 +917,22 @@ export const viewsTranslation: ViewsTranslation = {
   questionForm: {
     actions: {
       fixTypo: 'Fix a typo',
-      fixTypoHint: 'Changes the current version.',
+      fixTypoHint: 'Saves the changes in the current version.',
       newVersion: 'New version',
       newVersionHint: 'Use it when the meaning changes. The current version is retired.',
       saveDraft: 'Save draft',
+      saveDraftHint: 'Saves the changes in this draft.',
+      status: {
+        clean: 'No changes',
+        cleanDescription: 'Edit the question above, then choose how to save it.',
+        cleanDraftDescription: 'Edit the question above, then save the draft.',
+        dirty: 'Unsaved changes',
+        dirtyDescription:
+          'A typo fix keeps the current version. A change in meaning needs a new version, and the current one is retired.',
+        dirtyDraftDescription: 'Save the draft to keep your changes.',
+        locked: 'This version is retired',
+        lockedDescription: 'Your changes will be saved as a new version.',
+      },
     },
     answers: {
       add: 'Add answer',
