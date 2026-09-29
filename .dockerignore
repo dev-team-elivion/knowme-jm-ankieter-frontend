@@ -1,0 +1,8 @@
+.git
+.idea
+node_modules
+build
+api-generator/tmp
+# .env.local points the app at a local backend. It is not in the repository, so a build on
+# Coolify never sees it; a local image build must not see it either.
+*.local

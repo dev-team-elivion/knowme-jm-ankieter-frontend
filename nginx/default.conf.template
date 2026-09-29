@@ -1,0 +1,67 @@
+# The nginx image fills in BACKEND_URL and NGINX_RESOLVER from the environment when the container
+# starts (defaults in the Dockerfile). BACKEND_URL is scheme, host and port only: with a path,
+# even a trailing slash, every request would reach the backend as that path.
+
+# The backend's name is looked up again every 10 s instead of once at start: after a redeploy it
+# answers from a new address, and a name resolved once would keep pointing at the old container.
+resolver ${NGINX_RESOLVER} valid=10s ipv6=off;
+
+# Behind Coolify's proxy these arrive already set (https, the public host), and the backend builds
+# the SSO return address from them. Only without that proxy does nginx's own view stand in.
+map $http_x_forwarded_proto $forwarded_proto {
+    default $http_x_forwarded_proto;
+    ''      $scheme;
+}
+
+map $http_x_forwarded_host $forwarded_host {
+    default $http_x_forwarded_host;
+    ''      $http_host;
+}
+
+server {
+    listen 80;
+    server_tokens off;
+    root /usr/share/nginx/html;
+
+    # Above the backend's own 21 MB, so an oversized upload gets the backend's explanation
+    # instead of nginx's bare 413 page.
+    client_max_body_size 25m;
+
+    gzip on;
+    gzip_types text/css text/javascript application/javascript application/json image/svg+xml;
+
+    # The API and the SSO round trip: /oauth2/authorization/keycloak, /login/oauth2/code/keycloak,
+    # /logout, and /login, where Spring reports a failed sign-in.
+    location ~ ^/(api|oauth2|login|logout)(/|$) {
+        set $backend ${BACKEND_URL};
+        proxy_pass $backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $forwarded_proto;
+        proxy_set_header X-Forwarded-Host $forwarded_host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 120s;
+    }
+
+    # Vite puts a content hash in these names, so a file never changes under its name.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        add_header X-Content-Type-Options nosniff;
+        try_files $uri =404;
+    }
+
+    # Every other path is a screen of the single-page app. index.html must not be cached, or a
+    # browser keeps asking for the assets of a build that is no longer there.
+    location / {
+        add_header Cache-Control "no-cache";
+        add_header X-Content-Type-Options nosniff;
+        add_header Referrer-Policy strict-origin-when-cross-origin;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
+        try_files $uri /index.html;
+    }
+
+    location = /nginx-health {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+}
