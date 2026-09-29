@@ -5,10 +5,10 @@ import { useController, useFormContext } from 'react-hook-form';
 import { TagDto, TagRefDto } from '@/api/generated';
 import { FormFieldLabel } from '@/components/form/FormFieldLabel.comp.tsx';
 import { useNotifications } from '@/components/notifications/Notification.context.ts';
+import { useCreateTag } from '@/hooks/useCreateTag.util.ts';
 import { useGetTags } from '@/hooks/useGetTags.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionFormModel } from '@/views/questionForm/model/QuestionForm.model.ts';
-import { useCreateTag } from '@/views/questionForm/util/useCreateTag.util.ts';
 
 type CreateTagOption = {
   inputValue: string;

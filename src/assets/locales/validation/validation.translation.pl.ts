@@ -4,6 +4,8 @@ export const validationTranslation: ValidationTranslation = {
   answersCorrect: 'Zaznacz co najmniej jedną poprawną odpowiedź.',
   answersMin: 'Dodaj co najmniej dwie odpowiedzi.',
   answersSingleCorrect: 'Zaznacz dokładnie jedną poprawną odpowiedź.',
+  categoryNameTaken: 'Kategoria o tej nazwie już istnieje. Wielkość liter nie ma znaczenia.',
+  categoryPrefixTaken: 'Inna kategoria ma już ten prefiks. Wielkość liter nie ma znaczenia.',
   email: 'Wpisz poprawny adres e-mail.',
   expectedAnswersMax: 'Dodaj najwyżej {{max}} oczekiwanych odpowiedzi.',
   expectedAnswersMin: 'Dodaj co najmniej jedną oczekiwaną odpowiedź.',
@@ -14,4 +16,5 @@ export const validationTranslation: ValidationTranslation = {
   number: 'Wpisz liczbę.',
   positiveNumber: 'Wpisz liczbę większą od zera.',
   required: 'To pole jest wymagane.',
+  tagTaken: 'Taki tag już istnieje. Wielkość liter i spacje nie mają znaczenia.',
 };

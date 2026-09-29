@@ -1,6 +1,7 @@
 export enum RouteEnum {
   DASHBOARD = '/dashboard',
   DEV_PATTERNS = '/dev/patterns',
+  DICTIONARIES = '/dictionaries',
   PATHS = '/paths',
   PROCESSES = '/processes',
   QUESTION_BANK = '/question-bank',

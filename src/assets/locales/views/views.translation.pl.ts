@@ -8,6 +8,10 @@ import {
   VersionStatusDto,
 } from '@/api/generated';
 import { ViewsTranslation } from '@/assets/locales/views/views.translation.en.ts';
+import {
+  DictionarySectionEnum,
+  DictionaryStatusFilterEnum,
+} from '@/views/dictionaryManagement/model/DictionaryManagement.enum.ts';
 
 export const viewsTranslation: ViewsTranslation = {
   comingSoon: {
@@ -132,6 +136,151 @@ export const viewsTranslation: ViewsTranslation = {
       [VersionStatusDto.Draft]: 'Szkic',
       [VersionStatusDto.Retired]: 'Wyłączona',
     },
+  },
+  dictionaryManagement: {
+    categories: {
+      actions: {
+        activate: 'Włącz',
+        deactivate: 'Wyłącz',
+        edit: 'Edytuj',
+        menu: 'Akcje dla kategorii {{name}}',
+        moveDown: 'Przesuń kategorię {{name}} niżej',
+        moveUp: 'Przesuń kategorię {{name}} wyżej',
+      },
+      activated: 'Włączono kategorię {{name}}.',
+      add: 'Dodaj kategorię',
+      columns: {
+        actions: 'Akcje',
+        name: 'Nazwa',
+        order: 'Kolejność',
+        prefix: 'Prefiks',
+        questions: 'Pytania',
+        status: 'Status',
+      },
+      conflict: 'Kategoria o tej nazwie lub prefiksie już istnieje. Zmień nazwę lub prefiks.',
+      created: 'Dodano kategorię.',
+      deactivated: 'Wyłączono kategorię {{name}}.',
+      empty: {
+        description: 'Dodaj pierwszą kategorię, żeby autorzy mogli ją wybrać w pytaniu.',
+        title: 'Nie ma jeszcze kategorii',
+      },
+      form: {
+        cancel: 'Anuluj',
+        createTitle: 'Nowa kategoria',
+        editTitle: 'Edytuj kategorię',
+        name: 'Nazwa',
+        prefix: 'Prefiks',
+        prefixHint: 'Na przykład BHP. Po dodaniu pierwszego pytania nie będzie można go zmienić.',
+        prefixLocked_few: 'Prefiksu nie można zmienić, bo kategoria ma już {{count}} pytania.',
+        prefixLocked_many: 'Prefiksu nie można zmienić, bo kategoria ma już {{count}} pytań.',
+        prefixLocked_one: 'Prefiksu nie można zmienić, bo kategoria ma już {{count}} pytanie.',
+        save: 'Zapisz',
+      },
+      orderHint: 'W tej kolejności autorzy widzą kategorie w formularzu pytania.',
+      prefixNotice:
+        'Z prefiksu powstają klucze pytań, na przykład BHP-1. Gdy kategoria ma już pytania, prefiksu nie można zmienić.',
+      reorderFailed: 'Nie udało się zmienić kolejności. Spróbuj ponownie.',
+      saved: 'Zapisano zmiany.',
+      status: {
+        [DictionaryStatusFilterEnum.ACTIVE]: 'Aktywna',
+        [DictionaryStatusFilterEnum.INACTIVE]: 'Wyłączona',
+      },
+      statusDialog: {
+        cancel: 'Anuluj',
+        confirm: 'Wyłącz',
+        title: 'Wyłączyć kategorię {{name}}?',
+        used_few:
+          'Korzystają z niej {{count}} pytania. Zachowają ją, ale nowym pytaniom nie będzie można jej przypisać. Możesz ją później włączyć.',
+        used_many:
+          'Korzysta z niej {{count}} pytań. Zachowają ją, ale nowym pytaniom nie będzie można jej przypisać. Możesz ją później włączyć.',
+        used_one:
+          'Korzysta z niej {{count}} pytanie. Zachowa ją, ale nowym pytaniom nie będzie można jej przypisać. Możesz ją później włączyć.',
+      },
+      statusFailed: 'Nie udało się zmienić statusu kategorii. Spróbuj ponownie.',
+      tableLabel: 'Kategorie pytań',
+    },
+    description: 'Kategorie, tagi i nazwy procedur, którymi autorzy opisują pytania.',
+    procedureNames: {
+      columns: {
+        name: 'Nazwa procedury',
+      },
+      empty: {
+        description: 'Nazwa pojawi się tutaj, gdy autor wpisze ją jako źródło pytania.',
+        title: 'Nie ma jeszcze nazw procedur',
+      },
+      notice:
+        'Nazwy procedur wpisane w pytaniach, najczęściej używane na górze. Formularz pytania podpowiada je przy wpisywaniu, żeby ta sama procedura zawsze miała tę samą nazwę.',
+      search: 'Szukaj nazwy procedury',
+      tableLabel: 'Nazwy procedur',
+    },
+    questionCount_few: '{{count}} pytania',
+    questionCount_many: '{{count}} pytań',
+    questionCount_one: '{{count}} pytanie',
+    sections: {
+      [DictionarySectionEnum.CATEGORIES]: 'Kategorie',
+      [DictionarySectionEnum.PROCEDURE_NAMES]: 'Nazwy procedur',
+      [DictionarySectionEnum.TAGS]: 'Tagi',
+    },
+    tags: {
+      actions: {
+        menu: 'Akcje dla tagu {{label}}',
+        merge: 'Scal z innym tagiem',
+        mergeUnavailable: 'Wyłączonego tagu nie można scalić',
+      },
+      add: 'Dodaj tag',
+      columns: {
+        actions: 'Akcje',
+        label: 'Tag',
+        questions: 'Pytania',
+        status: 'Status',
+      },
+      created: 'Dodano tag.',
+      empty: {
+        description: 'Autorzy dodają tagi przy pisaniu pytań. Tag możesz też dodać tutaj.',
+        title: 'Nie ma jeszcze tagów',
+      },
+      form: {
+        cancel: 'Anuluj',
+        label: 'Nazwa tagu',
+        save: 'Dodaj',
+        similar: 'Podobne tagi, które już istnieją',
+        title: 'Nowy tag',
+      },
+      merge: {
+        cancel: 'Anuluj',
+        confirm: 'Scal tagi',
+        noOptions: 'Brak pasujących tagów',
+        preview_few:
+          '{{count}} pytania przejdą z tagu „{{source}}” na „{{target}}”. Tag „{{source}}” zostanie wyłączony.',
+        preview_many:
+          '{{count}} pytań przejdzie z tagu „{{source}}” na „{{target}}”. Tag „{{source}}” zostanie wyłączony.',
+        preview_one:
+          '{{count}} pytanie przejdzie z tagu „{{source}}” na „{{target}}”. Tag „{{source}}” zostanie wyłączony.',
+        source: 'Tag scalany',
+        target: 'Tag docelowy',
+        targetPlaceholder: 'Wybierz tag, który zostaje',
+        title: 'Scal tag „{{label}}”',
+      },
+      merged: 'Scalono tag „{{source}}” z tagiem „{{target}}”.',
+      mergeFailed: 'Nie udało się scalić tagów. Spróbuj ponownie.',
+      notice:
+        'Tagi, które znaczą to samo, na przykład „bhp” i „b.h.p.”, scal w jeden. Pytania przejdą na wybrany tag, a scalony tag zostanie wyłączony.',
+      search: 'Szukaj tagu',
+      status: {
+        [DictionaryStatusFilterEnum.ACTIVE]: 'Aktywny',
+        [DictionaryStatusFilterEnum.INACTIVE]: 'Wyłączony',
+      },
+      statusFilter: {
+        all: 'Wszystkie statusy',
+        label: 'Status',
+        options: {
+          [DictionaryStatusFilterEnum.ACTIVE]: 'Aktywne',
+          [DictionaryStatusFilterEnum.INACTIVE]: 'Wyłączone',
+        },
+      },
+      tableLabel: 'Tagi pytań',
+    },
+    title: 'Słowniki',
   },
   questionBank: {
     actions: {

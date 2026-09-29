@@ -10,14 +10,18 @@ type Filters = {
 };
 
 type Return = {
+  isError: boolean;
+  isFetching: boolean;
+  isLoading: boolean;
   procedureNames: string[];
+  retry: () => void;
 };
 
 export const useGetProcedureNames = (filters: Filters): Return => {
   const { dictionariesApi } = useApiClient();
   const search = filters.search.trim();
 
-  const { data } = useQuery<string[], AxiosError>({
+  const { data, isError, isFetching, isLoading, refetch } = useQuery<string[], AxiosError>({
     enabled: filters.enabled,
     placeholderData: keepPreviousData,
     queryFn: async () => {
@@ -27,5 +31,11 @@ export const useGetProcedureNames = (filters: Filters): Return => {
     queryKey: [QueryKeyEnum.LIST_PROCEDURE_NAMES, { search }],
   });
 
-  return { procedureNames: data ?? [] };
+  return {
+    isError,
+    isFetching,
+    isLoading,
+    procedureNames: data ?? [],
+    retry: () => void refetch(),
+  };
 };

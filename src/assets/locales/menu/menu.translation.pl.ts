@@ -4,6 +4,7 @@ export const menuTranslation: MenuTranslation = {
   items: {
     DASHBOARD: 'Dashboard',
     DEV_PATTERNS: 'Wzorce interfejsu',
+    DICTIONARIES: 'Słowniki',
     PATHS: 'Ścieżki',
     PROCESSES: 'Procesy',
     QUESTION_BANK: 'Baza pytań',

@@ -1,5 +1,6 @@
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined';
@@ -35,7 +36,10 @@ const MAIN_SECTIONS: MenuSectionModel[] = [
   },
   {
     id: MenuSectionEnum.SYSTEM,
-    items: [{ icon: SettingsOutlinedIcon, id: MenuItemEnum.SETTINGS, route: RouteEnum.SETTINGS }],
+    items: [
+      { icon: BookmarksOutlinedIcon, id: MenuItemEnum.DICTIONARIES, route: RouteEnum.DICTIONARIES },
+      { icon: SettingsOutlinedIcon, id: MenuItemEnum.SETTINGS, route: RouteEnum.SETTINGS },
+    ],
   },
 ];
 

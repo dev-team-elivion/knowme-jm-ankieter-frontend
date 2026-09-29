@@ -16,6 +16,12 @@ const DevPatternsView = lazy(() =>
   })),
 );
 
+const DictionaryManagementView = lazy(() =>
+  import('@/views/dictionaryManagement/DictionaryManagement.view.tsx').then(module => ({
+    default: module.DictionaryManagementView,
+  })),
+);
+
 const QuestionBankView = lazy(() =>
   import('@/views/questionBank/QuestionBank.view.tsx').then(module => ({
     default: module.QuestionBankView,
@@ -42,6 +48,7 @@ const QuestionHistoryView = lazy(() =>
 
 const MODULE_ROUTES: RouteModel[] = [
   { component: ComingSoonView, path: RouteEnum.DASHBOARD },
+  { component: DictionaryManagementView, path: RouteEnum.DICTIONARIES },
   { component: ComingSoonView, path: RouteEnum.PATHS },
   { component: ComingSoonView, path: RouteEnum.PROCESSES },
   { component: QuestionBankView, path: RouteEnum.QUESTION_BANK },

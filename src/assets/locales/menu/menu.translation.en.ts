@@ -2,6 +2,7 @@ export type MenuTranslation = {
   items: {
     DASHBOARD: string;
     DEV_PATTERNS: string;
+    DICTIONARIES: string;
     PATHS: string;
     PROCESSES: string;
     QUESTION_BANK: string;
@@ -21,6 +22,7 @@ export const menuTranslation: MenuTranslation = {
   items: {
     DASHBOARD: 'Dashboard',
     DEV_PATTERNS: 'UI patterns',
+    DICTIONARIES: 'Dictionaries',
     PATHS: 'Paths',
     PROCESSES: 'Processes',
     QUESTION_BANK: 'Question bank',

@@ -4,9 +4,9 @@ import { useController, useFormContext, useWatch } from 'react-hook-form';
 
 import { QuestionSourceDto } from '@/api/generated';
 import { FormFieldLabel } from '@/components/form/FormFieldLabel.comp.tsx';
+import { useGetProcedureNames } from '@/hooks/useGetProcedureNames.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionFormModel } from '@/views/questionForm/model/QuestionForm.model.ts';
-import { useGetProcedureNames } from '@/views/questionForm/util/useGetProcedureNames.util.ts';
 
 export const SourceNameField = (): JSX.Element => {
   const inputId = useId();

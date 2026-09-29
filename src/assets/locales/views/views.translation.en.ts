@@ -7,6 +7,10 @@ import {
   TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
+import {
+  DictionarySectionEnum,
+  DictionaryStatusFilterEnum,
+} from '@/views/dictionaryManagement/model/DictionaryManagement.enum.ts';
 import { HistoryField } from '@/views/questionHistory/model/HistoryField.model.ts';
 export type ViewsTranslation = {
   comingSoon: {
@@ -88,6 +92,133 @@ export type ViewsTranslation = {
     scoringRule: Record<ScoringRuleDto, ScoringRuleTranslation>;
     translationStatus: Record<TranslationStatusDto, string>;
     versionStatus: Record<VersionStatusDto, string>;
+  };
+  dictionaryManagement: {
+    categories: {
+      actions: {
+        activate: string;
+        deactivate: string;
+        edit: string;
+        menu: string;
+        moveDown: string;
+        moveUp: string;
+      };
+      activated: string;
+      add: string;
+      columns: {
+        actions: string;
+        name: string;
+        order: string;
+        prefix: string;
+        questions: string;
+        status: string;
+      };
+      conflict: string;
+      created: string;
+      deactivated: string;
+      empty: {
+        description: string;
+        title: string;
+      };
+      form: {
+        cancel: string;
+        createTitle: string;
+        editTitle: string;
+        name: string;
+        prefix: string;
+        prefixHint: string;
+        prefixLocked_few?: string;
+        prefixLocked_many?: string;
+        prefixLocked_one: string;
+        prefixLocked_other?: string;
+        save: string;
+      };
+      orderHint: string;
+      prefixNotice: string;
+      reorderFailed: string;
+      saved: string;
+      status: Record<DictionaryStatusFilterEnum, string>;
+      statusDialog: {
+        cancel: string;
+        confirm: string;
+        title: string;
+        used_few?: string;
+        used_many?: string;
+        used_one: string;
+        used_other?: string;
+      };
+      statusFailed: string;
+      tableLabel: string;
+    };
+    description: string;
+    procedureNames: {
+      columns: {
+        name: string;
+      };
+      empty: {
+        description: string;
+        title: string;
+      };
+      notice: string;
+      search: string;
+      tableLabel: string;
+    };
+    questionCount_few?: string;
+    questionCount_many?: string;
+    questionCount_one: string;
+    questionCount_other?: string;
+    sections: Record<DictionarySectionEnum, string>;
+    tags: {
+      actions: {
+        menu: string;
+        merge: string;
+        mergeUnavailable: string;
+      };
+      add: string;
+      columns: {
+        actions: string;
+        label: string;
+        questions: string;
+        status: string;
+      };
+      created: string;
+      empty: {
+        description: string;
+        title: string;
+      };
+      form: {
+        cancel: string;
+        label: string;
+        save: string;
+        similar: string;
+        title: string;
+      };
+      merge: {
+        cancel: string;
+        confirm: string;
+        noOptions: string;
+        preview_few?: string;
+        preview_many?: string;
+        preview_one: string;
+        preview_other?: string;
+        source: string;
+        target: string;
+        targetPlaceholder: string;
+        title: string;
+      };
+      merged: string;
+      mergeFailed: string;
+      notice: string;
+      search: string;
+      status: Record<DictionaryStatusFilterEnum, string>;
+      statusFilter: {
+        all: string;
+        label: string;
+        options: Record<DictionaryStatusFilterEnum, string>;
+      };
+      tableLabel: string;
+    };
+    title: string;
   };
   questionBank: {
     actions: {
@@ -490,6 +621,148 @@ export const viewsTranslation: ViewsTranslation = {
       [VersionStatusDto.Draft]: 'Draft',
       [VersionStatusDto.Retired]: 'Retired',
     },
+  },
+  dictionaryManagement: {
+    categories: {
+      actions: {
+        activate: 'Turn on',
+        deactivate: 'Turn off',
+        edit: 'Edit',
+        menu: 'Actions for category {{name}}',
+        moveDown: 'Move category {{name}} down',
+        moveUp: 'Move category {{name}} up',
+      },
+      activated: 'Category {{name}} is turned on.',
+      add: 'Add category',
+      columns: {
+        actions: 'Actions',
+        name: 'Name',
+        order: 'Order',
+        prefix: 'Prefix',
+        questions: 'Questions',
+        status: 'Status',
+      },
+      conflict:
+        'A category with this name or prefix already exists. Change the name or the prefix.',
+      created: 'Category added.',
+      deactivated: 'Category {{name}} is turned off.',
+      empty: {
+        description: 'Add the first category so authors can choose it for a question.',
+        title: 'No categories yet',
+      },
+      form: {
+        cancel: 'Cancel',
+        createTitle: 'New category',
+        editTitle: 'Edit category',
+        name: 'Name',
+        prefix: 'Prefix',
+        prefixHint: 'For example BHP. It cannot be changed once the category has a question.',
+        prefixLocked_one:
+          'The prefix cannot be changed because the category already has {{count}} question.',
+        prefixLocked_other:
+          'The prefix cannot be changed because the category already has {{count}} questions.',
+        save: 'Save',
+      },
+      orderHint: 'Authors see categories in this order in the question form.',
+      prefixNotice:
+        'Question keys are built from the prefix, for example BHP-1. Once a category has questions, its prefix cannot be changed.',
+      reorderFailed: 'The order could not be changed. Try again.',
+      saved: 'Changes saved.',
+      status: {
+        [DictionaryStatusFilterEnum.ACTIVE]: 'Active',
+        [DictionaryStatusFilterEnum.INACTIVE]: 'Turned off',
+      },
+      statusDialog: {
+        cancel: 'Cancel',
+        confirm: 'Turn off',
+        title: 'Turn off category {{name}}?',
+        used_one:
+          '{{count}} question uses it and keeps it, but new questions cannot be assigned to it. You can turn it on again later.',
+        used_other:
+          '{{count}} questions use it and keep it, but new questions cannot be assigned to it. You can turn it on again later.',
+      },
+      statusFailed: 'The category status could not be changed. Try again.',
+      tableLabel: 'Question categories',
+    },
+    description: 'Categories, tags and procedure names that authors use to describe questions.',
+    procedureNames: {
+      columns: {
+        name: 'Procedure name',
+      },
+      empty: {
+        description: 'A name appears here once an author enters it as the source of a question.',
+        title: 'No procedure names yet',
+      },
+      notice:
+        'Procedure names entered in questions, most used first. The question form suggests them while typing, so the same procedure always has the same name.',
+      search: 'Search procedure names',
+      tableLabel: 'Procedure names',
+    },
+    questionCount_one: '{{count}} question',
+    questionCount_other: '{{count}} questions',
+    sections: {
+      [DictionarySectionEnum.CATEGORIES]: 'Categories',
+      [DictionarySectionEnum.PROCEDURE_NAMES]: 'Procedure names',
+      [DictionarySectionEnum.TAGS]: 'Tags',
+    },
+    tags: {
+      actions: {
+        menu: 'Actions for tag {{label}}',
+        merge: 'Merge into another tag',
+        mergeUnavailable: 'A turned off tag cannot be merged',
+      },
+      add: 'Add tag',
+      columns: {
+        actions: 'Actions',
+        label: 'Tag',
+        questions: 'Questions',
+        status: 'Status',
+      },
+      created: 'Tag added.',
+      empty: {
+        description: 'Authors add tags while writing questions. You can also add one here.',
+        title: 'No tags yet',
+      },
+      form: {
+        cancel: 'Cancel',
+        label: 'Tag name',
+        save: 'Add',
+        similar: 'Similar tags that already exist',
+        title: 'New tag',
+      },
+      merge: {
+        cancel: 'Cancel',
+        confirm: 'Merge tags',
+        noOptions: 'No matching tags',
+        preview_one:
+          '{{count}} question moves from tag “{{source}}” to “{{target}}”. Tag “{{source}}” will be turned off.',
+        preview_other:
+          '{{count}} questions move from tag “{{source}}” to “{{target}}”. Tag “{{source}}” will be turned off.',
+        source: 'Tag to merge',
+        target: 'Target tag',
+        targetPlaceholder: 'Choose the tag that stays',
+        title: 'Merge tag “{{label}}”',
+      },
+      merged: 'Tag “{{source}}” merged into “{{target}}”.',
+      mergeFailed: 'The tags could not be merged. Try again.',
+      notice:
+        'Merge tags that mean the same thing, for example “bhp” and “b.h.p.”. Questions move to the tag you choose and the merged tag is turned off.',
+      search: 'Search tags',
+      status: {
+        [DictionaryStatusFilterEnum.ACTIVE]: 'Active',
+        [DictionaryStatusFilterEnum.INACTIVE]: 'Turned off',
+      },
+      statusFilter: {
+        all: 'All statuses',
+        label: 'Status',
+        options: {
+          [DictionaryStatusFilterEnum.ACTIVE]: 'Active',
+          [DictionaryStatusFilterEnum.INACTIVE]: 'Turned off',
+        },
+      },
+      tableLabel: 'Question tags',
+    },
+    title: 'Dictionaries',
   },
   questionBank: {
     actions: {
