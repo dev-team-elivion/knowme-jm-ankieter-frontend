@@ -1,6 +1,10 @@
 import { Components, Theme } from '@mui/material/styles';
+import '@mui/x-date-pickers/themeAugmentation';
 
 type ThemeWithoutComponents = Omit<Theme, 'components'>;
+
+const FIELD_HEIGHT = '36px';
+const FIELD_PADDING_X = '12px';
 
 const fieldRootStyles = (theme: ThemeWithoutComponents) => ({
   ...theme.typography.body1,
@@ -27,13 +31,14 @@ const fieldRootStyles = (theme: ThemeWithoutComponents) => ({
   '&.MuiInputBase-multiline': {
     alignItems: 'flex-start',
     height: 'auto',
-    padding: '10px 0',
+    minHeight: '80px',
+    padding: '8px 0',
   },
   backgroundColor: theme.colors.fieldBg,
   border: `1px solid ${theme.colors.fieldBorder}`,
-  borderRadius: '8px',
+  borderRadius: '6px',
   color: theme.colors.textPrimary,
-  minHeight: '40px',
+  height: FIELD_HEIGHT,
   padding: 0,
   transition: 'border-color 0.18s, background 0.18s, box-shadow 0.18s',
 });
@@ -56,7 +61,9 @@ export const components: Components<ThemeWithoutComponents> = {
     styleOverrides: {
       inputRoot: ({ theme }) => ({
         gap: theme.spacing(0.5),
-        padding: theme.spacing(0.5, 1),
+        height: 'auto',
+        minHeight: FIELD_HEIGHT,
+        padding: theme.spacing(0.25, 1),
       }),
       listbox: {
         padding: 4,
@@ -327,8 +334,11 @@ export const components: Components<ThemeWithoutComponents> = {
         '&::placeholder': {
           color: theme.colors.iconMuted,
           opacity: 1,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         },
-        padding: '9px 12px',
+        padding: `0 ${FIELD_PADDING_X}`,
       }),
       notchedOutline: {
         border: 'none',
@@ -341,6 +351,38 @@ export const components: Components<ThemeWithoutComponents> = {
       root: ({ theme }) => ({
         backgroundImage: 'none',
         boxShadow: theme.colors.shadowCard,
+      }),
+    },
+  },
+  MuiPickersInputBase: {
+    styleOverrides: {
+      root: ({ theme }) => fieldRootStyles(theme),
+      sectionsContainer: {
+        padding: `0 ${FIELD_PADDING_X}`,
+      },
+    },
+  },
+  MuiPickersOutlinedInput: {
+    styleOverrides: {
+      notchedOutline: {
+        border: 'none',
+      },
+      root: ({ theme }) => ({
+        ...fieldRootStyles(theme),
+        '& .MuiPickersSectionList-sectionContent[aria-valuetext="Empty"]': {
+          color: theme.colors.iconMuted,
+        },
+      }),
+      sectionsContainer: {
+        padding: `0 ${FIELD_PADDING_X}`,
+      },
+    },
+  },
+  MuiPickersSectionList: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        ...theme.typography.body1,
+        color: theme.colors.textPrimary,
       }),
     },
   },
@@ -358,7 +400,19 @@ export const components: Components<ThemeWithoutComponents> = {
     styleOverrides: {
       icon: ({ theme }) => ({
         color: theme.colors.iconMuted,
-        right: 10,
+        right: 12,
+      }),
+      select: ({ theme }) => ({
+        '&:focus': {
+          background: 'transparent',
+        },
+        alignItems: 'center',
+        color: theme.colors.textPrimary,
+        display: 'flex',
+        height: '100%',
+        minHeight: 'unset',
+        paddingBottom: 0,
+        paddingTop: 0,
       }),
     },
   },

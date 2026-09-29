@@ -14,6 +14,16 @@ export const microLabelSx = (color: string) => ({
   textTransform: 'uppercase' as const,
 });
 
+export const fieldLabelSx = (colors: ThemeColorSet) => ({
+  color: colors.textSecondary,
+  display: 'block',
+  fontSize: '12px',
+  fontWeight: 700,
+  letterSpacing: '0.6px',
+  lineHeight: 1.4,
+  mb: '6px',
+});
+
 export const numericSx = { fontVariantNumeric: 'tabular-nums' } as const;
 
 export const panelSx = (colors: ThemeColorSet) => ({

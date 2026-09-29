@@ -1,6 +1,7 @@
 import { Box, useTheme } from '@mui/material';
 import { JSX } from 'react';
 
+import { fieldLabelSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 
 type Props = {
@@ -15,19 +16,7 @@ export const FormFieldLabel = ({ htmlFor, id, isRequired, label }: Props): JSX.E
   const { t } = useTranslationWithPrefix('components.form');
 
   return (
-    <Box
-      component="label"
-      htmlFor={htmlFor}
-      id={id}
-      sx={{
-        ...theme.typography.caption,
-        color: theme.colors.textSecondary,
-        display: 'block',
-        fontWeight: 700,
-        letterSpacing: '0.4px',
-        mb: 0.75,
-      }}
-    >
+    <Box component="label" htmlFor={htmlFor} id={id} sx={fieldLabelSx(theme.colors)}>
       {label}
       {isRequired && (
         <Box

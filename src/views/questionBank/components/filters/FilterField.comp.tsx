@@ -1,7 +1,7 @@
-import { Box, Stack, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { JSX, ReactNode } from 'react';
 
-import { microLabelSx } from '@/config/theme/uiTokens.ts';
+import { fieldLabelSx } from '@/config/theme/uiTokens.ts';
 
 type Props = {
   children: ReactNode;
@@ -12,11 +12,11 @@ export const FilterField = ({ children, label }: Props): JSX.Element => {
   const theme = useTheme();
 
   return (
-    <Stack spacing={0.75} sx={{ minWidth: 0 }}>
-      <Box aria-hidden sx={microLabelSx(theme.colors.textSecondary)}>
+    <Box sx={{ minWidth: 0 }}>
+      <Box aria-hidden sx={fieldLabelSx(theme.colors)}>
         {label}
       </Box>
       {children}
-    </Stack>
+    </Box>
   );
 };

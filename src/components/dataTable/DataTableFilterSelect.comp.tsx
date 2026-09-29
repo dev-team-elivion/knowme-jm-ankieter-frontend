@@ -19,9 +19,10 @@ export const DataTableFilterSelect = ({
   value,
 }: Props): JSX.Element => (
   <TextField
+    fullWidth
     onChange={event => onChange(event.target.value)}
     select
-    slotProps={{ htmlInput: { 'aria-label': label } }}
+    slotProps={{ htmlInput: { 'aria-label': label }, select: { displayEmpty: true } }}
     sx={{ minWidth: 200 }}
     value={value}
   >
