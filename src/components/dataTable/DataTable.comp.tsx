@@ -20,6 +20,7 @@ type Props<Row, SortKey extends string, Filters extends DataTableFilters> = {
   controller: DataTableController<SortKey, Filters>;
   emptyState?: ReactNode;
   getRowKey: (row: Row) => number | string;
+  isRowSelected?: (row: Row) => boolean;
   onRowClick?: (row: Row) => void;
   source: DataTableSource<Row>;
   toolbar?: ReactNode;
@@ -31,6 +32,7 @@ export const DataTable = <Row, SortKey extends string, Filters extends DataTable
   controller,
   emptyState,
   getRowKey,
+  isRowSelected,
   onRowClick,
   source,
   toolbar,
@@ -64,6 +66,7 @@ export const DataTable = <Row, SortKey extends string, Filters extends DataTable
             emptyState={emptyState}
             getRowKey={getRowKey}
             hasActiveFilters={controller.hasActiveFilters}
+            isRowSelected={isRowSelected}
             onClearFilters={controller.clearFilters}
             onRowClick={onRowClick}
             pageSize={query.pageSize}

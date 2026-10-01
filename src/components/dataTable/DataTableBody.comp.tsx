@@ -19,6 +19,7 @@ type Props<Row, SortKey extends string> = {
   emptyState?: ReactNode;
   getRowKey: (row: Row) => number | string;
   hasActiveFilters: boolean;
+  isRowSelected?: (row: Row) => boolean;
   onClearFilters: () => void;
   onRowClick?: (row: Row) => void;
   pageSize: number;
@@ -38,6 +39,7 @@ export const DataTableBody = <Row, SortKey extends string>({
   emptyState,
   getRowKey,
   hasActiveFilters,
+  isRowSelected,
   onClearFilters,
   onRowClick,
   pageSize,
@@ -88,6 +90,7 @@ export const DataTableBody = <Row, SortKey extends string>({
           hover
           key={getRowKey(row)}
           onClick={onRowClick ? () => onRowClick(row) : undefined}
+          selected={isRowSelected?.(row) ?? false}
           sx={onRowClick ? { cursor: 'pointer' } : undefined}
         >
           {columns.map(column => (

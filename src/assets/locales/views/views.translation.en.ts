@@ -1,4 +1,5 @@
 import {
+  BulkOperationDto,
   HistoryEventKindDto,
   QuestionPurposeDto,
   QuestionSourceDto,
@@ -232,10 +233,71 @@ export type ViewsTranslation = {
       menu: string;
       preview: string;
       retire: string;
-      retireUnavailable: string;
+      retireNoActiveVersion: string;
       unsupportedType: string;
     };
     addQuestion: string;
+    bulk: {
+      back: string;
+      cancel: string;
+      change: {
+        addTags: string;
+        clearReview: string;
+        markForReview: string;
+        markForReviewWithReason: string;
+        removeTags: string;
+        retire: string;
+        setCategory: string;
+      };
+      clear: string;
+      done_few?: string;
+      done_many?: string;
+      done_one: string;
+      done_other?: string;
+      errors: {
+        applyFailed: string;
+        changedSincePreview: string;
+      };
+      next: string;
+      operations: Record<BulkOperationDto, string>;
+      params: {
+        category: string;
+        categoryPlaceholder: string;
+        noTags: string;
+        reason: string;
+        reasonPlaceholder: string;
+        tags: string;
+      };
+      preview: {
+        affected_few?: string;
+        affected_many?: string;
+        affected_one: string;
+        affected_other?: string;
+        large: {
+          description: string;
+          label: string;
+          title: string;
+        };
+        more: string;
+        nothingToChange: string;
+        sample: string;
+        skipped_few?: string;
+        skipped_many?: string;
+        skipped_one: string;
+        skipped_other?: string;
+      };
+      selectAllMatching: string;
+      selected_few?: string;
+      selected_many?: string;
+      selected_one: string;
+      selected_other?: string;
+      selectedAllMatching_few?: string;
+      selectedAllMatching_many?: string;
+      selectedAllMatching_one: string;
+      selectedAllMatching_other?: string;
+      selectPage: string;
+      selectRow: string;
+    };
     columns: {
       actions: string;
       category: string;
@@ -277,6 +339,14 @@ export type ViewsTranslation = {
     hasMedia: string;
     languageStatus: string;
     noSummary: string;
+    retireDialog: {
+      cancel: string;
+      confirm: string;
+      description: string;
+      done: string;
+      failed: string;
+      title: string;
+    };
     review: string;
     search: {
       label: string;
@@ -884,10 +954,71 @@ export const viewsTranslation: ViewsTranslation = {
       menu: 'Actions for question {{key}}',
       preview: 'Preview as an employee',
       retire: 'Retire',
-      retireUnavailable: 'Retiring questions is not available yet.',
+      retireNoActiveVersion: 'The question has no version in use.',
       unsupportedType: 'Questions of this type cannot be edited yet.',
     },
     addQuestion: 'Add question',
+    bulk: {
+      back: 'Back',
+      cancel: 'Cancel',
+      change: {
+        addTags: 'Tags to add: {{tags}}. The questions keep their current version.',
+        clearReview: 'The review mark will be removed.',
+        markForReview: 'The questions will be marked for review.',
+        markForReviewWithReason: 'The questions will be marked for review. Reason: {{reason}}',
+        removeTags: 'Tags to remove: {{tags}}. The questions keep their current version.',
+        retire:
+          'The versions in use will be retired and the questions will stop appearing in tests. Retired versions stay in the history.',
+        setCategory: 'New category: {{category}}. The questions keep their current version.',
+      },
+      clear: 'Clear selection',
+      done_one: '{{count}} question changed.',
+      done_other: '{{count}} questions changed.',
+      errors: {
+        applyFailed: 'The change could not be made. Try again.',
+        changedSincePreview:
+          'The questions changed since the preview. Check the new numbers and confirm again.',
+      },
+      next: 'Next',
+      operations: {
+        [BulkOperationDto.AddTags]: 'Add tag',
+        [BulkOperationDto.ClearReview]: 'Remove review mark',
+        [BulkOperationDto.MarkForReview]: 'Mark for review',
+        [BulkOperationDto.RemoveTags]: 'Remove tag',
+        [BulkOperationDto.Retire]: 'Retire',
+        [BulkOperationDto.SetCategory]: 'Change category',
+      },
+      params: {
+        category: 'Category',
+        categoryPlaceholder: 'Choose a category',
+        noTags: 'No matching tags',
+        reason: 'Reason (optional)',
+        reasonPlaceholder: 'What should the reviewer look at',
+        tags: 'Tags',
+      },
+      preview: {
+        affected_one: '{{count}} question will change',
+        affected_other: '{{count}} questions will change',
+        large: {
+          description:
+            'This changes {{count}} questions at once. Make sure the selection is the one you mean.',
+          label: 'Type {{count}} to confirm',
+          title: 'Large change',
+        },
+        more: 'and {{count}} more',
+        nothingToChange: 'Nothing will change. The selected questions are already in this state.',
+        sample: 'Example questions',
+        skipped_one: '{{count}} question stays as it is.',
+        skipped_other: '{{count}} questions stay as they are.',
+      },
+      selectAllMatching: 'Select all {{count}} matching the filters',
+      selected_one: '{{count}} question selected',
+      selected_other: '{{count}} questions selected',
+      selectedAllMatching_one: '{{count}} question matching the filters selected',
+      selectedAllMatching_other: 'All {{count}} questions matching the filters selected',
+      selectPage: 'Select questions on this page',
+      selectRow: 'Select question {{key}}',
+    },
     columns: {
       actions: 'Actions',
       category: 'Category',
@@ -929,6 +1060,15 @@ export const viewsTranslation: ViewsTranslation = {
     hasMedia: 'Question with media',
     languageStatus: '{{language}}: {{status}}',
     noSummary: 'No text yet',
+    retireDialog: {
+      cancel: 'Cancel',
+      confirm: 'Retire',
+      description:
+        'The question will stop appearing in tests. The retired version stays in its history.',
+      done: 'Question {{key}} was retired.',
+      failed: 'The question could not be retired. Try again.',
+      title: 'Retire question {{key}}?',
+    },
     review: 'Review',
     search: {
       label: 'Search question and answer text',

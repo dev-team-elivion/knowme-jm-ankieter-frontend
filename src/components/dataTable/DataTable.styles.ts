@@ -21,6 +21,9 @@ export const dataTableSx = (colors: ThemeColorSet) => ({
   '& .MuiTableRow-hover:hover .MuiTableCell-root': {
     backgroundColor: colors.bgCard2,
   },
+  '& .MuiTableRow-root.Mui-selected': {
+    backgroundColor: colors.accentBg,
+  },
   '& .MuiTableSortLabel-icon': {
     color: `${colors.accentInk} !important`,
   },

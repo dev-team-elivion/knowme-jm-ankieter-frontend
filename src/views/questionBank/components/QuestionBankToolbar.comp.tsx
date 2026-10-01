@@ -11,17 +11,17 @@ import { QuestionBankFilterPanel } from '@/views/questionBank/components/filters
 import { QuestionBankFilters } from '@/views/questionBank/model/QuestionBank.model.ts';
 import { QuestionSortKeyEnum } from '@/views/questionBank/model/QuestionSortKey.enum.ts';
 import { useActiveFilterChips } from '@/views/questionBank/util/useActiveFilterChips.util.ts';
-import { useQuestionBankFilterOptions } from '@/views/questionBank/util/useQuestionBankFilterOptions.util.ts';
+import { QuestionBankFilterOptions } from '@/views/questionBank/util/useQuestionBankFilterOptions.util.ts';
 
 type Props = {
   controller: DataTableController<QuestionSortKeyEnum, QuestionBankFilters>;
   extraActions?: ReactNode;
+  options: QuestionBankFilterOptions;
 };
 
-export const QuestionBankToolbar = ({ controller, extraActions }: Props): JSX.Element => {
+export const QuestionBankToolbar = ({ controller, extraActions, options }: Props): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionBank');
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const options = useQuestionBankFilterOptions();
   const chips = useActiveFilterChips(controller, options);
   const { filters } = controller.query;
   const panelFilterCount = chips.filter(chip => chip.id !== 'q').length;

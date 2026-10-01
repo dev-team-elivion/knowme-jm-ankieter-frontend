@@ -42,7 +42,7 @@ export const DataTableHead = <Row, SortKey extends string>({
               sx={{ width: column.width }}
             >
               {sortKey === undefined ? (
-                column.label
+                (column.header ?? column.label)
               ) : (
                 <TableSortLabel
                   active={isActive}

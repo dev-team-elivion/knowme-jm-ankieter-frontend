@@ -13,6 +13,7 @@ import {
   QUESTION_BANK_DEFAULTS,
   QUESTION_SORT_KEYS,
 } from '@/views/questionBank/model/questionBank.constants.ts';
+import { useQuestionBankFilterOptions } from '@/views/questionBank/util/useQuestionBankFilterOptions.util.ts';
 import { FocusReviewer } from '@/views/questionFocus/components/FocusReviewer.comp.tsx';
 import { FocusSortSelect } from '@/views/questionFocus/components/FocusSortSelect.comp.tsx';
 import {
@@ -26,6 +27,7 @@ export const QuestionFocusView = (): JSX.Element => {
   const theme = useTheme();
   const { t } = useTranslationWithPrefix('views.questionFocus');
   const [searchParams] = useSearchParams();
+  const options = useQuestionBankFilterOptions();
   const controller = useDataTableQuery({
     defaults: QUESTION_BANK_DEFAULTS,
     paramsResetOnChange: RESET_ON_FILTER_CHANGE,
@@ -52,6 +54,7 @@ export const QuestionFocusView = (): JSX.Element => {
               sortDirection={controller.query.sortDirection}
             />
           }
+          options={options}
         />
       </Box>
       <Box sx={revealSx(2)}>

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 export type DataTableColumn<Row, SortKey extends string> = {
   align?: 'center' | 'left' | 'right';
+  header?: ReactNode;
   id: string;
   label: string;
   render: (row: Row) => ReactNode;

@@ -2,7 +2,7 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
 import { JSX, MouseEvent, useState } from 'react';
 
-import { QuestionListItemDto } from '@/api/generated';
+import { QuestionListItemDto, VersionStatusDto } from '@/api/generated';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 
 export type QuestionRowActionHandlers = {
@@ -10,6 +10,7 @@ export type QuestionRowActionHandlers = {
   onEdit: (question: QuestionListItemDto) => void;
   onHistory: (question: QuestionListItemDto) => void;
   onPreview: (question: QuestionListItemDto) => void;
+  onRetire: (question: QuestionListItemDto) => void;
 };
 
 type Props = {
@@ -23,10 +24,12 @@ export const QuestionRowActions = ({
   onEdit,
   onHistory,
   onPreview,
+  onRetire,
   question,
 }: Props): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionBank.actions');
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const canRetire = question.status === VersionStatusDto.Active;
 
   const handleOpen = (event: MouseEvent<HTMLElement>): void => {
     event.stopPropagation();
@@ -64,8 +67,10 @@ export const QuestionRowActions = ({
         </MenuItem>
         <MenuItem onClick={runAndClose(onEdit)}>{t('edit')}</MenuItem>
         <MenuItem onClick={runAndClose(onHistory)}>{t('history')}</MenuItem>
-        <MenuItem disabled>
-          <ListItemText secondary={t('retireUnavailable')}>{t('retire')}</ListItemText>
+        <MenuItem disabled={!canRetire} onClick={runAndClose(onRetire)}>
+          <ListItemText secondary={canRetire ? undefined : t('retireNoActiveVersion')}>
+            {t('retire')}
+          </ListItemText>
         </MenuItem>
       </Menu>
     </>

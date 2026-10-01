@@ -1,4 +1,5 @@
 import {
+  QuestionFilterDto,
   QuestionPurposeDto,
   QuestionSourceDto,
   QuestionTypeDto,
@@ -64,5 +65,24 @@ export const toQuestionListParams = ({
     status: pickEnum(Object.values(VersionStatusDto), filters.status),
     tagId: tagIds.length > 0 ? tagIds : undefined,
     type: pickEnum(Object.values(QuestionTypeDto), filters.type),
+  };
+};
+
+export const toQuestionFilter = (query: QuestionBankQuery): QuestionFilterDto => {
+  const params = toQuestionListParams(query);
+  return {
+    author: params.author,
+    categoryId: params.categoryId,
+    changedFrom: params.changedFrom,
+    changedTo: params.changedTo,
+    locale: params.locale,
+    positionCode: params.positionCode,
+    purpose: params.purpose,
+    q: params.q,
+    source: params.source,
+    status: params.status,
+    tagIds: params.tagId,
+    translationStatus: params.translationStatus,
+    type: params.type,
   };
 };
