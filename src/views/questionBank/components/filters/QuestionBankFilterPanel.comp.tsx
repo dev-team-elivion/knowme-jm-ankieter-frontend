@@ -50,6 +50,7 @@ export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Ele
         <FilterField key={filter.key} label={filter.label}>
           <DataTableFilterSelect
             allLabel={t('all')}
+            fullWidth
             label={filter.label}
             onChange={value => controller.setFilter(filter.key, value)}
             options={filter.options}
@@ -85,7 +86,7 @@ export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Ele
           value={filters.changedTo}
         />
       </FilterField>
-      <Box sx={{ gridColumn: '1 / -1' }}>
+      <Box sx={{ gridColumn: 'span 3' }}>
         <FilterField label={t('tags')}>
           <TagsFilterField
             onChange={tagIds => controller.setFilter('tagIds', joinTagIds(tagIds))}

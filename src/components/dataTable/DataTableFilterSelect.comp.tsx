@@ -5,6 +5,7 @@ import { FilterOption } from '@/components/dataTable/model/DataTable.model.ts';
 
 type Props = {
   allLabel: string;
+  fullWidth?: boolean;
   label: string;
   onChange: (value: string) => void;
   options: FilterOption[];
@@ -13,13 +14,14 @@ type Props = {
 
 export const DataTableFilterSelect = ({
   allLabel,
+  fullWidth = false,
   label,
   onChange,
   options,
   value,
 }: Props): JSX.Element => (
   <TextField
-    fullWidth
+    fullWidth={fullWidth}
     onChange={event => onChange(event.target.value)}
     select
     slotProps={{ htmlInput: { 'aria-label': label }, select: { displayEmpty: true } }}

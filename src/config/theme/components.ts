@@ -60,10 +60,14 @@ export const components: Components<ThemeWithoutComponents> = {
   MuiAutocomplete: {
     styleOverrides: {
       inputRoot: ({ theme }) => ({
+        '& .MuiAutocomplete-input': {
+          minHeight: 0,
+          padding: `${theme.spacing(0.25, 0.5)} !important`,
+        },
         gap: theme.spacing(0.5),
         height: 'auto',
         minHeight: FIELD_HEIGHT,
-        padding: theme.spacing(0.25, 1),
+        padding: `${theme.spacing(0.25, 1)} !important`,
       }),
       listbox: {
         padding: 4,
