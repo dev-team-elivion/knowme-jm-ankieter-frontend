@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { JSX } from 'react';
+import { JSX, ReactNode } from 'react';
 
 import { QuestionDetailsDto, QuestionVersionDto, VersionStatusDto } from '@/api/generated';
 import { hasHttpStatus } from '@/api/guards/isAxiosError.guard.ts';
@@ -12,11 +12,12 @@ import { QuestionPageViewEnum } from '@/views/questionForm/model/QuestionPageVie
 import { useActivateQuestionVersion } from '@/views/questionForm/util/useActivateQuestionVersion.util.ts';
 
 type Props = {
+  extraActions?: ReactNode;
   question: QuestionDetailsDto;
   version: QuestionVersionDto | undefined;
 };
 
-export const QuestionEditHeader = ({ question, version }: Props): JSX.Element => {
+export const QuestionEditHeader = ({ extraActions, question, version }: Props): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionForm');
   const { notifyError, notifySuccess } = useNotifications();
   const { activateVersion, isPending } = useActivateQuestionVersion();
@@ -37,17 +38,20 @@ export const QuestionEditHeader = ({ question, version }: Props): JSX.Element =>
   return (
     <QuestionPageHeader
       actions={
-        version?.status === VersionStatusDto.Draft && (
-          <Button
-            disabled={isPending}
-            loading={isPending}
-            onClick={() => void handleActivate(version.id)}
-            sx={pressableSx}
-            variant="outlined"
-          >
-            {t('edit.activateVersion')}
-          </Button>
-        )
+        <>
+          {extraActions}
+          {version?.status === VersionStatusDto.Draft && (
+            <Button
+              disabled={isPending}
+              loading={isPending}
+              onClick={() => void handleActivate(version.id)}
+              sx={pressableSx}
+              variant="outlined"
+            >
+              {t('edit.activateVersion')}
+            </Button>
+          )}
+        </>
       }
       activeView={QuestionPageViewEnum.EDIT}
       businessKey={question.businessKey}

@@ -1,6 +1,6 @@
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import { Box, Button, Collapse } from '@mui/material';
-import { JSX, useState } from 'react';
+import { JSX, ReactNode, useState } from 'react';
 
 import { DataTableSearchField } from '@/components/dataTable/DataTableSearchField.comp.tsx';
 import { DataTableToolbar } from '@/components/dataTable/DataTableToolbar.comp.tsx';
@@ -15,9 +15,10 @@ import { useQuestionBankFilterOptions } from '@/views/questionBank/util/useQuest
 
 type Props = {
   controller: DataTableController<QuestionSortKeyEnum, QuestionBankFilters>;
+  extraActions?: ReactNode;
 };
 
-export const QuestionBankToolbar = ({ controller }: Props): JSX.Element => {
+export const QuestionBankToolbar = ({ controller, extraActions }: Props): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionBank');
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const options = useQuestionBankFilterOptions();
@@ -29,18 +30,21 @@ export const QuestionBankToolbar = ({ controller }: Props): JSX.Element => {
     <Box>
       <DataTableToolbar
         actions={
-          <Button
-            aria-expanded={isPanelOpen}
-            onClick={() => setIsPanelOpen(isOpen => !isOpen)}
-            startIcon={<TuneRoundedIcon />}
-            variant="outlined"
-          >
-            {isPanelOpen
-              ? t('filters.hide')
-              : panelFilterCount > 0
-                ? t('filters.showWithCount', { count: panelFilterCount })
-                : t('filters.show')}
-          </Button>
+          <>
+            {extraActions}
+            <Button
+              aria-expanded={isPanelOpen}
+              onClick={() => setIsPanelOpen(isOpen => !isOpen)}
+              startIcon={<TuneRoundedIcon />}
+              variant="outlined"
+            >
+              {isPanelOpen
+                ? t('filters.hide')
+                : panelFilterCount > 0
+                  ? t('filters.showWithCount', { count: panelFilterCount })
+                  : t('filters.show')}
+            </Button>
+          </>
         }
       >
         <DataTableSearchField

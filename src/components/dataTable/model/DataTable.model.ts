@@ -16,6 +16,7 @@ export type DataTableController<SortKey extends string, Filters extends DataTabl
   setFilter: (key: keyof Filters & string, value: string) => void;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
+  setSort: (sortBy: SortKey, sortDirection: SortDirection) => void;
   toggleSort: (sortKey: SortKey) => void;
 };
 

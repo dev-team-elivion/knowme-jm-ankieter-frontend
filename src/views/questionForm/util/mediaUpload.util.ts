@@ -1,13 +1,9 @@
 import { MediaKindDto, MediaRejectionReasonDto } from '@/api/generated';
 import { hasHttpStatus, isAxiosError } from '@/api/guards/isAxiosError.guard.ts';
 import { HttpStatusEnum } from '@/api/model/HttpStatus.enum.ts';
-import { CONFIG } from '@/config/config.ts';
 import { MediaUploadIssue } from '@/views/questionForm/model/MediaUploadIssue.model.ts';
 import { MEDIA_SIZE_LIMIT_BYTES } from '@/views/questionForm/model/QuestionMedia.constants.ts';
 import { toMediaRejection } from '@/views/questionForm/util/mediaRejection.guard.ts';
-
-export const buildMediaUrl = (assetId: string): string =>
-  `${CONFIG.HOST}/api/v1/media/${encodeURIComponent(assetId)}`;
 
 const guessMediaKind = (file: File): MediaKindDto | null => {
   if (file.type.startsWith('image/')) {

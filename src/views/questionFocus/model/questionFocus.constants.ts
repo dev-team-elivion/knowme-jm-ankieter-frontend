@@ -1,0 +1,4 @@
+export const FOCUS_STAGE_MIN_HEIGHT = 420;
+export const FOCUS_SWIPE_THRESHOLD = 80;
+export const FOCUS_SLIDE_OFFSET = 56;
+export const FOCUS_LOAD_MORE_THRESHOLD = 20;

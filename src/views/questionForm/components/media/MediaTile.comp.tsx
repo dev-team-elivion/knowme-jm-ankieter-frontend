@@ -3,9 +3,9 @@ import { Box, IconButton, Stack, Tooltip, Typography, useTheme } from '@mui/mate
 import { JSX } from 'react';
 
 import { MediaAssetDto } from '@/api/generated';
+import { MediaPreview } from '@/components/media/MediaPreview.comp.tsx';
 import { innerPanelSx, microLabelSx, numericSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-import { MediaPreview } from '@/views/questionForm/components/media/MediaPreview.comp.tsx';
 import { useMediaFormatters } from '@/views/questionForm/util/useMediaFormatters.util.ts';
 
 const MIN_TILE_WIDTH = 220;

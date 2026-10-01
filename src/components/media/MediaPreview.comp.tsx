@@ -2,8 +2,8 @@ import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { JSX, useState } from 'react';
 
 import { MediaAssetDto, MediaKindDto } from '@/api/generated';
+import { buildMediaUrl } from '@/components/media/util/mediaUrl.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
-import { buildMediaUrl } from '@/views/questionForm/util/mediaUpload.util.ts';
 
 type Props = {
   asset: MediaAssetDto;
@@ -14,7 +14,7 @@ const MEDIA_FILL_SX = { display: 'block', height: '100%', objectFit: 'contain', 
 
 export const MediaPreview = ({ asset, maxHeight }: Props): JSX.Element => {
   const theme = useTheme();
-  const { t } = useTranslationWithPrefix('views.questionForm.media.preview');
+  const { t } = useTranslationWithPrefix('components.mediaPreview');
   const [attempt, setAttempt] = useState(0);
   const [hasFailed, setHasFailed] = useState(false);
   const ratio = asset.height > 0 ? asset.width / asset.height : 16 / 9;

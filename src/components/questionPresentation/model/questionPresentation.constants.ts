@@ -1,0 +1,2 @@
+export const QUESTION_MEDIA_MAX_HEIGHT = 360;
+export const ANSWER_MEDIA_MAX_HEIGHT = 160;

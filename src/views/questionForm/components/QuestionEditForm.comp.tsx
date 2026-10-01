@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Stack } from '@mui/material';
+import { Collapse, Stack } from '@mui/material';
 import { JSX, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -7,10 +7,12 @@ import { QuestionDetailsDto, VersionStatusDto } from '@/api/generated';
 import { FormProviderKnowMe } from '@/components/form/FormProviderKnowMe.comp.tsx';
 import { InfoCallout } from '@/components/state/InfoCallout.comp.tsx';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
+import { FormPreviewToggle } from '@/views/questionForm/components/FormPreviewToggle.comp.tsx';
 import { NewVersionDialog } from '@/views/questionForm/components/NewVersionDialog.comp.tsx';
 import { QuestionEditActions } from '@/views/questionForm/components/QuestionEditActions.comp.tsx';
 import { QuestionEditHeader } from '@/views/questionForm/components/QuestionEditHeader.comp.tsx';
 import { QuestionFormActionBar } from '@/views/questionForm/components/QuestionFormActionBar.comp.tsx';
+import { QuestionFormPreview } from '@/views/questionForm/components/QuestionFormPreview.comp.tsx';
 import { QuestionFormSections } from '@/views/questionForm/components/QuestionFormSections.comp.tsx';
 import { QuestionMediaProvider } from '@/views/questionForm/context/QuestionMedia.provider.tsx';
 import {
@@ -32,6 +34,7 @@ type Props = {
 export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionForm.edit');
   const [isNewVersionDialogOpen, setIsNewVersionDialogOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const editableVersion = findEditableVersion(question);
   const baseVersion = editableVersion ?? question.versions.at(0);
   const values = useMemo(
@@ -62,28 +65,40 @@ export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
 
   return (
     <Stack spacing={3}>
-      <QuestionEditHeader question={question} version={baseVersion} />
+      <QuestionEditHeader
+        extraActions={
+          <FormPreviewToggle
+            isOpen={isPreviewOpen}
+            onToggle={() => setIsPreviewOpen(isOpen => !isOpen)}
+          />
+        }
+        question={question}
+        version={baseVersion}
+      />
       {!canFixTypo && (
         <InfoCallout title={t('noEditableVersion.title')} tone="warning">
           {t('noEditableVersion.description')}
         </InfoCallout>
       )}
       <FormProviderKnowMe {...form} validation={validation}>
-        <Stack component="form" noValidate onSubmit={event => event.preventDefault()} spacing={3}>
-          <QuestionMediaProvider questionId={question.id} version={baseVersion}>
+        <QuestionMediaProvider questionId={question.id} version={baseVersion}>
+          <Collapse in={isPreviewOpen} unmountOnExit>
+            <QuestionFormPreview />
+          </Collapse>
+          <Stack component="form" noValidate onSubmit={event => event.preventDefault()} spacing={3}>
             <QuestionFormSections currentCategory={question.category} isEditing />
-          </QuestionMediaProvider>
-          <QuestionFormActionBar>
-            <QuestionEditActions
-              canFixTypo={canFixTypo}
-              isDirty={form.formState.isDirty}
-              isDraft={isDraft}
-              isSaving={isSaving || form.formState.isSubmitting}
-              onFixTypo={() => void form.handleSubmit(fixTypo)()}
-              onNewVersion={() => void form.handleSubmit(() => setIsNewVersionDialogOpen(true))()}
-            />
-          </QuestionFormActionBar>
-        </Stack>
+            <QuestionFormActionBar>
+              <QuestionEditActions
+                canFixTypo={canFixTypo}
+                isDirty={form.formState.isDirty}
+                isDraft={isDraft}
+                isSaving={isSaving || form.formState.isSubmitting}
+                onFixTypo={() => void form.handleSubmit(fixTypo)()}
+                onNewVersion={() => void form.handleSubmit(() => setIsNewVersionDialogOpen(true))()}
+              />
+            </QuestionFormActionBar>
+          </Stack>
+        </QuestionMediaProvider>
       </FormProviderKnowMe>
       <NewVersionDialog
         isOpen={isNewVersionDialogOpen}

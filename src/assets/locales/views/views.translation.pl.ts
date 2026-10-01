@@ -12,6 +12,7 @@ import {
   DictionarySectionEnum,
   DictionaryStatusFilterEnum,
 } from '@/views/dictionaryManagement/model/DictionaryManagement.enum.ts';
+import { QuestionSortKeyEnum } from '@/views/questionBank/model/QuestionSortKey.enum.ts';
 import { QuestionPageViewEnum } from '@/views/questionForm/model/QuestionPageView.enum.ts';
 
 export const viewsTranslation: ViewsTranslation = {
@@ -338,21 +339,47 @@ export const viewsTranslation: ViewsTranslation = {
     hasMedia: 'Pytanie z materiałem',
     languageStatus: '{{language}}: {{status}}',
     noSummary: 'Brak treści',
-    preview: {
-      answerPlaceholder: 'Wpisz odpowiedź',
-      close: 'Zamknij',
-      description: 'Tak pytanie zobaczy pracownik.',
-      fallbackLanguage:
-        'Pytanie nie ma jeszcze treści w wybranym języku, dlatego widać język źródłowy.',
-      noActiveVersion: 'Pytanie nie ma jeszcze wersji do pokazania.',
-      title: 'Podgląd pytania',
-    },
+    review: 'Przegląd',
     search: {
       label: 'Szukaj w treści pytań i odpowiedzi',
       language: 'Język',
     },
     tableLabel: 'Pytania',
     title: 'Baza pytań',
+  },
+  questionFocus: {
+    backToList: 'Wróć do listy',
+    description:
+      'Jedno pytanie na ekranie, tak jak zobaczy je pracownik. Strzałki przełączają pytania, Esc wraca do listy.',
+    empty: {
+      clearFilters: 'Wyczyść filtry',
+      description: 'Dodaj pytanie, a pojawi się tutaj do przeglądu.',
+      noMatchDescription: 'Zmień albo wyczyść filtry, aby zobaczyć więcej pytań.',
+      noMatchTitle: 'Żadne pytanie nie pasuje do filtrów',
+      title: 'Nie ma pytań do przeglądu',
+    },
+    navigation: {
+      counter: '{{position}} z {{total}}',
+      edit: 'Edytuj',
+      next: 'Następne',
+      previous: 'Poprzednie',
+    },
+    notFound: {
+      description: 'Pytanie mogło zostać usunięte. Przejdź do następnego.',
+      title: 'To pytanie jest już niedostępne',
+    },
+    sort: {
+      label: 'Kolejność',
+      options: {
+        [QuestionSortKeyEnum.BUSINESS_KEY]: { asc: 'Klucz od A do Z', desc: 'Klucz od Z do A' },
+        [QuestionSortKeyEnum.UPDATED_AT]: {
+          asc: 'Najdawniej zmienione',
+          desc: 'Ostatnio zmienione',
+        },
+        [QuestionSortKeyEnum.VERSION_NO]: { asc: 'Najniższa wersja', desc: 'Najwyższa wersja' },
+      },
+    },
+    title: 'Przegląd pytań',
   },
   questionForm: {
     actions: {
@@ -389,6 +416,7 @@ export const viewsTranslation: ViewsTranslation = {
       title: 'Odpowiedzi',
     },
     backToBank: 'Wróć do bazy pytań',
+    backToFocus: 'Wróć do przeglądu',
     classification: {
       addTag: 'Dodaj tag „{{label}}”',
       businessKey: 'Klucz pytania',
@@ -465,6 +493,13 @@ export const viewsTranslation: ViewsTranslation = {
       removeDisabled: 'Pytanie potrzebuje co najmniej jednej oczekiwanej odpowiedzi.',
       title: 'Oczekiwane odpowiedzi',
     },
+    formPreview: {
+      description:
+        'Tak pytanie zobaczy pracownik, razem z niezapisanymi zmianami. Odpowiedzi w podglądzie nie są zapisywane.',
+      hide: 'Ukryj podgląd',
+      show: 'Podgląd',
+      title: 'Podgląd',
+    },
     media: {
       actions: {
         remove: 'Usuń {{name}}',
@@ -527,11 +562,6 @@ export const viewsTranslation: ViewsTranslation = {
       notifications: {
         removed: 'Usunięto materiał.',
         uploaded: 'Dodano materiał.',
-      },
-      preview: {
-        imageAlt: 'Materiał: {{name}}',
-        loadFailed: 'Nie udało się wczytać materiału.',
-        retry: 'Wczytaj ponownie',
       },
       readOnly: {
         description:

@@ -18,6 +18,7 @@ import {
   buildQuestionEditPath,
   buildQuestionHistoryPath,
 } from '@/views/questionForm/util/questionRoutes.util.ts';
+import { useQuestionReturnTo } from '@/views/questionForm/util/useQuestionReturnTo.util.ts';
 
 type HeaderVersion = {
   status: VersionStatusDto;
@@ -44,11 +45,12 @@ export const QuestionPageHeader = ({
   const navigate = useNavigate();
   const { t } = useTranslationWithPrefix('views.questionForm.page');
   const { t: tDictionary } = useTranslationWithPrefix('views.dictionaries');
+  const { returnTo } = useQuestionReturnTo();
 
   const toPath = (view: QuestionPageViewEnum): string =>
     view === QuestionPageViewEnum.EDIT
-      ? buildQuestionEditPath(questionId)
-      : buildQuestionHistoryPath(questionId);
+      ? buildQuestionEditPath(questionId, returnTo)
+      : buildQuestionHistoryPath(questionId, returnTo);
 
   return (
     <Box sx={{ ...revealSx(0), pb: 1 }}>

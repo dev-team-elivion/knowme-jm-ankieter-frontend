@@ -1,18 +1,18 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
+import ViewCarouselOutlinedIcon from '@mui/icons-material/ViewCarouselOutlined';
 import { Box, Button, Stack } from '@mui/material';
-import { JSX, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { JSX, useMemo } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { DataTable } from '@/components/dataTable/DataTable.comp.tsx';
 import { useDataTableQuery } from '@/components/dataTable/util/useDataTableQuery.util.ts';
 import { PageHeader } from '@/components/page/PageHeader.comp.tsx';
 import { EmptyState } from '@/components/state/EmptyState.comp.tsx';
-import { revealSx } from '@/config/theme/uiTokens.ts';
+import { pressableSx, revealSx } from '@/config/theme/uiTokens.ts';
 import { RouteEnum } from '@/models/route/Route.enum.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { QuestionBankToolbar } from '@/views/questionBank/components/QuestionBankToolbar.comp.tsx';
-import { QuestionPreviewDialog } from '@/views/questionBank/components/QuestionPreviewDialog.comp.tsx';
 import { QuestionRowActionHandlers } from '@/views/questionBank/components/QuestionRowActions.comp.tsx';
 import {
   QUESTION_BANK_DEFAULTS,
@@ -21,15 +21,22 @@ import {
 import { useGetQuestionList } from '@/views/questionBank/util/useGetQuestionList.util.ts';
 import { useQuestionBankColumns } from '@/views/questionBank/util/useQuestionBankColumns.util.tsx';
 import {
+  buildQuestionCreatePath,
   buildQuestionDuplicatePath,
   buildQuestionEditPath,
+  buildQuestionFocusEntryPath,
   buildQuestionHistoryPath,
 } from '@/views/questionForm/util/questionRoutes.util.ts';
+
+const createFocusSessionId = (): string => Date.now().toString(36);
 
 export const QuestionBankView = (): JSX.Element => {
   const { t } = useTranslationWithPrefix('views.questionBank');
   const navigate = useNavigate();
-  const [previewQuestionId, setPreviewQuestionId] = useState<null | string>(null);
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const returnTo = location.search ? `${RouteEnum.QUESTION_BANK}${location.search}` : undefined;
+  const createPath = buildQuestionCreatePath(returnTo);
   const controller = useDataTableQuery({
     defaults: QUESTION_BANK_DEFAULTS,
     sortKeys: QUESTION_SORT_KEYS,
@@ -38,12 +45,15 @@ export const QuestionBankView = (): JSX.Element => {
 
   const handlers = useMemo<QuestionRowActionHandlers>(
     () => ({
-      onDuplicate: question => void navigate(buildQuestionDuplicatePath(question.id)),
-      onEdit: question => void navigate(buildQuestionEditPath(question.id)),
-      onHistory: question => void navigate(buildQuestionHistoryPath(question.id)),
-      onPreview: question => setPreviewQuestionId(question.id),
+      onDuplicate: question => void navigate(buildQuestionDuplicatePath(question.id, returnTo)),
+      onEdit: question => void navigate(buildQuestionEditPath(question.id, returnTo)),
+      onHistory: question => void navigate(buildQuestionHistoryPath(question.id, returnTo)),
+      onPreview: question =>
+        void navigate(
+          buildQuestionFocusEntryPath(searchParams, createFocusSessionId(), question.id),
+        ),
     }),
-    [navigate],
+    [navigate, returnTo, searchParams],
   );
   const columns = useQuestionBankColumns(handlers);
 
@@ -52,9 +62,21 @@ export const QuestionBankView = (): JSX.Element => {
       <Box sx={{ ...revealSx(0), pb: 1 }}>
         <PageHeader
           actions={
-            <Button component={Link} startIcon={<AddRoundedIcon />} to={RouteEnum.QUESTION_CREATE}>
-              {t('addQuestion')}
-            </Button>
+            <>
+              <Button
+                onClick={() =>
+                  void navigate(buildQuestionFocusEntryPath(searchParams, createFocusSessionId()))
+                }
+                startIcon={<ViewCarouselOutlinedIcon />}
+                sx={pressableSx}
+                variant="outlined"
+              >
+                {t('review')}
+              </Button>
+              <Button component={Link} startIcon={<AddRoundedIcon />} to={createPath}>
+                {t('addQuestion')}
+              </Button>
+            </>
           }
           description={t('description')}
           icon={LibraryBooksOutlinedIcon}
@@ -70,22 +92,18 @@ export const QuestionBankView = (): JSX.Element => {
             <EmptyState
               action={{
                 label: t('addQuestion'),
-                onClick: () => void navigate(RouteEnum.QUESTION_CREATE),
+                onClick: () => void navigate(createPath),
               }}
               description={t('empty.description')}
               title={t('empty.title')}
             />
           }
           getRowKey={row => row.id}
-          onRowClick={row => void navigate(buildQuestionEditPath(row.id))}
+          onRowClick={row => void navigate(buildQuestionEditPath(row.id, returnTo))}
           source={source}
           toolbar={<QuestionBankToolbar controller={controller} />}
         />
       </Box>
-      <QuestionPreviewDialog
-        onClose={() => setPreviewQuestionId(null)}
-        questionId={previewQuestionId}
-      />
     </Stack>
   );
 };

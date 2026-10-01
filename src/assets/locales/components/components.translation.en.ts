@@ -1,3 +1,5 @@
+import { VersionStatusDto } from '@/api/generated';
+
 export type ComponentsTranslation = {
   dataTable: {
     displayedRows: string;
@@ -30,8 +32,54 @@ export type ComponentsTranslation = {
   loadingState: {
     label: string;
   };
+  mediaPreview: {
+    imageAlt: string;
+    loadFailed: string;
+    retry: string;
+  };
   notifications: {
     close: string;
+  };
+  questionPresentation: {
+    answerKey: string;
+    answerMediaLabel: string;
+    answerPlaceholder: string;
+    answerPoints: string;
+    answersLabel: string;
+    correct: string;
+    emptyAnswer: string;
+    emptyBody: string;
+    examiner: {
+      answerKey: string;
+      comment: string;
+      commentRequired: string;
+      fail: string;
+      pass: string;
+      result: string;
+      scale: string;
+      topics: string;
+      topicsToPick_few?: string;
+      topicsToPick_many?: string;
+      topicsToPick_one: string;
+      topicsToPick_other?: string;
+    };
+    expectedAnswers: string;
+    hiddenMarker: Record<Exclude<VersionStatusDto, typeof VersionStatusDto.Active>, string>;
+    missingTranslation: string;
+    noVersion: string;
+    openPlaceholder: string;
+    ordering: {
+      correctPosition: string;
+      hint: string;
+      moveDown: string;
+      moveUp: string;
+    };
+    questionMediaLabel: string;
+    showCorrect: string;
+    solution: {
+      explanation: string;
+      maxPoints: string;
+    };
   };
   searchField: {
     clear: string;
@@ -75,8 +123,56 @@ export const componentsTranslation: ComponentsTranslation = {
   loadingState: {
     label: 'Loading',
   },
+  mediaPreview: {
+    imageAlt: 'Media: {{name}}',
+    loadFailed: 'Could not load the media.',
+    retry: 'Load again',
+  },
   notifications: {
     close: 'Close notification',
+  },
+  questionPresentation: {
+    answerKey: 'Answer key',
+    answerMediaLabel: 'Answer media',
+    answerPlaceholder: 'Type your answer',
+    answerPoints: 'Points: {{points}}',
+    answersLabel: 'Answers',
+    correct: 'Correct',
+    emptyAnswer: 'Empty answer',
+    emptyBody: 'The question text will appear here.',
+    examiner: {
+      answerKey: 'Key for the examiner',
+      comment: 'Examiner comment',
+      commentRequired: 'Examiner comment (required)',
+      fail: 'Failed',
+      pass: 'Passed',
+      result: 'Result',
+      scale: 'Score from 0 to {{max}}',
+      topics: 'Topics',
+      topicsToPick_one: 'The examiner picks {{count}} topic.',
+      topicsToPick_other: 'The examiner picks {{count}} topics.',
+    },
+    expectedAnswers: 'Expected answer',
+    hiddenMarker: {
+      [VersionStatusDto.Draft]: 'Draft only, employees do not see it',
+      [VersionStatusDto.Retired]: 'Retired, employees do not see it',
+    },
+    missingTranslation:
+      'This question has no approved text in this language, so it will not appear in a test in this language.',
+    noVersion: 'The question has no version to show yet.',
+    openPlaceholder: 'Write your answer',
+    ordering: {
+      correctPosition: 'Correct place: {{position}}',
+      hint: 'Drag the answers or use the arrows to put them in order.',
+      moveDown: 'Move down: {{answer}}',
+      moveUp: 'Move up: {{answer}}',
+    },
+    questionMediaLabel: 'Question media',
+    showCorrect: 'Show correct answers',
+    solution: {
+      explanation: 'Explanation',
+      maxPoints: 'Points for the question',
+    },
   },
   searchField: {
     clear: 'Clear search',

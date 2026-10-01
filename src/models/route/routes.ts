@@ -40,6 +40,12 @@ const QuestionEditView = lazy(() =>
   })),
 );
 
+const QuestionFocusView = lazy(() =>
+  import('@/views/questionFocus/QuestionFocus.view.tsx').then(module => ({
+    default: module.QuestionFocusView,
+  })),
+);
+
 const QuestionHistoryView = lazy(() =>
   import('@/views/questionHistory/QuestionHistory.view.tsx').then(module => ({
     default: module.QuestionHistoryView,
@@ -54,6 +60,7 @@ const MODULE_ROUTES: RouteModel[] = [
   { component: QuestionBankView, path: RouteEnum.QUESTION_BANK },
   { component: QuestionCreateView, path: RouteEnum.QUESTION_CREATE },
   { component: QuestionEditView, path: RouteEnum.QUESTION_EDIT },
+  { component: QuestionFocusView, path: RouteEnum.QUESTION_FOCUS },
   { component: QuestionHistoryView, path: RouteEnum.QUESTION_HISTORY },
   { component: ComingSoonView, path: RouteEnum.SETTINGS },
   { component: ComingSoonView, path: RouteEnum.SURVEYS },

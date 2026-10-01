@@ -12,6 +12,8 @@ const PARAM = {
   sort: 'sort',
 } as const;
 
+export const PAGINATION_PARAMS: readonly string[] = [PARAM.page, PARAM.size];
+
 type ParseOptions<SortKey extends string, Filters extends DataTableFilters> = {
   defaults: DataTableQuery<SortKey, Filters>;
   prefix: string;
@@ -87,3 +89,6 @@ export const writeDataTableQuery = <SortKey extends string, Filters extends Data
     return next;
   }, new URLSearchParams(current));
 };
+
+export const withoutParams = (params: URLSearchParams, keys: readonly string[]): URLSearchParams =>
+  new URLSearchParams([...params].filter(([key]) => !keys.includes(key)));

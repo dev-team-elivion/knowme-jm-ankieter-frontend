@@ -7,10 +7,12 @@ import {
   TranslationStatusDto,
   VersionStatusDto,
 } from '@/api/generated';
+import { SortDirection } from '@/components/dataTable/model/DataTable.model.ts';
 import {
   DictionarySectionEnum,
   DictionaryStatusFilterEnum,
 } from '@/views/dictionaryManagement/model/DictionaryManagement.enum.ts';
+import { QuestionSortKeyEnum } from '@/views/questionBank/model/QuestionSortKey.enum.ts';
 import { QuestionPageViewEnum } from '@/views/questionForm/model/QuestionPageView.enum.ts';
 import { HistoryField } from '@/views/questionHistory/model/HistoryField.model.ts';
 export type ViewsTranslation = {
@@ -275,19 +277,38 @@ export type ViewsTranslation = {
     hasMedia: string;
     languageStatus: string;
     noSummary: string;
-    preview: {
-      answerPlaceholder: string;
-      close: string;
-      description: string;
-      fallbackLanguage: string;
-      noActiveVersion: string;
-      title: string;
-    };
+    review: string;
     search: {
       label: string;
       language: string;
     };
     tableLabel: string;
+    title: string;
+  };
+  questionFocus: {
+    backToList: string;
+    description: string;
+    empty: {
+      clearFilters: string;
+      description: string;
+      noMatchDescription: string;
+      noMatchTitle: string;
+      title: string;
+    };
+    navigation: {
+      counter: string;
+      edit: string;
+      next: string;
+      previous: string;
+    };
+    notFound: {
+      description: string;
+      title: string;
+    };
+    sort: {
+      label: string;
+      options: Record<QuestionSortKeyEnum, Record<SortDirection, string>>;
+    };
     title: string;
   };
   questionForm: {
@@ -324,6 +345,7 @@ export type ViewsTranslation = {
       title: string;
     };
     backToBank: string;
+    backToFocus: string;
     classification: {
       addTag: string;
       businessKey: string;
@@ -398,6 +420,12 @@ export type ViewsTranslation = {
       removeDisabled: string;
       title: string;
     };
+    formPreview: {
+      description: string;
+      hide: string;
+      show: string;
+      title: string;
+    };
     media: {
       actions: {
         remove: string;
@@ -448,11 +476,6 @@ export type ViewsTranslation = {
       notifications: {
         removed: string;
         uploaded: string;
-      };
-      preview: {
-        imageAlt: string;
-        loadFailed: string;
-        retry: string;
       };
       readOnly: {
         description: string;
@@ -906,21 +929,47 @@ export const viewsTranslation: ViewsTranslation = {
     hasMedia: 'Question with media',
     languageStatus: '{{language}}: {{status}}',
     noSummary: 'No text yet',
-    preview: {
-      answerPlaceholder: 'Type your answer',
-      close: 'Close',
-      description: 'This is how an employee sees the question.',
-      fallbackLanguage:
-        'The question has no text in the chosen language yet, so the source language is shown.',
-      noActiveVersion: 'The question has no version to show yet.',
-      title: 'Question preview',
-    },
+    review: 'Review',
     search: {
       label: 'Search question and answer text',
       language: 'Language',
     },
     tableLabel: 'Questions',
     title: 'Question bank',
+  },
+  questionFocus: {
+    backToList: 'Back to the list',
+    description:
+      'One question at a time, as an employee sees it. Use the arrow keys to move and Esc to go back to the list.',
+    empty: {
+      clearFilters: 'Clear filters',
+      description: 'Add a question and you can review it here.',
+      noMatchDescription: 'Change or clear the filters to see more questions.',
+      noMatchTitle: 'No question matches the filters',
+      title: 'There are no questions to review',
+    },
+    navigation: {
+      counter: '{{position}} of {{total}}',
+      edit: 'Edit',
+      next: 'Next',
+      previous: 'Previous',
+    },
+    notFound: {
+      description: 'The question may have been removed. Move to the next one.',
+      title: 'This question is no longer available',
+    },
+    sort: {
+      label: 'Order',
+      options: {
+        [QuestionSortKeyEnum.BUSINESS_KEY]: { asc: 'Key A to Z', desc: 'Key Z to A' },
+        [QuestionSortKeyEnum.UPDATED_AT]: {
+          asc: 'Changed earliest',
+          desc: 'Changed most recently',
+        },
+        [QuestionSortKeyEnum.VERSION_NO]: { asc: 'Lowest version', desc: 'Highest version' },
+      },
+    },
+    title: 'Question review',
   },
   questionForm: {
     actions: {
@@ -957,6 +1006,7 @@ export const viewsTranslation: ViewsTranslation = {
       title: 'Answers',
     },
     backToBank: 'Back to question bank',
+    backToFocus: 'Back to review',
     classification: {
       addTag: 'Add tag "{{label}}"',
       businessKey: 'Question key',
@@ -1034,6 +1084,13 @@ export const viewsTranslation: ViewsTranslation = {
       removeDisabled: 'A question needs at least one expected answer.',
       title: 'Expected answers',
     },
+    formPreview: {
+      description:
+        'This is how an employee sees the question, including unsaved changes. Answers given here are not saved.',
+      hide: 'Hide preview',
+      show: 'Preview',
+      title: 'Preview',
+    },
     media: {
       actions: {
         remove: 'Remove {{name}}',
@@ -1098,11 +1155,6 @@ export const viewsTranslation: ViewsTranslation = {
       notifications: {
         removed: 'Media removed.',
         uploaded: 'Media added.',
-      },
-      preview: {
-        imageAlt: 'Media: {{name}}',
-        loadFailed: 'Could not load the media.',
-        retry: 'Load again',
       },
       readOnly: {
         description:
