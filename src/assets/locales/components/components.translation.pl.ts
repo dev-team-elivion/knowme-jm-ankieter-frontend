@@ -85,6 +85,28 @@ export const componentsTranslation: ComponentsTranslation = {
       maxPoints: 'Punkty za pytanie',
     },
   },
+  reviewMark: {
+    clear: 'Zdejmij oznaczenie',
+    dialog: {
+      cancel: 'Anuluj',
+      confirm: 'Oznacz do przeglądu',
+      description:
+        'Pytanie dostanie oznaczenie widoczne na liście, w pytaniu i w trybie przeglądu.',
+      reason: 'Powód (opcjonalnie)',
+      reasonPlaceholder: 'Na co zwrócić uwagę przy przeglądzie',
+      title: 'Oznacz do przeglądu',
+    },
+    mark: 'Oznacz do przeglądu',
+    markedBy: 'Oznaczenie: {{person}}, {{date}}',
+    noReason: 'Bez podanego powodu.',
+    notifications: {
+      cleared: 'Zdjęto oznaczenie do przeglądu.',
+      clearFailed: 'Nie udało się zdjąć oznaczenia. Spróbuj ponownie.',
+      marked: 'Pytanie oznaczono do przeglądu.',
+      markFailed: 'Nie udało się oznaczyć pytania. Spróbuj ponownie.',
+    },
+    title: 'Do przeglądu',
+  },
   searchField: {
     clear: 'Wyczyść wyszukiwanie',
     placeholder: 'Szukaj',

@@ -20,7 +20,7 @@ type Props = {
 
 type SelectFilterKey = keyof Pick<
   QuestionBankFilters,
-  'categoryId' | 'purpose' | 'source' | 'status' | 'type'
+  'categoryId' | 'forReview' | 'purpose' | 'source' | 'status' | 'type'
 >;
 
 export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Element => {
@@ -33,6 +33,7 @@ export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Ele
     { key: 'purpose', label: t('purpose'), options: options.purposes },
     { key: 'status', label: t('status'), options: options.statuses },
     { key: 'source', label: t('source'), options: options.sources },
+    { key: 'forReview', label: t('review'), options: options.reviewMarks },
   ];
 
   return (
@@ -86,7 +87,7 @@ export const QuestionBankFilterPanel = ({ controller, options }: Props): JSX.Ele
           value={filters.changedTo}
         />
       </FilterField>
-      <Box sx={{ gridColumn: 'span 3' }}>
+      <Box sx={{ gridColumn: 'span 2' }}>
         <FilterField label={t('tags')}>
           <TagsFilterField
             onChange={tagIds => controller.setFilter('tagIds', joinTagIds(tagIds))}

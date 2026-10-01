@@ -327,6 +327,9 @@ export type ViewsTranslation = {
       noTags: string;
       positionCode: string;
       purpose: string;
+      review: string;
+      reviewMarked: string;
+      reviewUnmarked: string;
       search: string;
       show: string;
       showWithCount: string;
@@ -348,6 +351,7 @@ export type ViewsTranslation = {
       title: string;
     };
     review: string;
+    reviewMarker: string;
     search: {
       label: string;
       language: string;
@@ -659,12 +663,15 @@ export type ViewsTranslation = {
     title: string;
     values: {
       added: string;
+      contentStatus: Record<TranslationStatusDto, string>;
       correct: string;
       empty: string;
       incorrect: string;
       item: string;
       no: string;
       removed: string;
+      review: string;
+      reviewWithoutReason: string;
       yes: string;
     };
     versionLabel: string;
@@ -1048,6 +1055,9 @@ export const viewsTranslation: ViewsTranslation = {
       noTags: 'No matching tags',
       positionCode: 'Position',
       purpose: 'Purpose',
+      review: 'Review',
+      reviewMarked: 'Marked for review',
+      reviewUnmarked: 'Not marked',
       search: 'Text',
       show: 'Filters',
       showWithCount: 'Filters ({{count}})',
@@ -1070,6 +1080,7 @@ export const viewsTranslation: ViewsTranslation = {
       title: 'Retire question {{key}}?',
     },
     review: 'Review',
+    reviewMarker: 'For review',
     search: {
       label: 'Search question and answer text',
       language: 'Language',
@@ -1369,7 +1380,7 @@ export const viewsTranslation: ViewsTranslation = {
   questionHistory: {
     classification: {
       description:
-        'Changes of category, source, tags and positions. They belong to the question, not to a version.',
+        'Changes of category, source, tags, positions and the review mark. They belong to the question, not to a version.',
       empty: 'The classification has not changed since the question was created.',
       title: 'Classification',
     },
@@ -1413,6 +1424,7 @@ export const viewsTranslation: ViewsTranslation = {
       maxPoints: 'Points',
       media: 'Material',
       positionCodes: 'Job positions',
+      review: 'Review mark',
       scaleMax: 'Top of the scale',
       scoringRule: 'Scoring rule',
       source: 'Source',
@@ -1421,6 +1433,7 @@ export const viewsTranslation: ViewsTranslation = {
       tags: 'Tags',
       topics: 'Topics',
       topicsToPick: 'Topics to pick',
+      translationStatus: 'Content status',
     },
     notFound: {
       description:
@@ -1450,12 +1463,19 @@ export const viewsTranslation: ViewsTranslation = {
     title: 'Question history',
     values: {
       added: 'Added',
+      contentStatus: {
+        [TranslationStatusDto.Approved]: 'approved',
+        [TranslationStatusDto.Draft]: 'draft',
+        [TranslationStatusDto.Missing]: 'missing',
+      },
       correct: 'correct',
       empty: 'none',
       incorrect: 'not correct',
       item: 'item',
       no: 'no',
       removed: 'Removed',
+      review: '{{reason}} ({{person}})',
+      reviewWithoutReason: 'Marked by {{person}}',
       yes: 'yes',
     },
     versionLabel: 'Version {{number}}',

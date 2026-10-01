@@ -12,6 +12,7 @@ import { microLabelSx } from '@/config/theme/uiTokens.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 
 type Props = {
+  actions?: ReactNode;
   adornment?: ReactNode;
   model: null | QuestionPresentationModel;
   onShowCorrectChange: (showCorrect: boolean) => void;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export const QuestionPresentation = ({
+  actions,
   adornment,
   model,
   onShowCorrectChange,
@@ -43,22 +45,25 @@ export const QuestionPresentation = ({
           </Typography>
           {adornment}
         </Stack>
-        {model !== null && (
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showCorrect}
-                onChange={event => onShowCorrectChange(event.target.checked)}
-                size="small"
-              />
-            }
-            label={t('showCorrect')}
-            slotProps={{
-              typography: { sx: { color: theme.colors.textSecondary }, variant: 'body2' },
-            }}
-            sx={{ mr: 0 }}
-          />
-        )}
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexShrink: 0 }}>
+          {model !== null && (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={showCorrect}
+                  onChange={event => onShowCorrectChange(event.target.checked)}
+                  size="small"
+                />
+              }
+              label={t('showCorrect')}
+              slotProps={{
+                typography: { sx: { color: theme.colors.textSecondary }, variant: 'body2' },
+              }}
+              sx={{ mr: 0 }}
+            />
+          )}
+          {actions}
+        </Stack>
       </Stack>
       {model === null ? (
         <InfoCallout tone="warning">{t('missingTranslation')}</InfoCallout>

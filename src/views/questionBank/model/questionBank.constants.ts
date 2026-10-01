@@ -13,6 +13,7 @@ export const QUESTION_BANK_DEFAULTS: QuestionBankQuery = {
     categoryId: '',
     changedFrom: '',
     changedTo: '',
+    forReview: '',
     positionCode: '',
     purpose: '',
     q: '',

@@ -34,6 +34,7 @@ export const useGetQuestionList = (
         params.page,
         params.size,
         params.sort,
+        params.forReview,
       );
       return data;
     },

@@ -64,6 +64,7 @@ export const useGetFocusQuestionIds = (query: QuestionBankQuery, sessionId: stri
         pageParam,
         params.size,
         params.sort,
+        params.forReview,
       );
       return data;
     },

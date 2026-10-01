@@ -53,6 +53,7 @@ export const useQuestionBankColumns = (handlers: QuestionRowActionHandlers): Ret
               sx={{
                 color: row.summary ? theme.colors.textPrimary : theme.colors.textSecondary,
                 display: '-webkit-box',
+                flex: 1,
                 fontStyle: row.summary ? 'normal' : 'italic',
                 overflow: 'hidden',
                 WebkitBoxOrient: 'vertical',
@@ -62,6 +63,7 @@ export const useQuestionBankColumns = (handlers: QuestionRowActionHandlers): Ret
             >
               {row.summary ?? t('noSummary')}
             </Typography>
+            {row.forReview && <StatusPill label={t('reviewMarker')} tone="warning" />}
           </Stack>
         ),
       },

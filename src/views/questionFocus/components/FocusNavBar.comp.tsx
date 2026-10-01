@@ -36,7 +36,7 @@ export const FocusNavBar = ({
       spacing={2}
       sx={{ alignItems: 'center', justifyContent: 'space-between' }}
     >
-      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+      <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
         <Button
           disabled={!hasPrevious}
           onClick={onPrevious}
@@ -51,7 +51,8 @@ export const FocusNavBar = ({
           sx={{
             ...numericSx,
             color: theme.colors.textSecondary,
-            minWidth: 96,
+            minWidth: 72,
+            px: 1,
             textAlign: 'center',
           }}
           variant="body2"

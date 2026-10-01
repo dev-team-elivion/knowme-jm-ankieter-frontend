@@ -39,6 +39,7 @@ export const useActiveFilterChips = (
       { key: 'purpose', label: t('purpose'), options: options.purposes },
       { key: 'status', label: t('status'), options: options.statuses },
       { key: 'source', label: t('source'), options: options.sources },
+      { key: 'forReview', label: t('review'), options: options.reviewMarks },
       { key: 'positionCode', label: t('positionCode') },
       { key: 'author', label: t('author') },
       { key: 'changedFrom', label: t('changedFrom') },

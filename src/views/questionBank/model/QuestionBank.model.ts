@@ -6,6 +6,7 @@ export type QuestionBankFilters = {
   categoryId: string;
   changedFrom: string;
   changedTo: string;
+  forReview: string;
   positionCode: string;
   purpose: string;
   q: string;

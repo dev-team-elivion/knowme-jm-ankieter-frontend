@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 
-import { QuestionSourceDto, ScoringRuleDto, VersionStatusDto } from '@/api/generated';
+import {
+  QuestionSourceDto,
+  ScoringRuleDto,
+  TranslationStatusDto,
+  VersionStatusDto,
+} from '@/api/generated';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { ChangeValue, HistoryField } from '@/views/questionHistory/model/HistoryField.model.ts';
 
@@ -27,9 +32,13 @@ export const useFormatChangeValue = (): Return => {
       if (field === 'source' && source) {
         return tDictionary(`questionSource.${source}`);
       }
+      const translationStatus = findEnumValue(Object.values(TranslationStatusDto), text);
+      if (field === 'translationStatus' && translationStatus) {
+        return t(`contentStatus.${translationStatus}`);
+      }
       return text;
     },
-    [tDictionary],
+    [t, tDictionary],
   );
 
   return useCallback(
@@ -46,6 +55,10 @@ export const useFormatChangeValue = (): Return => {
           return value.items.length > 0 ? value.items.join(', ') : t('empty');
         case 'number':
           return String(value.value);
+        case 'review':
+          return value.reason
+            ? t('review', { person: value.markedBy, reason: value.reason })
+            : t('reviewWithoutReason', { person: value.markedBy });
         case 'text':
           return formatText(field, value.text);
       }

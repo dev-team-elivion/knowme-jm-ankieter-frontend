@@ -17,6 +17,7 @@ export type QuestionListParams = {
   categoryId?: string;
   changedFrom?: string;
   changedTo?: string;
+  forReview?: boolean;
   locale: string;
   page: number;
   positionCode?: string;
@@ -36,6 +37,16 @@ const pickEnum = <T extends string>(values: readonly T[], raw: string): T | unde
 
 const toOptional = (value: string): string | undefined => value.trim() || undefined;
 
+export const REVIEW_FILTER_MARKED = 'true';
+export const REVIEW_FILTER_UNMARKED = 'false';
+
+const toReviewFlag = (value: string): boolean | undefined => {
+  if (value === REVIEW_FILTER_MARKED) {
+    return true;
+  }
+  return value === REVIEW_FILTER_UNMARKED ? false : undefined;
+};
+
 export const splitTagIds = (raw: string): string[] => raw.split(TAG_ID_SEPARATOR).filter(Boolean);
 
 export const joinTagIds = (tagIds: string[]): string => tagIds.join(TAG_ID_SEPARATOR);
@@ -54,6 +65,7 @@ export const toQuestionListParams = ({
     categoryId: toOptional(filters.categoryId),
     changedFrom: toOptional(filters.changedFrom),
     changedTo: toOptional(filters.changedTo),
+    forReview: toReviewFlag(filters.forReview),
     locale: QUESTION_LOCALE,
     page,
     positionCode: toOptional(filters.positionCode),
@@ -75,6 +87,7 @@ export const toQuestionFilter = (query: QuestionBankQuery): QuestionFilterDto =>
     categoryId: params.categoryId,
     changedFrom: params.changedFrom,
     changedTo: params.changedTo,
+    forReview: params.forReview,
     locale: params.locale,
     positionCode: params.positionCode,
     purpose: params.purpose,

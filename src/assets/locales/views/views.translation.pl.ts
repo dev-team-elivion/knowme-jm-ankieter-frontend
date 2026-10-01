@@ -394,6 +394,9 @@ export const viewsTranslation: ViewsTranslation = {
       noTags: 'Brak pasujących tagów',
       positionCode: 'Stanowisko',
       purpose: 'Przeznaczenie',
+      review: 'Przegląd',
+      reviewMarked: 'Do przeglądu',
+      reviewUnmarked: 'Bez oznaczenia',
       search: 'Treść',
       show: 'Filtry',
       showWithCount: 'Filtry ({{count}})',
@@ -416,6 +419,7 @@ export const viewsTranslation: ViewsTranslation = {
       title: 'Wyłączyć pytanie {{key}}?',
     },
     review: 'Przegląd',
+    reviewMarker: 'Do przeglądu',
     search: {
       label: 'Szukaj w treści pytań i odpowiedzi',
       language: 'Język',
@@ -713,7 +717,7 @@ export const viewsTranslation: ViewsTranslation = {
   questionHistory: {
     classification: {
       description:
-        'Zmiany kategorii, źródła, tagów i stanowisk. Dotyczą pytania, a nie jednej wersji.',
+        'Zmiany kategorii, źródła, tagów, stanowisk i oznaczenia do przeglądu. Dotyczą pytania, a nie jednej wersji.',
       empty: 'Klasyfikacja nie zmieniła się od utworzenia pytania.',
       title: 'Klasyfikacja',
     },
@@ -757,6 +761,7 @@ export const viewsTranslation: ViewsTranslation = {
       maxPoints: 'Liczba punktów',
       media: 'Materiał',
       positionCodes: 'Stanowiska',
+      review: 'Oznaczenie do przeglądu',
       scaleMax: 'Górna granica skali',
       scoringRule: 'Reguła punktacji',
       source: 'Źródło',
@@ -765,6 +770,7 @@ export const viewsTranslation: ViewsTranslation = {
       tags: 'Tagi',
       topics: 'Tematy',
       topicsToPick: 'Liczba tematów do wyboru',
+      translationStatus: 'Status treści',
     },
     notFound: {
       description: 'Link mógł stracić ważność. Wróć do bazy pytań i otwórz pytanie z listy.',
@@ -793,12 +799,19 @@ export const viewsTranslation: ViewsTranslation = {
     title: 'Historia pytania',
     values: {
       added: 'Dodano',
+      contentStatus: {
+        [TranslationStatusDto.Approved]: 'zatwierdzona',
+        [TranslationStatusDto.Draft]: 'szkic',
+        [TranslationStatusDto.Missing]: 'brak',
+      },
       correct: 'poprawna',
       empty: 'brak',
       incorrect: 'niepoprawna',
       item: 'element',
       no: 'nie',
       removed: 'Usunięto',
+      review: '{{reason}} ({{person}})',
+      reviewWithoutReason: 'Oznaczenie: {{person}}',
       yes: 'tak',
     },
     versionLabel: 'Wersja {{number}}',

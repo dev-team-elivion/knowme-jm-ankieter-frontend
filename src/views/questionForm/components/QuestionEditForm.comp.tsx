@@ -5,9 +5,11 @@ import { useForm } from 'react-hook-form';
 
 import { QuestionDetailsDto, VersionStatusDto } from '@/api/generated';
 import { FormProviderKnowMe } from '@/components/form/FormProviderKnowMe.comp.tsx';
+import { QuestionReviewBanner } from '@/components/reviewMark/QuestionReviewBanner.comp.tsx';
 import { InfoCallout } from '@/components/state/InfoCallout.comp.tsx';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { FormPreviewToggle } from '@/views/questionForm/components/FormPreviewToggle.comp.tsx';
+import { MarkForReviewButton } from '@/views/questionForm/components/MarkForReviewButton.comp.tsx';
 import { NewVersionDialog } from '@/views/questionForm/components/NewVersionDialog.comp.tsx';
 import { QuestionEditActions } from '@/views/questionForm/components/QuestionEditActions.comp.tsx';
 import { QuestionEditHeader } from '@/views/questionForm/components/QuestionEditHeader.comp.tsx';
@@ -67,14 +69,20 @@ export const QuestionEditForm = ({ question, type }: Props): JSX.Element => {
     <Stack spacing={3}>
       <QuestionEditHeader
         extraActions={
-          <FormPreviewToggle
-            isOpen={isPreviewOpen}
-            onToggle={() => setIsPreviewOpen(isOpen => !isOpen)}
-          />
+          <>
+            {question.review === undefined && <MarkForReviewButton questionId={question.id} />}
+            <FormPreviewToggle
+              isOpen={isPreviewOpen}
+              onToggle={() => setIsPreviewOpen(isOpen => !isOpen)}
+            />
+          </>
         }
         question={question}
         version={baseVersion}
       />
+      {question.review && (
+        <QuestionReviewBanner questionId={question.id} review={question.review} />
+      )}
       {!canFixTypo && (
         <InfoCallout title={t('noEditableVersion.title')} tone="warning">
           {t('noEditableVersion.description')}

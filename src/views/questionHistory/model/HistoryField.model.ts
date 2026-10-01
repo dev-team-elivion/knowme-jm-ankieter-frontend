@@ -14,6 +14,7 @@ export const HISTORY_FIELDS = [
   'maxPoints',
   'media',
   'positionCodes',
+  'review',
   'scaleMax',
   'scoringRule',
   'source',
@@ -22,6 +23,7 @@ export const HISTORY_FIELDS = [
   'tags',
   'topics',
   'topicsToPick',
+  'translationStatus',
 ] as const;
 
 export type HistoryField = (typeof HISTORY_FIELDS)[number];
@@ -38,6 +40,7 @@ export const TEXT_DIFF_FIELDS: readonly HistoryField[] = [
 
 export type ChangeValue =
   | { items: string[]; type: 'list' }
+  | { markedBy: string; reason?: string; type: 'review' }
   | { text: string; type: 'text' }
   | { type: 'boolean'; value: boolean }
   | { type: 'item' }

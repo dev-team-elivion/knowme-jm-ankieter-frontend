@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, ReactNode } from 'react';
 
 import { QuestionDetailsDto, VersionStatusDto } from '@/api/generated';
 import { QuestionPresentation } from '@/components/questionPresentation/QuestionPresentation.comp.tsx';
@@ -11,6 +11,7 @@ import { StatusPill } from '@/components/state/StatusPill.comp.tsx';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 
 type Props = {
+  actions?: ReactNode;
   locale?: string;
   onShowCorrectChange: (showCorrect: boolean) => void;
   question: QuestionDetailsDto;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export const SavedQuestionPresentation = ({
+  actions,
   locale,
   onShowCorrectChange,
   question,
@@ -32,6 +34,7 @@ export const SavedQuestionPresentation = ({
 
   return (
     <QuestionPresentation
+      actions={actions}
       adornment={
         version.status !== VersionStatusDto.Active && (
           <StatusPill label={t(`hiddenMarker.${version.status}`)} tone="warning" />

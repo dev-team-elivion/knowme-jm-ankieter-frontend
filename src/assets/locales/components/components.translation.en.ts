@@ -81,6 +81,27 @@ export type ComponentsTranslation = {
       maxPoints: string;
     };
   };
+  reviewMark: {
+    clear: string;
+    dialog: {
+      cancel: string;
+      confirm: string;
+      description: string;
+      reason: string;
+      reasonPlaceholder: string;
+      title: string;
+    };
+    mark: string;
+    markedBy: string;
+    noReason: string;
+    notifications: {
+      cleared: string;
+      clearFailed: string;
+      marked: string;
+      markFailed: string;
+    };
+    title: string;
+  };
   searchField: {
     clear: string;
     placeholder: string;
@@ -173,6 +194,28 @@ export const componentsTranslation: ComponentsTranslation = {
       explanation: 'Explanation',
       maxPoints: 'Points for the question',
     },
+  },
+  reviewMark: {
+    clear: 'Remove mark',
+    dialog: {
+      cancel: 'Cancel',
+      confirm: 'Mark for review',
+      description:
+        'The question will get a mark that is visible in the list, in the question and in review mode.',
+      reason: 'Reason (optional)',
+      reasonPlaceholder: 'What should the reviewer look at',
+      title: 'Mark for review',
+    },
+    mark: 'Mark for review',
+    markedBy: 'Marked by {{person}}, {{date}}',
+    noReason: 'No reason given.',
+    notifications: {
+      cleared: 'The review mark was removed.',
+      clearFailed: 'The mark could not be removed. Try again.',
+      marked: 'The question was marked for review.',
+      markFailed: 'The question could not be marked. Try again.',
+    },
+    title: 'For review',
   },
   searchField: {
     clear: 'Clear search',

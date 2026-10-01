@@ -38,6 +38,13 @@ export const toChangeValue = (value: unknown, locale: string): ChangeValue | nul
   if (isStringArray(value)) {
     return { items: value, type: 'list' };
   }
+  if (isRecord(value) && typeof value.markedBy === 'string') {
+    return {
+      markedBy: value.markedBy,
+      reason: typeof value.reason === 'string' ? value.reason : undefined,
+      type: 'review',
+    };
+  }
   if (isRecord(value)) {
     const text = findNamedText(value, locale);
     return text === null ? { type: 'item' } : { text, type: 'text' };

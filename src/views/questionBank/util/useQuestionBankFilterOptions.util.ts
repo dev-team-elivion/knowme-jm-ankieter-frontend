@@ -14,11 +14,16 @@ import { useGetTags } from '@/hooks/useGetTags.util.ts';
 import { formatLocaleName } from '@/utils/localeName.util.ts';
 import { useTranslationWithPrefix } from '@/utils/useTranslationWithPrefix.util.ts';
 import { SUPPORTED_LOCALES } from '@/views/questionBank/model/questionBank.constants.ts';
+import {
+  REVIEW_FILTER_MARKED,
+  REVIEW_FILTER_UNMARKED,
+} from '@/views/questionBank/util/questionListParams.util.ts';
 
 export type QuestionBankFilterOptions = {
   categories: FilterOption[];
   locales: FilterOption[];
   purposes: FilterOption[];
+  reviewMarks: FilterOption[];
   sources: FilterOption[];
   statuses: FilterOption[];
   tags: TagDto[];
@@ -30,6 +35,7 @@ export const useQuestionBankFilterOptions = (): QuestionBankFilterOptions => {
   const { i18n, t } = useTranslationWithPrefix('views.dictionaries');
   const { categories } = useGetCategories();
   const { tags } = useGetTags({ search: '' });
+  const { t: tFilters } = useTranslationWithPrefix('views.questionBank.filters');
 
   return useMemo(
     () => ({
@@ -42,6 +48,10 @@ export const useQuestionBankFilterOptions = (): QuestionBankFilterOptions => {
         label: t(`questionPurpose.${value}`),
         value,
       })),
+      reviewMarks: [
+        { label: tFilters('reviewMarked'), value: REVIEW_FILTER_MARKED },
+        { label: tFilters('reviewUnmarked'), value: REVIEW_FILTER_UNMARKED },
+      ],
       sources: Object.values(QuestionSourceDto).map(value => ({
         label: t(`questionSource.${value}`),
         value,
@@ -60,6 +70,6 @@ export const useQuestionBankFilterOptions = (): QuestionBankFilterOptions => {
         value,
       })),
     }),
-    [categories, i18n.language, t, tags],
+    [categories, i18n.language, t, tFilters, tags],
   );
 };
