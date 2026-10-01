@@ -22,6 +22,10 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import type { BulkUpdateRequestDto } from '../models';
+// @ts-ignore
+import type { BulkUpdateResultDto } from '../models';
+// @ts-ignore
 import type { CreateQuestionRequestDto } from '../models';
 // @ts-ignore
 import type { ProblemDetailDto } from '../models';
@@ -54,7 +58,7 @@ import type { VersionStatusDto } from '../models';
 export const QuestionsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Exactly one version per question is ACTIVE. Activating another retires the current one. The database enforces this with a partial unique index, so the answer is a conflict, not a silent second active row.
+         * Exactly one version per question is ACTIVE. Activating a version retires the one in force, in the same transaction, so the question is never left without one in between; the database enforces the rule with a partial unique index. The version\'s wording in its source language is approved with it, if it was still a draft: whoever puts a version in force has read it, and a test draws approved wording only. Other languages keep their status. The history records both in one entry.
          * @summary Make a version the one in force
          * @param {string} questionId 
          * @param {string} versionId 
@@ -85,6 +89,42 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * One operation on many questions: add or remove tags, set the category, retire, mark for review or take the mark off. The questions are named by id — those ticked on the page — or by the list\'s filter, which spares sending thousands of ids and cannot drift from what the list showed; exactly one of the two. Start with dryRun: it answers how many questions the operation changes and a few of their keys, and changes nothing — the confirmation screen is built from it. Above 50 changed questions the request has to say confirmLargeChange, or it is refused with 409: a mistaken click must not retire half the bank. Everything happens in one transaction; on any error nothing changes. A question the operation would leave as it is — already tagged, already in the category, already marked, no version in force to retire — is skipped and counted, not refused. Every question changed gets its own entry in its history. Changing classification creates no version.
+         * @summary Change many questions at once
+         * @param {BulkUpdateRequestDto} bulkUpdateRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        bulkUpdateQuestions: async (bulkUpdateRequestDto: BulkUpdateRequestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'bulkUpdateRequestDto' is not null or undefined
+            assertParamExists('bulkUpdateQuestions', 'bulkUpdateRequestDto', bulkUpdateRequestDto)
+            const localVarPath = `/api/v1/questions/bulk`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(bulkUpdateRequestDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -128,14 +168,15 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
+         * For a substantive rewrite. The version in force is retired at once — or, with keepCurrent, stays in force until the new one is activated, so that the question does not drop out of tests while the new version is being prepared. Every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
          * @summary Create a new version of a question
          * @param {string} questionId 
          * @param {QuestionVersionContentDto} questionVersionContentDto 
+         * @param {boolean} [keepCurrent] true keeps the version in force until the new one is activated; false retires it at once. The interface asks every time — a procedure that changed wants the old wording gone now, a better picture does not.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createQuestionVersion: async (questionId: string, questionVersionContentDto: QuestionVersionContentDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createQuestionVersion: async (questionId: string, questionVersionContentDto: QuestionVersionContentDto, keepCurrent?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'questionId' is not null or undefined
             assertParamExists('createQuestionVersion', 'questionId', questionId)
             // verify required parameter 'questionVersionContentDto' is not null or undefined
@@ -152,6 +193,10 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (keepCurrent !== undefined) {
+                localVarQueryParameter['keepCurrent'] = keepCurrent;
+            }
 
 
     
@@ -274,7 +319,7 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
+         * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size. Each row describes the version in force, or the newest when none is: what employees see. Filters and the text search read that version too; a draft being written next to it shows as draftVersionNo.
          * @summary List questions
          * @param {string} [categoryId] 
          * @param {QuestionTypeDto} [type] 
@@ -292,10 +337,11 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
          * @param {number} [page] 
          * @param {number} [size] 
          * @param {string} [sort] Field and direction, for example \&quot;updatedAt,desc\&quot;. Defaults to newest change first.
+         * @param {boolean} [forReview] true for the questions marked for review, false for the rest. Leave it out for both. Listed last on purpose: generated clients pass parameters by position, and one added in the middle would shift every argument after it.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listQuestions: async (categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listQuestions: async (categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, forReview?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/questions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -374,6 +420,10 @@ export const QuestionsApiAxiosParamCreator = function (configuration?: Configura
 
             if (sort !== undefined) {
                 localVarQueryParameter['sort'] = sort;
+            }
+
+            if (forReview !== undefined) {
+                localVarQueryParameter['forReview'] = forReview;
             }
 
 
@@ -482,7 +532,7 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = QuestionsApiAxiosParamCreator(configuration)
     return {
         /**
-         * Exactly one version per question is ACTIVE. Activating another retires the current one. The database enforces this with a partial unique index, so the answer is a conflict, not a silent second active row.
+         * Exactly one version per question is ACTIVE. Activating a version retires the one in force, in the same transaction, so the question is never left without one in between; the database enforces the rule with a partial unique index. The version\'s wording in its source language is approved with it, if it was still a draft: whoever puts a version in force has read it, and a test draws approved wording only. Other languages keep their status. The history records both in one entry.
          * @summary Make a version the one in force
          * @param {string} questionId 
          * @param {string} versionId 
@@ -493,6 +543,19 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.activateQuestionVersion(questionId, versionId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QuestionsApi.activateQuestionVersion']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * One operation on many questions: add or remove tags, set the category, retire, mark for review or take the mark off. The questions are named by id — those ticked on the page — or by the list\'s filter, which spares sending thousands of ids and cannot drift from what the list showed; exactly one of the two. Start with dryRun: it answers how many questions the operation changes and a few of their keys, and changes nothing — the confirmation screen is built from it. Above 50 changed questions the request has to say confirmLargeChange, or it is refused with 409: a mistaken click must not retire half the bank. Everything happens in one transaction; on any error nothing changes. A question the operation would leave as it is — already tagged, already in the category, already marked, no version in force to retire — is skipped and counted, not refused. Every question changed gets its own entry in its history. Changing classification creates no version.
+         * @summary Change many questions at once
+         * @param {BulkUpdateRequestDto} bulkUpdateRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async bulkUpdateQuestions(bulkUpdateRequestDto: BulkUpdateRequestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BulkUpdateResultDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.bulkUpdateQuestions(bulkUpdateRequestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QuestionsApi.bulkUpdateQuestions']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -509,15 +572,16 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
+         * For a substantive rewrite. The version in force is retired at once — or, with keepCurrent, stays in force until the new one is activated, so that the question does not drop out of tests while the new version is being prepared. Every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
          * @summary Create a new version of a question
          * @param {string} questionId 
          * @param {QuestionVersionContentDto} questionVersionContentDto 
+         * @param {boolean} [keepCurrent] true keeps the version in force until the new one is activated; false retires it at once. The interface asks every time — a procedure that changed wants the old wording gone now, a better picture does not.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuestionVersionDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createQuestionVersion(questionId, questionVersionContentDto, options);
+        async createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, keepCurrent?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuestionVersionDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createQuestionVersion(questionId, questionVersionContentDto, keepCurrent, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QuestionsApi.createQuestionVersion']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -563,7 +627,7 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
+         * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size. Each row describes the version in force, or the newest when none is: what employees see. Filters and the text search read that version too; a draft being written next to it shows as draftVersionNo.
          * @summary List questions
          * @param {string} [categoryId] 
          * @param {QuestionTypeDto} [type] 
@@ -581,11 +645,12 @@ export const QuestionsApiFp = function(configuration?: Configuration) {
          * @param {number} [page] 
          * @param {number} [size] 
          * @param {string} [sort] Field and direction, for example \&quot;updatedAt,desc\&quot;. Defaults to newest change first.
+         * @param {boolean} [forReview] true for the questions marked for review, false for the rest. Leave it out for both. Listed last on purpose: generated clients pass parameters by position, and one added in the middle would shift every argument after it.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuestionPageDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listQuestions(categoryId, type, purpose, status, source, tagId, positionCode, locale, translationStatus, author, q, changedFrom, changedTo, page, size, sort, options);
+        async listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, forReview?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuestionPageDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listQuestions(categoryId, type, purpose, status, source, tagId, positionCode, locale, translationStatus, author, q, changedFrom, changedTo, page, size, sort, forReview, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QuestionsApi.listQuestions']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -630,7 +695,7 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
     const localVarFp = QuestionsApiFp(configuration)
     return {
         /**
-         * Exactly one version per question is ACTIVE. Activating another retires the current one. The database enforces this with a partial unique index, so the answer is a conflict, not a silent second active row.
+         * Exactly one version per question is ACTIVE. Activating a version retires the one in force, in the same transaction, so the question is never left without one in between; the database enforces the rule with a partial unique index. The version\'s wording in its source language is approved with it, if it was still a draft: whoever puts a version in force has read it, and a test draws approved wording only. Other languages keep their status. The history records both in one entry.
          * @summary Make a version the one in force
          * @param {string} questionId 
          * @param {string} versionId 
@@ -639,6 +704,16 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
          */
         activateQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto> {
             return localVarFp.activateQuestionVersion(questionId, versionId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * One operation on many questions: add or remove tags, set the category, retire, mark for review or take the mark off. The questions are named by id — those ticked on the page — or by the list\'s filter, which spares sending thousands of ids and cannot drift from what the list showed; exactly one of the two. Start with dryRun: it answers how many questions the operation changes and a few of their keys, and changes nothing — the confirmation screen is built from it. Above 50 changed questions the request has to say confirmLargeChange, or it is refused with 409: a mistaken click must not retire half the bank. Everything happens in one transaction; on any error nothing changes. A question the operation would leave as it is — already tagged, already in the category, already marked, no version in force to retire — is skipped and counted, not refused. Every question changed gets its own entry in its history. Changing classification creates no version.
+         * @summary Change many questions at once
+         * @param {BulkUpdateRequestDto} bulkUpdateRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        bulkUpdateQuestions(bulkUpdateRequestDto: BulkUpdateRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<BulkUpdateResultDto> {
+            return localVarFp.bulkUpdateQuestions(bulkUpdateRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
          * The first version is created as a DRAFT. Leave businessKey empty to have one issued from the category prefix and a counter; supply it only when carrying a question over from an existing bank.
@@ -651,15 +726,16 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
             return localVarFp.createQuestion(createQuestionRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
+         * For a substantive rewrite. The version in force is retired at once — or, with keepCurrent, stays in force until the new one is activated, so that the question does not drop out of tests while the new version is being prepared. Every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
          * @summary Create a new version of a question
          * @param {string} questionId 
          * @param {QuestionVersionContentDto} questionVersionContentDto 
+         * @param {boolean} [keepCurrent] true keeps the version in force until the new one is activated; false retires it at once. The interface asks every time — a procedure that changed wants the old wording gone now, a better picture does not.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto> {
-            return localVarFp.createQuestionVersion(questionId, questionVersionContentDto, options).then((request) => request(axios, basePath));
+        createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, keepCurrent?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto> {
+            return localVarFp.createQuestionVersion(questionId, questionVersionContentDto, keepCurrent, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns the classification and the full history: every version with its status, scoring and translations. Retired versions are included — an attempt from years ago has to be reproducible in the wording the employee actually saw.
@@ -693,7 +769,7 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
             return localVarFp.getQuestionVersion(questionId, versionId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
+         * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size. Each row describes the version in force, or the newest when none is: what employees see. Filters and the text search read that version too; a draft being written next to it shows as draftVersionNo.
          * @summary List questions
          * @param {string} [categoryId] 
          * @param {QuestionTypeDto} [type] 
@@ -711,11 +787,12 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
          * @param {number} [page] 
          * @param {number} [size] 
          * @param {string} [sort] Field and direction, for example \&quot;updatedAt,desc\&quot;. Defaults to newest change first.
+         * @param {boolean} [forReview] true for the questions marked for review, false for the rest. Leave it out for both. Listed last on purpose: generated clients pass parameters by position, and one added in the middle would shift every argument after it.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionPageDto> {
-            return localVarFp.listQuestions(categoryId, type, purpose, status, source, tagId, positionCode, locale, translationStatus, author, q, changedFrom, changedTo, page, size, sort, options).then((request) => request(axios, basePath));
+        listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, forReview?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<QuestionPageDto> {
+            return localVarFp.listQuestions(categoryId, type, purpose, status, source, tagId, positionCode, locale, translationStatus, author, q, changedFrom, changedTo, page, size, sort, forReview, options).then((request) => request(axios, basePath));
         },
         /**
          * Classification hangs off the question, not off a version, so changing it does not create a new version and does not touch what anyone answered. The business key never changes, even when the question moves to a different category — a key is an identifier, not a label.
@@ -750,7 +827,7 @@ export const QuestionsApiFactory = function (configuration?: Configuration, base
  */
 export interface QuestionsApiInterface {
     /**
-     * Exactly one version per question is ACTIVE. Activating another retires the current one. The database enforces this with a partial unique index, so the answer is a conflict, not a silent second active row.
+     * Exactly one version per question is ACTIVE. Activating a version retires the one in force, in the same transaction, so the question is never left without one in between; the database enforces the rule with a partial unique index. The version\'s wording in its source language is approved with it, if it was still a draft: whoever puts a version in force has read it, and a test draws approved wording only. Other languages keep their status. The history records both in one entry.
      * @summary Make a version the one in force
      * @param {string} questionId 
      * @param {string} versionId 
@@ -759,6 +836,16 @@ export interface QuestionsApiInterface {
      * @memberof QuestionsApiInterface
      */
     activateQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto>;
+
+    /**
+     * One operation on many questions: add or remove tags, set the category, retire, mark for review or take the mark off. The questions are named by id — those ticked on the page — or by the list\'s filter, which spares sending thousands of ids and cannot drift from what the list showed; exactly one of the two. Start with dryRun: it answers how many questions the operation changes and a few of their keys, and changes nothing — the confirmation screen is built from it. Above 50 changed questions the request has to say confirmLargeChange, or it is refused with 409: a mistaken click must not retire half the bank. Everything happens in one transaction; on any error nothing changes. A question the operation would leave as it is — already tagged, already in the category, already marked, no version in force to retire — is skipped and counted, not refused. Every question changed gets its own entry in its history. Changing classification creates no version.
+     * @summary Change many questions at once
+     * @param {BulkUpdateRequestDto} bulkUpdateRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof QuestionsApiInterface
+     */
+    bulkUpdateQuestions(bulkUpdateRequestDto: BulkUpdateRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<BulkUpdateResultDto>;
 
     /**
      * The first version is created as a DRAFT. Leave businessKey empty to have one issued from the category prefix and a counter; supply it only when carrying a question over from an existing bank.
@@ -771,15 +858,16 @@ export interface QuestionsApiInterface {
     createQuestion(createQuestionRequestDto: CreateQuestionRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<QuestionDetailsDto>;
 
     /**
-     * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
+     * For a substantive rewrite. The version in force is retired at once — or, with keepCurrent, stays in force until the new one is activated, so that the question does not drop out of tests while the new version is being prepared. Every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
      * @summary Create a new version of a question
      * @param {string} questionId 
      * @param {QuestionVersionContentDto} questionVersionContentDto 
+     * @param {boolean} [keepCurrent] true keeps the version in force until the new one is activated; false retires it at once. The interface asks every time — a procedure that changed wants the old wording gone now, a better picture does not.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof QuestionsApiInterface
      */
-    createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto>;
+    createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, keepCurrent?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto>;
 
     /**
      * Returns the classification and the full history: every version with its status, scoring and translations. Retired versions are included — an attempt from years ago has to be reproducible in the wording the employee actually saw.
@@ -813,7 +901,7 @@ export interface QuestionsApiInterface {
     getQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionVersionDto>;
 
     /**
-     * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
+     * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size. Each row describes the version in force, or the newest when none is: what employees see. Filters and the text search read that version too; a draft being written next to it shows as draftVersionNo.
      * @summary List questions
      * @param {string} [categoryId] 
      * @param {QuestionTypeDto} [type] 
@@ -831,11 +919,12 @@ export interface QuestionsApiInterface {
      * @param {number} [page] 
      * @param {number} [size] 
      * @param {string} [sort] Field and direction, for example \&quot;updatedAt,desc\&quot;. Defaults to newest change first.
+     * @param {boolean} [forReview] true for the questions marked for review, false for the rest. Leave it out for both. Listed last on purpose: generated clients pass parameters by position, and one added in the middle would shift every argument after it.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof QuestionsApiInterface
      */
-    listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, options?: RawAxiosRequestConfig): AxiosPromise<QuestionPageDto>;
+    listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, forReview?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<QuestionPageDto>;
 
     /**
      * Classification hangs off the question, not off a version, so changing it does not create a new version and does not touch what anyone answered. The business key never changes, even when the question moves to a different category — a key is an identifier, not a label.
@@ -870,7 +959,7 @@ export interface QuestionsApiInterface {
  */
 export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
     /**
-     * Exactly one version per question is ACTIVE. Activating another retires the current one. The database enforces this with a partial unique index, so the answer is a conflict, not a silent second active row.
+     * Exactly one version per question is ACTIVE. Activating a version retires the one in force, in the same transaction, so the question is never left without one in between; the database enforces the rule with a partial unique index. The version\'s wording in its source language is approved with it, if it was still a draft: whoever puts a version in force has read it, and a test draws approved wording only. Other languages keep their status. The history records both in one entry.
      * @summary Make a version the one in force
      * @param {string} questionId 
      * @param {string} versionId 
@@ -880,6 +969,18 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
      */
     public activateQuestionVersion(questionId: string, versionId: string, options?: RawAxiosRequestConfig) {
         return QuestionsApiFp(this.configuration).activateQuestionVersion(questionId, versionId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * One operation on many questions: add or remove tags, set the category, retire, mark for review or take the mark off. The questions are named by id — those ticked on the page — or by the list\'s filter, which spares sending thousands of ids and cannot drift from what the list showed; exactly one of the two. Start with dryRun: it answers how many questions the operation changes and a few of their keys, and changes nothing — the confirmation screen is built from it. Above 50 changed questions the request has to say confirmLargeChange, or it is refused with 409: a mistaken click must not retire half the bank. Everything happens in one transaction; on any error nothing changes. A question the operation would leave as it is — already tagged, already in the category, already marked, no version in force to retire — is skipped and counted, not refused. Every question changed gets its own entry in its history. Changing classification creates no version.
+     * @summary Change many questions at once
+     * @param {BulkUpdateRequestDto} bulkUpdateRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof QuestionsApi
+     */
+    public bulkUpdateQuestions(bulkUpdateRequestDto: BulkUpdateRequestDto, options?: RawAxiosRequestConfig) {
+        return QuestionsApiFp(this.configuration).bulkUpdateQuestions(bulkUpdateRequestDto, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -895,16 +996,17 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
     }
 
     /**
-     * For a substantive rewrite. The currently active version becomes RETIRED, and every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
+     * For a substantive rewrite. The version in force is retired at once — or, with keepCurrent, stays in force until the new one is activated, so that the question does not drop out of tests while the new version is being prepared. Every translation of the new version except the source language starts as MISSING — which is how the list of questions awaiting translation writes itself. The new version takes over the pictures and films of the newest one, and those of every answer it names by id.
      * @summary Create a new version of a question
      * @param {string} questionId 
      * @param {QuestionVersionContentDto} questionVersionContentDto 
+     * @param {boolean} [keepCurrent] true keeps the version in force until the new one is activated; false retires it at once. The interface asks every time — a procedure that changed wants the old wording gone now, a better picture does not.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof QuestionsApi
      */
-    public createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, options?: RawAxiosRequestConfig) {
-        return QuestionsApiFp(this.configuration).createQuestionVersion(questionId, questionVersionContentDto, options).then((request) => request(this.axios, this.basePath));
+    public createQuestionVersion(questionId: string, questionVersionContentDto: QuestionVersionContentDto, keepCurrent?: boolean, options?: RawAxiosRequestConfig) {
+        return QuestionsApiFp(this.configuration).createQuestionVersion(questionId, questionVersionContentDto, keepCurrent, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -945,7 +1047,7 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
     }
 
     /**
-     * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size.
+     * Filtering, sorting and paging happen on the server. The bank is designed for tens of thousands of questions, so fetching everything and filtering in the browser is not an option at any size. Each row describes the version in force, or the newest when none is: what employees see. Filters and the text search read that version too; a draft being written next to it shows as draftVersionNo.
      * @summary List questions
      * @param {string} [categoryId] 
      * @param {QuestionTypeDto} [type] 
@@ -963,12 +1065,13 @@ export class QuestionsApi extends BaseAPI implements QuestionsApiInterface {
      * @param {number} [page] 
      * @param {number} [size] 
      * @param {string} [sort] Field and direction, for example \&quot;updatedAt,desc\&quot;. Defaults to newest change first.
+     * @param {boolean} [forReview] true for the questions marked for review, false for the rest. Leave it out for both. Listed last on purpose: generated clients pass parameters by position, and one added in the middle would shift every argument after it.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof QuestionsApi
      */
-    public listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, options?: RawAxiosRequestConfig) {
-        return QuestionsApiFp(this.configuration).listQuestions(categoryId, type, purpose, status, source, tagId, positionCode, locale, translationStatus, author, q, changedFrom, changedTo, page, size, sort, options).then((request) => request(this.axios, this.basePath));
+    public listQuestions(categoryId?: string, type?: QuestionTypeDto, purpose?: QuestionPurposeDto, status?: VersionStatusDto, source?: QuestionSourceDto, tagId?: Array<string>, positionCode?: string, locale?: string, translationStatus?: TranslationStatusDto, author?: string, q?: string, changedFrom?: string, changedTo?: string, page?: number, size?: number, sort?: string, forReview?: boolean, options?: RawAxiosRequestConfig) {
+        return QuestionsApiFp(this.configuration).listQuestions(categoryId, type, purpose, status, source, tagId, positionCode, locale, translationStatus, author, q, changedFrom, changedTo, page, size, sort, forReview, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

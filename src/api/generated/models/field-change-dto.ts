@@ -21,7 +21,7 @@
  */
 export interface FieldChangeDto {
     /**
-     * Named as in the version\'s contract. Of the version: maxPoints, scoringRule, scaleMax, topicsToPick, examinerCommentRequired, sourceLocale, status. Of a language, with locale: translation (the whole language added or removed), body, explanation, answerKey, expectedAnswers, topics. Of an answer, with answerId: answer (the whole answer added or removed, its material included), answer.displayOrder, answer.isCorrect, answer.points, answer.correctOrder, and answer.body with locale. media, with answerId when the material hangs on an answer. Of the question: category (an object with id and name), source, sourceName, tags (the labels, sorted) and positionCodes (sorted).
+     * Named as in the version\'s contract. Of the version: maxPoints, scoringRule, scaleMax, topicsToPick, examinerCommentRequired, sourceLocale, status. Of a language, with locale: translation (the whole language added or removed), body, explanation, answerKey, expectedAnswers, topics. Of an answer, with answerId: answer (the whole answer added or removed, its material included), answer.displayOrder, answer.isCorrect, answer.points, answer.correctOrder, and answer.body with locale. media, with answerId when the material hangs on an answer. Of the question: category (an object with id and name), source, sourceName, tags (the labels, sorted), positionCodes (sorted) and review (an object with reason, markedBy and markedAt).
      * @type {string}
      * @memberof FieldChangeDto
      */

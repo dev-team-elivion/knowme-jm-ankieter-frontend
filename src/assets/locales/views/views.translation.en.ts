@@ -1254,6 +1254,7 @@ export const viewsTranslation: ViewsTranslation = {
       [HistoryEventKindDto.Created]: 'Version created',
       [HistoryEventKindDto.MediaAdded]: 'Material added',
       [HistoryEventKindDto.MediaRemoved]: 'Material removed',
+      [HistoryEventKindDto.ReviewChanged]: 'Review mark changed',
       [HistoryEventKindDto.StatusChanged]: 'Status changed',
     },
     fields: {

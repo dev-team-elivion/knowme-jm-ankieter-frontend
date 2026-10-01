@@ -30,6 +30,9 @@ import type { QuestionTypeDto } from './question-type-dto';
 import type { QuestionVersionDto } from './question-version-dto';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { ReviewMarkDto } from './review-mark-dto';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { TagRefDto } from './tag-ref-dto';
 
 /**
@@ -110,6 +113,12 @@ export interface QuestionDetailsDto {
      * @memberof QuestionDetailsDto
      */
     'createdBy': string;
+    /**
+     * 
+     * @type {ReviewMarkDto}
+     * @memberof QuestionDetailsDto
+     */
+    'review'?: ReviewMarkDto;
 }
 
 

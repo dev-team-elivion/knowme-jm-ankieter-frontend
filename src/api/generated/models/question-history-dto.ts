@@ -39,7 +39,7 @@ export interface QuestionHistoryDto {
      */
     'businessKey': string;
     /**
-     * Changes of the question itself — category, source, tags, positions — newest first. Classification hangs on the key, not on the wording, so these belong to no version. A tag merged into another shows here on every question it retagged. Only changes are recorded, not the classification a question was created with.
+     * Changes of the question itself — category, source, tags, positions, the review mark — newest first. They hang on the key, not on the wording, so they belong to no version. A tag merged into another shows here on every question it retagged. Only changes are recorded, not the classification a question was created with.
      * @type {Array<HistoryEventDto>}
      * @memberof QuestionHistoryDto
      */

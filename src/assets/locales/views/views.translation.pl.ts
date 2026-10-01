@@ -662,6 +662,7 @@ export const viewsTranslation: ViewsTranslation = {
       [HistoryEventKindDto.Created]: 'Utworzono wersję',
       [HistoryEventKindDto.MediaAdded]: 'Dodano materiał',
       [HistoryEventKindDto.MediaRemoved]: 'Usunięto materiał',
+      [HistoryEventKindDto.ReviewChanged]: 'Zmieniono oznaczenie do przeglądu',
       [HistoryEventKindDto.StatusChanged]: 'Zmieniono status',
     },
     fields: {

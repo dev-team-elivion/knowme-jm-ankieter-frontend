@@ -75,17 +75,23 @@ export interface QuestionListItemDto {
      */
     'positionCodes'?: Array<string>;
     /**
-     * Status of the newest version.
+     * Status of the version shown — the one in force, or the newest when none is.
      * @type {VersionStatusDto}
      * @memberof QuestionListItemDto
      */
     'status': VersionStatusDto;
     /**
-     * 
+     * Number of the version shown.
      * @type {number}
      * @memberof QuestionListItemDto
      */
     'versionNo': number;
+    /**
+     * A draft newer than the version shown, written while that one stays in force until the draft is activated. Absent when there is none.
+     * @type {number}
+     * @memberof QuestionListItemDto
+     */
+    'draftVersionNo'?: number;
     /**
      * Translation state per language, for spotting gaps without opening the question.
      * @type {Array<LocaleStatusDto>}
@@ -98,6 +104,12 @@ export interface QuestionListItemDto {
      * @memberof QuestionListItemDto
      */
     'hasMedia': boolean;
+    /**
+     * Marked for review; who and why is in the question\'s details.
+     * @type {boolean}
+     * @memberof QuestionListItemDto
+     */
+    'forReview': boolean;
     /**
      * 
      * @type {string}

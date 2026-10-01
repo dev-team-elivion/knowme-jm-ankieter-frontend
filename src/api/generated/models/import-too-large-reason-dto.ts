@@ -14,11 +14,18 @@
 
 
 
-export * from './apis/csrf-api';
-export * from './apis/current-user-api';
-export * from './apis/dictionaries-api';
-export * from './apis/media-api';
-export * from './apis/ping-api';
-export * from './apis/question-import-api';
-export * from './apis/questions-api';
+/**
+ * FILE_TOO_LARGE counts bytes, TOO_MANY_ROWS question rows.
+ * @export
+ * @enum {string}
+ */
+
+export const ImportTooLargeReasonDto = {
+    FileTooLarge: 'FILE_TOO_LARGE',
+    TooManyRows: 'TOO_MANY_ROWS'
+} as const;
+
+export type ImportTooLargeReasonDto = typeof ImportTooLargeReasonDto[keyof typeof ImportTooLargeReasonDto];
+
+
 

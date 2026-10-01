@@ -1,0 +1,244 @@
+# Questions in bulk: in from a spreadsheet, out to one.
+#
+# The form stays the main way a question comes into being. A spreadsheet is for entering many at
+# once: setting up a category from scratch, or a set someone prepared outside the system. The
+# file follows the template (getQuestionImportTemplate): the sheet "Pytania", one question a row,
+# columns known by their header. The template's first sheet explains every column in Polish.
+#
+# Two steps, and the interface is built around them: check the file (validateQuestionImport),
+# show the report, and import (importQuestions) only once it is clean and the person confirms.
+# The import is all or nothing — a file of several hundred questions that stops halfway leaves a
+# bank nobody can tidy up — and saves every question as a draft, the way the form does. A row that
+# says TAK in the column "aktywne" is the exception: its question is saved in force with its
+# wording approved, ready for a test at once, since a test draws approved wording only. That suits
+# questions without pictures or films; material is added to a draft only.
+#
+# Pictures and films do not travel in a spreadsheet; they are added in the question's editor
+# afterwards. Corrections do not travel either: a key already in the bank is refused, never
+# overwritten, so the choice between a typo fix and a new version stays with a person.
+
+question-import-dry-run:
+  post:
+    tags: [QuestionImport]
+    summary: Check a spreadsheet of questions without saving anything
+    description: >-
+      Reads the file as the import would and reports every problem, row by row, each with the
+      column at fault and a code the interface can put into its own words. Nothing is saved;
+      the confirmation screen is built from this. A file that cannot be read as the template at
+      all — not a spreadsheet, no sheet "Pytania", a required column missing — is refused with
+      400 before any row is looked at.
+    operationId: validateQuestionImport
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema: { $ref: '#/components/schemas/QuestionImportForm' }
+    responses:
+      200:
+        description: What the file holds. errors is empty when an import would save every row.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ImportReport' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      413: { $ref: '#/components/responses/ImportTooLarge' }
+
+question-import:
+  post:
+    tags: [QuestionImport]
+    summary: Import a spreadsheet of questions
+    description: >-
+      Saves every row as a question with its first version, a draft, in one transaction — or
+      in force with its wording approved, where the row says TAK in "aktywne". With any row
+      refused nothing is saved, and the answer is 400 carrying the same report a check gives.
+      Keys left empty are issued from the category's prefix and a counter, as for the form; tags
+      the file names and the dictionary lacks are created. Every question saved gets its
+      "created" entry in its history, and one saved in force the entry an activation by hand
+      leaves.
+    operationId: importQuestions
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema: { $ref: '#/components/schemas/QuestionImportForm' }
+    responses:
+      200:
+        description: Saved. created lists the keys in the order of the rows.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ImportReport' }
+      400: { $ref: '#/components/responses/ImportRefused' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      409: { $ref: '../common/errors.yaml#/components/responses/Conflict' }
+      413: { $ref: '#/components/responses/ImportTooLarge' }
+
+question-import-template:
+  get:
+    tags: [QuestionImport]
+    summary: The empty template, with instructions and examples
+    description: >-
+      The file to start from: the sheet "Pytania" with every column and a few example rows
+      (delete them or keep them), the dictionaries behind the drop-down lists, and a sheet of
+      instructions in Polish. It always matches what the import reads.
+    operationId: getQuestionImportTemplate
+    responses:
+      200:
+        description: The template
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema: { type: string, format: binary }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+
+question-export:
+  get:
+    tags: [QuestionImport]
+    summary: Export the questions the list shows
+    description: >-
+      The same filters as listQuestions, on every page, in the layout of the template — so the
+      file imports again, into another environment. Each question comes with the version the
+      list shows, in its source language. Sorted by key.
+    operationId: exportQuestions
+    parameters:
+      - { name: categoryId, in: query, schema: { type: string, format: uuid } }
+      - { name: type, in: query, schema: { $ref: './questions.yaml#/components/schemas/QuestionType' } }
+      - { name: purpose, in: query, schema: { $ref: './questions.yaml#/components/schemas/QuestionPurpose' } }
+      - { name: status, in: query, schema: { $ref: './questions.yaml#/components/schemas/VersionStatus' } }
+      - { name: source, in: query, schema: { $ref: './questions.yaml#/components/schemas/QuestionSource' } }
+      - name: tagId
+        in: query
+        description: Repeatable. A question matches when it carries every tag given.
+        schema: { type: array, items: { type: string, format: uuid } }
+      - { name: positionCode, in: query, schema: { type: string } }
+      - name: locale
+        in: query
+        description: Language the text search uses. Defaults to pl.
+        schema: { type: string, default: pl }
+      - { name: translationStatus, in: query, schema: { $ref: './questions.yaml#/components/schemas/TranslationStatus' } }
+      - { name: author, in: query, schema: { type: string } }
+      - { name: q, in: query, schema: { type: string, minLength: 3 } }
+      - { name: changedFrom, in: query, schema: { type: string, format: date } }
+      - { name: changedTo, in: query, schema: { type: string, format: date } }
+      - { name: forReview, in: query, schema: { type: boolean } }
+    responses:
+      200:
+        description: The questions, one a row
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema: { type: string, format: binary }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+
+components:
+  schemas:
+
+    QuestionImportForm:
+      type: object
+      required: [file]
+      properties:
+        file:
+          type: string
+          format: binary
+          description: An .xlsx file of at most 5 MB and 2 000 question rows.
+
+    ImportReport:
+      type: object
+      required: [rows, valid, activated, errors, created]
+      properties:
+        rows:
+          type: integer
+          format: int32
+          description: Question rows read from the file; empty rows are not counted.
+        valid:
+          type: integer
+          format: int32
+          description: Rows without a problem. An import saves only when that is all of them.
+        activated:
+          type: integer
+          format: int32
+          description: >-
+            Of the valid rows, those saying TAK in "aktywne": questions saved — after a check,
+            to be saved — in force with their wording approved. The rest are saved as drafts.
+        errors:
+          type: array
+          description: Every problem found, ordered by row.
+          items: { $ref: '#/components/schemas/ImportError' }
+        created:
+          type: array
+          description: Keys of the questions saved, in the order of the rows. Empty after a check.
+          items: { type: string }
+
+    ImportError:
+      type: object
+      required: [row, code, message]
+      properties:
+        row:
+          type: integer
+          format: int32
+          description: The row number the spreadsheet shows, the header being row 1.
+        column:
+          type: string
+          description: >-
+            Header of the column at fault, such as "kategoria" or "wartosc_2". A rule about the
+            answers as a whole — at least two of them, exactly one correct — names the first
+            of their columns. Absent when no column is to blame.
+        code: { $ref: '#/components/schemas/ImportErrorCode' }
+        field:
+          type: string
+          description: >-
+            RULE only: the field the rule names, the same as a form's violations do — reuse the
+            messages the form shows for it.
+        message:
+          type: string
+          description: The same in English, for a log or a fallback.
+
+    ImportErrorCode:
+      type: string
+      description: >-
+        REQUIRED — the column is empty and the question needs it. INVALID_VALUE — not a value
+        the column takes: an unknown type, a word other than TAK or NIE, a survey value outside
+        0–100, a tag taken out of use. TOO_LONG — longer than the bank stores. UNKNOWN_CATEGORY
+        — no category in use has this name. KEY_TAKEN — a question in the bank already has the
+        key. KEY_REPEATED — an earlier row of the file has it. RULE — the question breaks a rule
+        the form enforces too; field names which.
+      enum: [REQUIRED, INVALID_VALUE, TOO_LONG, UNKNOWN_CATEGORY, KEY_TAKEN, KEY_REPEATED, RULE]
+
+    ImportRefusal:
+      description: The usual problem, with the report of every row that stopped the import.
+      allOf:
+        - $ref: '../common/errors.yaml#/components/schemas/ProblemDetail'
+        - type: object
+          properties:
+            report: { $ref: '#/components/schemas/ImportReport' }
+
+    ImportTooLargeReason:
+      type: string
+      description: FILE_TOO_LARGE counts bytes, TOO_MANY_ROWS question rows.
+      enum: [FILE_TOO_LARGE, TOO_MANY_ROWS]
+
+    ImportTooLarge:
+      description: >-
+        The usual problem, with the limit and what the file had, so the interface can say "the
+        file has 3 400 questions, we take 2 000 at a time".
+      allOf:
+        - $ref: '../common/errors.yaml#/components/schemas/ProblemDetail'
+        - type: object
+          properties:
+            reason: { $ref: '#/components/schemas/ImportTooLargeReason' }
+            limit: { type: integer, format: int64 }
+            actual: { type: integer, format: int64 }
+
+  responses:
+
+    ImportRefused:
+      description: >-
+        Nothing was saved. With report, rows were refused and the report says which and why;
+        without it, the file could not be read as the template at all, and violations say why.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ImportRefusal' }
+
+    ImportTooLarge:
+      description: Over 5 MB or over 2 000 question rows. Split the file.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ImportTooLarge' }

@@ -19,6 +19,16 @@ paths:
   #Question bank:
   /api/v1/questions:
     $ref: "./paths/questions/questions.yaml#/questions"
+  /api/v1/questions/bulk:
+    $ref: "./paths/questions/questions.yaml#/question-bulk"
+  /api/v1/questions/import/dry-run:
+    $ref: "./paths/questions/questions-import.yaml#/question-import-dry-run"
+  /api/v1/questions/import:
+    $ref: "./paths/questions/questions-import.yaml#/question-import"
+  /api/v1/questions/import/template:
+    $ref: "./paths/questions/questions-import.yaml#/question-import-template"
+  /api/v1/questions/export:
+    $ref: "./paths/questions/questions-import.yaml#/question-export"
   /api/v1/questions/{questionId}:
     $ref: "./paths/questions/questions.yaml#/question-by-id"
   /api/v1/questions/{questionId}/classification:

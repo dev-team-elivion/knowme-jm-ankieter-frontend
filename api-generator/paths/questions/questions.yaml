@@ -16,7 +16,9 @@ questions:
     description: >-
       Filtering, sorting and paging happen on the server. The bank is designed for tens of
       thousands of questions, so fetching everything and filtering in the browser is not an
-      option at any size.
+      option at any size. Each row describes the version in force, or the newest when none is:
+      what employees see. Filters and the text search read that version too; a draft being
+      written next to it shows as draftVersionNo.
     operationId: listQuestions
     parameters:
       - { name: categoryId, in: query, schema: { type: string, format: uuid } }
@@ -63,6 +65,13 @@ questions:
         in: query
         description: Field and direction, for example "updatedAt,desc". Defaults to newest change first.
         schema: { type: string, default: updatedAt,desc }
+      - name: forReview
+        in: query
+        description: >-
+          true for the questions marked for review, false for the rest. Leave it out for both.
+          Listed last on purpose: generated clients pass parameters by position, and one added
+          in the middle would shift every argument after it.
+        schema: { type: boolean }
     responses:
       200:
         description: A page of questions
@@ -91,6 +100,38 @@ questions:
         content:
           application/json:
             schema: { $ref: '#/components/schemas/QuestionDetails' }
+      400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
+      401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
+      409: { $ref: '../common/errors.yaml#/components/responses/Conflict' }
+
+question-bulk:
+  post:
+    tags: [Questions]
+    summary: Change many questions at once
+    description: >-
+      One operation on many questions: add or remove tags, set the category, retire, mark for
+      review or take the mark off. The questions are named by id — those ticked on the page —
+      or by the list's filter, which spares sending thousands of ids and cannot drift from
+      what the list showed; exactly one of the two. Start with dryRun: it answers how many
+      questions the operation changes and a few of their keys, and changes nothing — the
+      confirmation screen is built from it. Above 50 changed questions the request has to say
+      confirmLargeChange, or it is refused with 409: a mistaken click must not retire half the
+      bank. Everything happens in one transaction; on any error nothing changes. A question the
+      operation would leave as it is — already tagged, already in the category, already marked,
+      no version in force to retire — is skipped and counted, not refused. Every question
+      changed gets its own entry in its history. Changing classification creates no version.
+    operationId: bulkUpdateQuestions
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/BulkUpdateRequest' }
+    responses:
+      200:
+        description: What changed, or with dryRun what would.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BulkUpdateResult' }
       400: { $ref: '../common/errors.yaml#/components/responses/BadRequest' }
       401: { $ref: '../common/errors.yaml#/components/responses/Unauthorized' }
       409: { $ref: '../common/errors.yaml#/components/responses/Conflict' }
@@ -146,13 +187,22 @@ question-versions:
     tags: [Questions]
     summary: Create a new version of a question
     description: >-
-      For a substantive rewrite. The currently active version becomes RETIRED, and every
-      translation of the new version except the source language starts as MISSING — which is how
-      the list of questions awaiting translation writes itself. The new version takes over the
-      pictures and films of the newest one, and those of every answer it names by id.
+      For a substantive rewrite. The version in force is retired at once — or, with
+      keepCurrent, stays in force until the new one is activated, so that the question does not
+      drop out of tests while the new version is being prepared. Every translation of the new
+      version except the source language starts as MISSING — which is how the list of questions
+      awaiting translation writes itself. The new version takes over the pictures and films of
+      the newest one, and those of every answer it names by id.
     operationId: createQuestionVersion
     parameters:
       - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
+      - name: keepCurrent
+        in: query
+        description: >-
+          true keeps the version in force until the new one is activated; false retires it at
+          once. The interface asks every time — a procedure that changed wants the old wording
+          gone now, a better picture does not.
+        schema: { type: boolean, default: false }
     requestBody:
       required: true
       content:
@@ -224,9 +274,12 @@ question-version-activate:
     tags: [Questions]
     summary: Make a version the one in force
     description: >-
-      Exactly one version per question is ACTIVE. Activating another retires the current one.
-      The database enforces this with a partial unique index, so the answer is a conflict, not a
-      silent second active row.
+      Exactly one version per question is ACTIVE. Activating a version retires the one in force,
+      in the same transaction, so the question is never left without one in between; the
+      database enforces the rule with a partial unique index. The version's wording in its source language is approved with
+      it, if it was still a draft: whoever puts a version in force has read it, and a test draws
+      approved wording only. Other languages keep their status. The history records both in one
+      entry.
     operationId: activateQuestionVersion
     parameters:
       - { name: questionId, in: path, required: true, schema: { type: string, format: uuid } }
@@ -460,6 +513,8 @@ components:
           items: { $ref: '#/components/schemas/QuestionVersion' }
         createdAt: { type: string, format: date-time }
         createdBy: { type: string }
+        review:
+          $ref: '#/components/schemas/ReviewMark'
 
     NewAnswerOption:
       type: object
@@ -559,7 +614,7 @@ components:
 
     QuestionListItem:
       type: object
-      required: [id, businessKey, type, purpose, categoryName, status, versionNo, locales, hasMedia, updatedAt]
+      required: [id, businessKey, type, purpose, categoryName, status, versionNo, locales, hasMedia, forReview, updatedAt]
       properties:
         id: { type: string, format: uuid }
         businessKey: { type: string, example: BHP-1 }
@@ -575,14 +630,120 @@ components:
         status:
           allOf:
             - $ref: '#/components/schemas/VersionStatus'
-          description: Status of the newest version.
-        versionNo: { type: integer, format: int32 }
+          description: Status of the version shown — the one in force, or the newest when none is.
+        versionNo:
+          type: integer
+          format: int32
+          description: Number of the version shown.
+        draftVersionNo:
+          type: integer
+          format: int32
+          description: >-
+            A draft newer than the version shown, written while that one stays in force until
+            the draft is activated. Absent when there is none.
         locales:
           type: array
           description: Translation state per language, for spotting gaps without opening the question.
           items: { $ref: '#/components/schemas/LocaleStatus' }
         hasMedia: { type: boolean }
+        forReview:
+          type: boolean
+          description: Marked for review; who and why is in the question's details.
         updatedAt: { type: string, format: date-time }
+
+    ReviewMark:
+      type: object
+      description: >-
+        The question is marked for review. The mark stays until somebody takes it off — a
+        correction does not clear it, since whether the review is over is a person's call.
+      required: [markedBy, markedAt]
+      properties:
+        reason:
+          type: string
+          description: What to look at, when the one who marked it said.
+        markedBy: { type: string }
+        markedAt: { type: string, format: date-time }
+
+    QuestionFilter:
+      type: object
+      description: >-
+        The list's filters, as in listQuestions. Every field narrows; an empty filter picks the
+        whole bank.
+      properties:
+        categoryId: { type: string, format: uuid }
+        type: { $ref: '#/components/schemas/QuestionType' }
+        purpose: { $ref: '#/components/schemas/QuestionPurpose' }
+        status: { $ref: '#/components/schemas/VersionStatus' }
+        source: { $ref: '#/components/schemas/QuestionSource' }
+        tagIds:
+          type: array
+          description: A question matches when it carries every tag given.
+          items: { type: string, format: uuid }
+        positionCode: { type: string }
+        locale: { type: string, default: pl }
+        translationStatus: { $ref: '#/components/schemas/TranslationStatus' }
+        author: { type: string }
+        q: { type: string, minLength: 3 }
+        changedFrom: { type: string, format: date }
+        changedTo: { type: string, format: date }
+        forReview: { type: boolean }
+
+    BulkOperation:
+      type: string
+      description: >-
+        ADD_TAGS and REMOVE_TAGS take tagIds, SET_CATEGORY a categoryId, MARK_FOR_REVIEW an
+        optional reviewReason; RETIRE and CLEAR_REVIEW nothing. A parameter the operation does
+        not take is refused. RETIRE takes the version in force out of force; a question with only
+        a draft has none and is skipped. MARK_FOR_REVIEW leaves a question already marked as it
+        is.
+      enum: [ADD_TAGS, REMOVE_TAGS, SET_CATEGORY, RETIRE, MARK_FOR_REVIEW, CLEAR_REVIEW]
+
+    BulkUpdateRequest:
+      type: object
+      required: [operation]
+      properties:
+        questionIds:
+          type: array
+          description: The questions ticked on screen. Either this or filter.
+          maxItems: 10000
+          items: { type: string, format: uuid }
+        filter: { $ref: '#/components/schemas/QuestionFilter' }
+        operation: { $ref: '#/components/schemas/BulkOperation' }
+        tagIds:
+          type: array
+          items: { type: string, format: uuid }
+        categoryId: { type: string, format: uuid }
+        reviewReason: { type: string, maxLength: 500 }
+        dryRun:
+          type: boolean
+          default: false
+          description: Count and sample what would change, changing nothing.
+        confirmLargeChange:
+          type: boolean
+          default: false
+          description: Required when more than 50 questions change.
+
+    BulkUpdateResult:
+      type: object
+      required: [dryRun, matched, affected, skipped, sampleKeys]
+      properties:
+        dryRun: { type: boolean }
+        matched:
+          type: integer
+          format: int32
+          description: Questions the selection named.
+        affected:
+          type: integer
+          format: int32
+          description: Those the operation changes — or changed.
+        skipped:
+          type: integer
+          format: int32
+          description: Those it leaves as they are, already being as asked.
+        sampleKeys:
+          type: array
+          description: Up to ten keys of the affected questions, for the confirmation screen.
+          items: { type: string }
 
     LocaleStatus:
       type: object

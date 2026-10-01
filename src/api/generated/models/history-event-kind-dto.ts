@@ -15,7 +15,7 @@
 
 
 /**
- * CREATED — the version came into being. CORRECTED — changed in place, the fields listed. STATUS_CHANGED — put in force or retired, as the field status. MEDIA_ADDED and MEDIA_REMOVED — a picture or film added to or taken out of a draft. CLASSIFICATION_CHANGED — category, source, tags or positions of the question changed; the only kind listed under the question rather than a version.
+ * CREATED — the version came into being. CORRECTED — changed in place, the fields listed. STATUS_CHANGED — put in force or retired, as the field status. MEDIA_ADDED and MEDIA_REMOVED — a picture or film added to or taken out of a draft. CLASSIFICATION_CHANGED — category, source, tags or positions of the question changed. REVIEW_CHANGED — the question was marked for review, or the mark taken off. These two are listed under the question rather than a version.
  * @export
  * @enum {string}
  */
@@ -26,7 +26,8 @@ export const HistoryEventKindDto = {
     StatusChanged: 'STATUS_CHANGED',
     MediaAdded: 'MEDIA_ADDED',
     MediaRemoved: 'MEDIA_REMOVED',
-    ClassificationChanged: 'CLASSIFICATION_CHANGED'
+    ClassificationChanged: 'CLASSIFICATION_CHANGED',
+    ReviewChanged: 'REVIEW_CHANGED'
 } as const;
 
 export type HistoryEventKindDto = typeof HistoryEventKindDto[keyof typeof HistoryEventKindDto];
